@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const Register = () => {
+const reasturantadd = () => {
   const [formData, setFormData] = useState({
     restaurantName: '',
     ownerName: '',
@@ -286,4 +286,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default reasturantadd;
