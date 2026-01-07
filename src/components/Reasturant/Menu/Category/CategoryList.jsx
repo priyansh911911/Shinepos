@@ -1,11 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useCategory } from './hooks/useCategory';
+import EditCategory from './EditCategory';
 
 const CategoryList = () => {
-  const { categories, loading, deleteCategory } = useCategory();
+  const { categories, loading, deleteCategory, toggleCategoryStatus, fetchCategories } = useCategory();
+  const [editingCategory, setEditingCategory] = useState(null);
 
   const handleEdit = (category) => {
-    console.log('Edit category:', category);
+    setEditingCategory(category);
+  };
+
+  const handleCloseEdit = () => {
+    setEditingCategory(null);
+  };
+
+  const handleEditSuccess = () => {
+    setEditingCategory(null);
+    fetchCategories();
   };
 
   const handleDelete = async (id) => {
@@ -18,8 +29,9 @@ const CategoryList = () => {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow">
-      <div className="overflow-x-auto">
+    <>
+      <div className="bg-white rounded-lg shadow">
+        <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -40,11 +52,18 @@ const CategoryList = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{category.name}</td>
                   <td className="px-6 py-4 text-sm text-gray-500">{category.description || '-'}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      category.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                    }`}>
-                      {category.isActive ? 'Active' : 'Inactive'}
-                    </span>
+                    <button
+                      onClick={() => toggleCategoryStatus(category._id, category.isActive)}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
+                        category.isActive ? 'bg-green-600' : 'bg-gray-300'
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                          category.isActive ? 'translate-x-6' : 'translate-x-1'
+                        }`}
+                      />
+                    </button>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <button
@@ -67,6 +86,14 @@ const CategoryList = () => {
         </table>
       </div>
     </div>
+    {editingCategory && (
+      <EditCategory
+        category={editingCategory}
+        onClose={handleCloseEdit}
+        onSuccess={handleEditSuccess}
+      />
+    )}
+    </>
   );
 };
 

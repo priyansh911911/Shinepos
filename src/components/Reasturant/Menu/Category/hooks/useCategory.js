@@ -40,6 +40,49 @@ export const useCategory = () => {
     }
   };
 
+  const updateCategory = async (id, categoryData) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/categories/update/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(categoryData)
+      });
+      if (response.ok) {
+        return { success: true };
+      } else {
+        const data = await response.json();
+        return { success: false, error: data.error };
+      }
+    } catch (error) {
+      console.error('Error updating category:', error);
+      return { success: false, error: 'Network error' };
+    }
+  };
+
+  const toggleCategoryStatus = async (id, currentStatus) => {
+    // Optimistic update
+    setCategories(prev => 
+      prev.map(cat => 
+        cat._id === id ? { ...cat, isActive: !currentStatus } : cat
+      )
+    );
+    
+    const result = await updateCategory(id, { isActive: !currentStatus });
+    
+    // Revert on failure
+    if (!result.success) {
+      setCategories(prev => 
+        prev.map(cat => 
+          cat._id === id ? { ...cat, isActive: currentStatus } : cat
+        )
+      );
+    }
+  };
+
   useEffect(() => {
     fetchCategories();
   }, []);
@@ -48,6 +91,8 @@ export const useCategory = () => {
     categories,
     loading,
     fetchCategories,
-    deleteCategory
+    deleteCategory,
+    updateCategory,
+    toggleCategoryStatus
   };
 };
