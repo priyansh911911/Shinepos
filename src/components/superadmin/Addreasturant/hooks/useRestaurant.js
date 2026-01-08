@@ -9,7 +9,7 @@ export const useRestaurant = () => {
     setError('');
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/restaurants`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/restaurants/add`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -51,7 +51,7 @@ export const useRestaurant = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/restaurants`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/restaurants/all`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
