@@ -9,7 +9,7 @@ export const useRestaurant = () => {
     setError('');
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/restaurants/add`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/restaurants/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
