@@ -1,19 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCategory } from '../Category/hooks/useCategory';
 
-const AddItem = ({ onSuccess, onBack }) => {
+const EditItem = ({ item, onSuccess, onBack }) => {
   const { categories } = useCategory();
   const [formData, setFormData] = useState({
     itemName: '',
     categoryID: '',
-    price: '',
-    description: '',
     status: 'active',
     imageUrl: '',
+    videoUrl: '',
     timeToPrepare: '',
     foodType: 'veg'
   });
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (item) {
+      setFormData({
+        itemName: item.itemName || '',
+        categoryID: item.categoryID || '',
+        status: item.status || 'active',
+        imageUrl: item.imageUrl || '',
+        videoUrl: item.videoUrl || '',
+        timeToPrepare: item.timeToPrepare || '',
+        foodType: item.foodType || 'veg'
+      });
+    }
+  }, [item]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -30,8 +43,8 @@ const AddItem = ({ onSuccess, onBack }) => {
     try {
       const token = localStorage.getItem('token');
       
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/menus/create/menu-item`, {
-        method: 'POST',
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/menus/update/menu-item/${item._id}`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
@@ -41,30 +54,21 @@ const AddItem = ({ onSuccess, onBack }) => {
           categoryID: formData.categoryID,
           status: formData.status,
           imageUrl: formData.imageUrl,
+          videoUrl: formData.videoUrl,
           timeToPrepare: Number(formData.timeToPrepare),
           foodType: formData.foodType
         })
       });
 
       if (response.ok) {
-        alert('Item added successfully!');
-        setFormData({
-          itemName: '',
-          categoryID: '',
-          price: '',
-          description: '',
-          status: 'active',
-          imageUrl: '',
-          timeToPrepare: '',
-          foodType: 'veg'
-        });
+        alert('Item updated successfully!');
         if (onSuccess) onSuccess();
       } else {
         const data = await response.json();
-        alert(data.error || 'Failed to add item');
+        alert(data.error || 'Failed to update item');
       }
     } catch (error) {
-      alert('Error adding item');
+      alert('Error updating item');
     }
     setLoading(false);
   };
@@ -72,7 +76,7 @@ const AddItem = ({ onSuccess, onBack }) => {
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Add New Item</h2>
+        <h2 className="text-2xl font-bold">Edit Item</h2>
         {onBack && (
           <button
             onClick={onBack}
@@ -115,32 +119,6 @@ const AddItem = ({ onSuccess, onBack }) => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">Price</label>
-          <input
-            type="number"
-            name="price"
-            value={formData.price}
-            onChange={handleInputChange}
-            className="w-full p-3 border rounded-lg"
-            min="0"
-            step="0.01"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-2">Description</label>
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleInputChange}
-            className="w-full p-3 border rounded-lg"
-            rows="3"
-            required
-          />
-        </div>
-
-        <div>
           <label className="block text-sm font-medium mb-2">Status</label>
           <select
             name="status"
@@ -150,6 +128,7 @@ const AddItem = ({ onSuccess, onBack }) => {
           >
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
+            <option value="out-of-stock">Out of Stock</option>
           </select>
         </div>
 
@@ -162,6 +141,18 @@ const AddItem = ({ onSuccess, onBack }) => {
             onChange={handleInputChange}
             className="w-full p-3 border rounded-lg"
             placeholder="https://example.com/image.jpg"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">Video URL</label>
+          <input
+            type="url"
+            name="videoUrl"
+            value={formData.videoUrl}
+            onChange={handleInputChange}
+            className="w-full p-3 border rounded-lg"
+            placeholder="https://example.com/video.mp4"
           />
         </div>
 
@@ -196,11 +187,11 @@ const AddItem = ({ onSuccess, onBack }) => {
           disabled={loading}
           className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50"
         >
-          {loading ? 'Adding...' : 'Add Item'}
+          {loading ? 'Updating...' : 'Update Item'}
         </button>
       </form>
     </div>
   );
 };
 
-export default AddItem;
+export default EditItem;
