@@ -1,31 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import AddVariation from './AddVariation';
 
-const VariationList = ({ onAdd, onEdit }) => {
-  const [variations, setVariations] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchVariations();
-  }, []);
-
-  const fetchVariations = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/variation/all/variation`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setVariations(data.variations || []);
-      }
-    } catch (error) {
-      console.error('Error fetching variations:', error);
-    }
-    setLoading(false);
-  };
-
+const VariationList = ({ variations, loading, onAdd, onEdit, onDelete }) => {
   const deleteVariation = async (id) => {
     if (!confirm('Are you sure you want to delete this variation?')) return;
     
@@ -37,8 +13,8 @@ const VariationList = ({ onAdd, onEdit }) => {
       });
       
       if (response.ok) {
-        setVariations(variations.filter(variation => variation._id !== id));
         alert('Variation deleted successfully!');
+        onDelete(); // Refresh data in parent
       }
     } catch (error) {
       console.error('Error deleting variation:', error);

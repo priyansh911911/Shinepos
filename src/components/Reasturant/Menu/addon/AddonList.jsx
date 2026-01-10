@@ -1,31 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import AddAddon from './AddAddon';
 
-const AddonList = ({ onAdd }) => {
-  const [addons, setAddons] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchAddons();
-  }, []);
-
-  const fetchAddons = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/addon/all/addon`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setAddons(data.addons || []);
-      }
-    } catch (error) {
-      console.error('Error fetching addons:', error);
-    }
-    setLoading(false);
-  };
-
+const AddonList = ({ addons, loading, onAdd, onEdit, onDelete }) => {
   const deleteAddon = async (id) => {
     if (!confirm('Are you sure you want to delete this addon?')) return;
     
@@ -37,8 +13,8 @@ const AddonList = ({ onAdd }) => {
       });
       
       if (response.ok) {
-        setAddons(addons.filter(addon => addon._id !== id));
         alert('Addon deleted successfully!');
+        onDelete(); // Refresh data in parent
       }
     } catch (error) {
       console.error('Error deleting addon:', error);

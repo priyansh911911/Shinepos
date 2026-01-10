@@ -9,9 +9,38 @@ const ItemList = () => {
   const [editingItem, setEditingItem] = useState(null);
 
   useEffect(() => {
+    let isMounted = true;
+    
     if (view === 'list') {
-      fetchItems();
+      const loadItems = async () => {
+        if (!isMounted) return;
+        
+        try {
+          const token = localStorage.getItem('token');
+          const response = await fetch(`${import.meta.env.VITE_API_URL}/api/menus/get/all-menu-items`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          
+          if (response.ok && isMounted) {
+            const data = await response.json();
+            setItems(data.menuItems || []);
+          }
+        } catch (error) {
+          if (isMounted) {
+            console.error('Error fetching items:', error);
+          }
+        }
+        if (isMounted) {
+          setLoading(false);
+        }
+      };
+
+      loadItems();
     }
+    
+    return () => {
+      isMounted = false;
+    };
   }, [view]);
 
   const fetchItems = async () => {
