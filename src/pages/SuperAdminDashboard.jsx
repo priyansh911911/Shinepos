@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Dashboard from '../components/superadmin/Dashboard/Dashboard';
 import Restaurants from '../components/superadmin/Addreasturant/Restaurants';
+import UsersList from '../components/superadmin/Reasturantadmin/usersList';
 
 const SuperAdminDashboard = () => {
   const location = useLocation();
@@ -28,7 +29,7 @@ const SuperAdminDashboard = () => {
         {activeTab === 'dashboard' && <Dashboard />}
         {activeTab === 'restaurants' && <Restaurants />}
         {activeTab === 'subscriptions' && <div className="p-6"><h1 className="text-2xl font-bold">Subscriptions</h1></div>}
-        {activeTab === 'users' && <div className="p-6"><h1 className="text-2xl font-bold">Users</h1></div>}
+        {activeTab === 'users' && <UsersList />}
         {activeTab === 'settings' && <div className="p-6"><h1 className="text-2xl font-bold">Settings</h1></div>}
       </div>
     </div>
