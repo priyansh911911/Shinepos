@@ -9,6 +9,7 @@ import Variation from '../components/Reasturant/Menu/variation/Variation';
 import StaffList from '../components/Reasturant/Staff/Staff';
 import Order from '../components/Reasturant/Order/Orders/Order';
 import KOT from '../components/Reasturant/Order/KOT/KOT';
+import SubscriptionPlans from '../components/Reasturant/Subscription/SubscriptionPlans';
 
 const RestaurantDashboard = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -39,6 +40,8 @@ const RestaurantDashboard = () => {
         return <KOT />;
       case 'staff':
         return <StaffList />;
+      case 'subscription':
+        return <SubscriptionPlans />;
       case 'settings':
         return <div className="p-6"><h2 className="text-2xl font-bold">Settings</h2></div>;
       default:

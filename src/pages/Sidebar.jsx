@@ -12,7 +12,7 @@ const Sidebar = ({ activeTab, setActiveTab, onLogout }) => {
   return (
     <div className="w-64 bg-gray-900 text-white min-h-screen p-4 flex flex-col">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold">Super Admin</h2>
+        <h2 className="font-bold" style={{ fontSize: '22px' }}>Super Admin</h2>
       </div>
 
       <nav className="flex-1">

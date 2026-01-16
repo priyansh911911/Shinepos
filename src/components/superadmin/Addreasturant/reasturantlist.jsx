@@ -40,13 +40,21 @@ const RestaurantList = ({ onEdit }) => {
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{restaurant.email}</td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{restaurant.phone}</td>
               <td className="px-6 py-4 whitespace-nowrap">
-                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                  restaurant.subscriptionPlan === 'trial' 
-                    ? 'bg-yellow-100 text-yellow-800' 
-                    : 'bg-green-100 text-green-800'
-                }`}>
-                  {restaurant.subscriptionPlan}
-                </span>
+                <div>
+                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                    restaurant.subscriptionPlan === 'trial' ? 'bg-yellow-100 text-yellow-800' :
+                    restaurant.subscriptionPlan === 'basic' ? 'bg-blue-100 text-blue-800' :
+                    restaurant.subscriptionPlan === 'premium' ? 'bg-purple-100 text-purple-800' :
+                    'bg-green-100 text-green-800'
+                  }`}>
+                    {restaurant.subscriptionPlan}
+                  </span>
+                  {restaurant.subscriptionEndDate && (
+                    <div className="text-xs text-gray-500 mt-1">
+                      Expires: {new Date(restaurant.subscriptionEndDate).toLocaleDateString()}
+                    </div>
+                  )}
+                </div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
