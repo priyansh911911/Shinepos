@@ -4,6 +4,7 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [orderOpen, setOrderOpen] = useState(false);
   const [menuItemsOpen, setMenuItemsOpen] = useState(false);
+  const [inventoryOpen, setInventoryOpen] = useState(false);
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: 'M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z' },
@@ -14,6 +15,11 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout }) => {
   const orderSubItems = [
     { id: 'orders', label: 'Orders' },
     { id: 'kot', label: 'Kitchen (KOT)' }
+  ];
+
+  const inventorySubItems = [
+    { id: 'inventory', label: 'Inventory List' },
+    { id: 'add-inventory', label: 'Add Item' }
   ];
 
   const menuSubItems = [
@@ -70,6 +76,41 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout }) => {
             {orderOpen && (
               <ul className="ml-8 mt-2 space-y-1">
                 {orderSubItems.map((subItem) => (
+                  <li key={subItem.id}>
+                    <button
+                      onClick={() => setActiveTab(subItem.id)}
+                      className={`w-full text-left p-2 rounded-lg text-sm ${
+                        activeTab === subItem.id
+                          ? 'bg-indigo-600 hover:bg-indigo-700'
+                          : 'hover:bg-gray-800'
+                      }`}
+                    >
+                      {subItem.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+          
+          <li>
+            <button
+              onClick={() => setInventoryOpen(!inventoryOpen)}
+              className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-800"
+            >
+              <div className="flex items-center">
+                <svg className="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+                </svg>
+                Inventory
+              </div>
+              <svg className={`w-4 h-4 transition-transform ${inventoryOpen ? 'rotate-180' : ''}`} fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+            {inventoryOpen && (
+              <ul className="ml-8 mt-2 space-y-1">
+                {inventorySubItems.map((subItem) => (
                   <li key={subItem.id}>
                     <button
                       onClick={() => setActiveTab(subItem.id)}

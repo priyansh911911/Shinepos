@@ -9,6 +9,7 @@ import Variation from '../components/Reasturant/Menu/variation/Variation';
 import StaffList from '../components/Reasturant/Staff/Staff';
 import Order from '../components/Reasturant/Order/Orders/Order';
 import KOT from '../components/Reasturant/Order/KOT/KOT';
+import Inventory from '../components/Reasturant/Inventory/Inventory';
 
 const RestaurantDashboard = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -37,6 +38,10 @@ const RestaurantDashboard = () => {
         return <Order />;
       case 'kot':
         return <KOT />;
+      case 'inventory':
+        return <Inventory initialTab="list" onTabChange={(tab) => setActiveTab(tab === 'list' ? 'inventory' : 'add-inventory')} />;
+      case 'add-inventory':
+        return <Inventory initialTab="add" onTabChange={(tab) => setActiveTab(tab === 'list' ? 'inventory' : 'add-inventory')} />;
       case 'staff':
         return <StaffList />;
       case 'settings':

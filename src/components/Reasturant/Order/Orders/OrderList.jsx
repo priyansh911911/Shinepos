@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { FiEye, FiEdit, FiDollarSign, FiRefreshCw } from 'react-icons/fi';
 
-const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRefresh }) => {
+const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRefresh, onUpdatePriority }) => {
   const [filterStatus, setFilterStatus] = useState('ALL');
+
+  console.log('OrderList loaded with onUpdatePriority:', !!onUpdatePriority);
+  console.log('Sample order priority:', orders[0]?.priority);
 
   const statusColors = {
     PENDING: 'bg-yellow-100 text-yellow-800',
@@ -69,6 +72,7 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Items</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Priority</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Payment</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
@@ -94,6 +98,18 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
                 </td>
                 <td className="px-4 py-3 text-sm font-medium text-gray-900">
                   {formatCurrency(order.totalAmount)}
+                </td>
+                <td className="px-4 py-3">
+                  <select
+                    value={order.priority || 'NORMAL'}
+                    onChange={(e) => onUpdatePriority && onUpdatePriority(order._id, e.target.value)}
+                    className="text-xs px-2 py-1 border rounded"
+                  >
+                    <option value="LOW">Low</option>
+                    <option value="NORMAL">Normal</option>
+                    <option value="HIGH">High</option>
+                    <option value="URGENT">Urgent</option>
+                  </select>
                 </td>
                 <td className="px-4 py-3">
                   <select
