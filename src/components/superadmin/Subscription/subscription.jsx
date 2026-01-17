@@ -4,6 +4,51 @@ import { FiEdit2 } from 'react-icons/fi';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
+const CountdownTimer = ({ endDate, paymentStatus }) => {
+  const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+
+  useEffect(() => {
+    if (!endDate || paymentStatus !== 'paid') return;
+
+    const calculateCountdown = () => {
+      const now = new Date().getTime();
+      const end = new Date(endDate).getTime();
+      const distance = end - now;
+
+      if (distance < 0) {
+        return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+      }
+
+      return {
+        days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+        minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+        seconds: Math.floor((distance % (1000 * 60)) / 1000)
+      };
+    };
+
+    // Set initial value immediately
+    setCountdown(calculateCountdown());
+
+    const timer = setInterval(() => {
+      setCountdown(calculateCountdown());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [endDate, paymentStatus]);
+
+  if (paymentStatus !== 'paid') return <span className="text-gray-500">-</span>;
+
+  return (
+    <div className="text-xs">
+      <span className="font-semibold text-indigo-600">{countdown.days}d</span> :
+      <span className="font-semibold text-indigo-600"> {countdown.hours}h</span> :
+      <span className="font-semibold text-indigo-600"> {countdown.minutes}m</span> :
+      <span className="font-semibold text-indigo-600"> {countdown.seconds}s</span>
+    </div>
+  );
+};
+
 const Subscription = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,6 +70,44 @@ const Subscription = () => {
       console.error('Error fetching restaurants:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleRenew = async (restaurantId, restaurantName) => {
+    if (!confirm(`Renew subscription for ${restaurantName}?`)) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(
+        `${API_BASE_URL}/api/subscription-plans/renew`,
+        {
+          restaurantId,
+          paymentMethod: 'admin',
+          transactionId: `ADMIN-${Date.now()}`
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      alert('Subscription renewed successfully');
+      fetchRestaurants();
+    } catch (error) {
+      alert(error.response?.data?.error || 'Failed to renew subscription');
+    }
+  };
+
+  const handleCancel = async (restaurantId, restaurantName) => {
+    if (!confirm(`Cancel subscription for ${restaurantName}?`)) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(
+        `${API_BASE_URL}/api/subscription-plans/cancel/${restaurantId}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      alert('Subscription cancelled successfully');
+      fetchRestaurants();
+    } catch (error) {
+      alert(error.response?.data?.error || 'Failed to cancel subscription');
     }
   };
 
@@ -71,6 +154,8 @@ const Subscription = () => {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Plan</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Start Date</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">End Date</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Time Left</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
             </tr>
           </thead>
@@ -112,41 +197,41 @@ const Subscription = () => {
                   )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {editingId === restaurant._id ? (
-                    <input
-                      type="date"
-                      value={formData.subscriptionEndDate}
-                      onChange={(e) => setFormData({ ...formData, subscriptionEndDate: e.target.value })}
-                      className="border rounded px-2 py-1 text-sm"
-                    />
-                  ) : (
-                    restaurant.subscriptionEndDate ? new Date(restaurant.subscriptionEndDate).toLocaleDateString() : '-'
-                  )}
+                  {restaurant.subscriptionEndDate ? new Date(restaurant.subscriptionEndDate).toLocaleDateString() : '-'}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <CountdownTimer 
+                    endDate={restaurant.subscriptionEndDate} 
+                    paymentStatus={restaurant.paymentStatus}
+                  />
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                    restaurant.paymentStatus === 'paid' ? 'bg-green-100 text-green-800' : 
+                    restaurant.paymentStatus === 'cancelled' ? 'bg-orange-100 text-orange-800' :
+                    'bg-red-100 text-red-800'
+                  }`}>
+                    {restaurant.paymentStatus || 'pending'}
+                  </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
-                  {editingId === restaurant._id ? (
-                    <div className="flex space-x-2">
+                  <div className="flex space-x-2">
+                    {restaurant.paymentStatus === 'paid' ? (
                       <button
-                        onClick={() => handleUpdate(restaurant._id)}
-                        className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
-                      >
-                        Save
-                      </button>
-                      <button
-                        onClick={() => setEditingId(null)}
-                        className="bg-gray-600 text-white px-3 py-1 rounded hover:bg-gray-700"
+                        onClick={() => handleCancel(restaurant._id, restaurant.restaurantName)}
+                        className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
                       >
                         Cancel
                       </button>
-                    </div>
-                  ) : (
-                    <button
-                      onClick={() => handleEdit(restaurant)}
-                      className="text-blue-600 hover:text-blue-800"
-                    >
-                      <FiEdit2 className="inline" /> Edit
-                    </button>
-                  )}
+                    ) : (
+                      <button
+                        onClick={() => handleRenew(restaurant._id, restaurant.restaurantName)}
+                        className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
+                      >
+                        Renew
+                      </button>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}

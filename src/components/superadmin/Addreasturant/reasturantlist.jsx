@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { FiEdit2, FiTrash2, FiToggleLeft, FiToggleRight } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { useRestaurantList } from './hooks/useRestaurantList';
+import RestaurantCountdown from './RestaurantCountdown';
 
 const RestaurantList = ({ onEdit }) => {
   const navigate = useNavigate();
@@ -41,12 +42,7 @@ const RestaurantList = ({ onEdit }) => {
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{restaurant.phone}</td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <div>
-                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    restaurant.subscriptionPlan === 'trial' ? 'bg-yellow-100 text-yellow-800' :
-                    restaurant.subscriptionPlan === 'basic' ? 'bg-blue-100 text-blue-800' :
-                    restaurant.subscriptionPlan === 'premium' ? 'bg-purple-100 text-purple-800' :
-                    'bg-green-100 text-green-800'
-                  }`}>
+                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800`}>
                     {restaurant.subscriptionPlan}
                   </span>
                   {restaurant.subscriptionEndDate && (
@@ -54,6 +50,10 @@ const RestaurantList = ({ onEdit }) => {
                       Expires: {new Date(restaurant.subscriptionEndDate).toLocaleDateString()}
                     </div>
                   )}
+                  <RestaurantCountdown 
+                    endDate={restaurant.subscriptionEndDate} 
+                    paymentStatus={restaurant.paymentStatus}
+                  />
                 </div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
