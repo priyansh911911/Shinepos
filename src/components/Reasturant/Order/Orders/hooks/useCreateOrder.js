@@ -5,9 +5,11 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export const useCreateOrder = (onCreateOrder) => {
   const [menuItems, setMenuItems] = useState([]);
+  const [tables, setTables] = useState([]);
   const [orderItems, setOrderItems] = useState([]);
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
+  const [selectedTable, setSelectedTable] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [selectedItem, setSelectedItem] = useState(null);
@@ -16,6 +18,7 @@ export const useCreateOrder = (onCreateOrder) => {
 
   useEffect(() => {
     fetchMenuItems();
+    fetchTables();
   }, []);
 
   const fetchMenuItems = async () => {
@@ -28,6 +31,18 @@ export const useCreateOrder = (onCreateOrder) => {
     } catch (err) {
       console.error('Fetch menu items error:', err);
       setError('Failed to fetch menu items');
+    }
+  };
+
+  const fetchTables = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${API_BASE_URL}/api/tables/tables`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setTables(response.data.tables || []);
+    } catch (err) {
+      console.error('Fetch tables error:', err);
     }
   };
 
@@ -122,7 +137,8 @@ export const useCreateOrder = (onCreateOrder) => {
         }))
       })),
       customerName: customerName.trim(),
-      customerPhone: customerPhone.trim()
+      customerPhone: customerPhone.trim(),
+      tableId: selectedTable || undefined
     };
 
     const result = await onCreateOrder(orderData);
@@ -131,6 +147,7 @@ export const useCreateOrder = (onCreateOrder) => {
       setOrderItems([]);
       setCustomerName('');
       setCustomerPhone('');
+      setSelectedTable('');
     } else {
       setError(result.error);
     }
@@ -140,11 +157,14 @@ export const useCreateOrder = (onCreateOrder) => {
 
   return {
     menuItems,
+    tables,
     orderItems,
     customerName,
     setCustomerName,
     customerPhone,
     setCustomerPhone,
+    selectedTable,
+    setSelectedTable,
     loading,
     error,
     selectedItem,

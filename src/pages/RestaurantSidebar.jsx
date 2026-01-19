@@ -15,6 +15,7 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout }) => {
 
   const orderSubItems = [
     { id: 'orders', label: 'Orders' },
+    { id: 'tables', label: 'Tables' },
     { id: 'kot', label: 'Kitchen (KOT)' }
   ];
 

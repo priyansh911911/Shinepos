@@ -5,11 +5,14 @@ import { useCreateOrder } from './hooks/useCreateOrder';
 const CreateOrder = ({ onCreateOrder, onCancel }) => {
   const {
     menuItems,
+    tables,
     orderItems,
     customerName,
     setCustomerName,
     customerPhone,
     setCustomerPhone,
+    selectedTable,
+    setSelectedTable,
     loading,
     error,
     selectedItem,
@@ -67,6 +70,24 @@ const CreateOrder = ({ onCreateOrder, onCancel }) => {
                 onChange={(e) => setCustomerPhone(e.target.value)}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Table (Optional)
+              </label>
+              <select
+                value={selectedTable}
+                onChange={(e) => setSelectedTable(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">No Table</option>
+                {tables.filter(t => t.status === 'AVAILABLE').map(table => (
+                  <option key={table._id} value={table._id}>
+                    {table.tableNumber} (Capacity: {table.capacity})
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 

@@ -26,7 +26,7 @@ const KOT = () => {
         console.log('Kitchen orders data:', data);
         console.log('All KOTs:', data.kots);
         const activeKots = (data.kots || []).filter(kot => 
-          kot.status !== 'COMPLETE' && kot.status !== 'CANCELLED'
+          kot.status !== 'DELIVERED' && kot.status !== 'CANCELLED' && kot.status !== 'PAID'
         );
         console.log('Filtered active KOTs:', activeKots);
         setKots(activeKots);
@@ -43,7 +43,7 @@ const KOT = () => {
   const updateKOTStatus = async (kotId, newStatus) => {
     try {
       // Optimistically update UI
-      if (newStatus === 'COMPLETE' || newStatus === 'CANCELLED') {
+      if (newStatus === 'DELIVERED' || newStatus === 'CANCELLED' || newStatus === 'PAID') {
         setKots(prev => prev.filter(kot => kot._id !== kotId));
       } else {
         setKots(prev => prev.map(kot => 
@@ -52,7 +52,7 @@ const KOT = () => {
       }
 
       const token = localStorage.getItem('token');
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/kitchen/update/kot/status/${kotId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/kot/${kotId}/status`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -152,11 +152,10 @@ const KOT = () => {
                 </div>
                 <span className={`px-2 py-1 rounded text-xs font-medium ${
                   kot.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
-                  kot.status === 'ORDER_ACCEPTED' ? 'bg-blue-100 text-blue-800' :
                   kot.status === 'PREPARING' ? 'bg-orange-100 text-orange-800' :
                   kot.status === 'READY' ? 'bg-green-100 text-green-800' :
-                  kot.status === 'SERVED' ? 'bg-purple-100 text-purple-800' :
-                  kot.status === 'COMPLETE' ? 'bg-gray-100 text-gray-800' :
+                  kot.status === 'DELIVERED' ? 'bg-purple-100 text-purple-800' :
+                  kot.status === 'PAID' ? 'bg-gray-100 text-gray-800' :
                   'bg-red-100 text-red-800'
                 }`}>
                   {kot.status}
@@ -189,21 +188,19 @@ const KOT = () => {
                   onChange={(e) => updateKOTStatus(kot._id, e.target.value)}
                   className={`w-full px-3 py-2 rounded text-sm font-medium border-0 ${
                     kot.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
-                    kot.status === 'ORDER_ACCEPTED' ? 'bg-blue-100 text-blue-800' :
                     kot.status === 'PREPARING' ? 'bg-orange-100 text-orange-800' :
                     kot.status === 'READY' ? 'bg-green-100 text-green-800' :
-                    kot.status === 'SERVED' ? 'bg-purple-100 text-purple-800' :
-                    kot.status === 'COMPLETE' ? 'bg-gray-100 text-gray-800' :
+                    kot.status === 'DELIVERED' ? 'bg-purple-100 text-purple-800' :
+                    kot.status === 'PAID' ? 'bg-gray-100 text-gray-800' :
                     'bg-red-100 text-red-800'
                   }`}
                 >
                   <option value="PENDING">Pending</option>
-                  <option value="ORDER_ACCEPTED">Accepted</option>
                   <option value="PREPARING">Preparing</option>
                   <option value="READY">Ready</option>
-                  <option value="SERVED">Served</option>
-                  <option value="COMPLETE">Complete</option>
+                  <option value="DELIVERED">Delivered</option>
                   <option value="CANCELLED">Cancelled</option>
+                  <option value="PAID">Paid</option>
                 </select>
               </div>
             </div>

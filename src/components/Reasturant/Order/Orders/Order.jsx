@@ -50,6 +50,8 @@ const Order = () => {
     } catch (err) {
       console.error('Create order error:', err);
       console.error('Error response:', err.response?.data);
+      console.error('Error status:', err.response?.status);
+      console.error('Full error:', err);
       return { success: false, error: err.response?.data?.error || 'Failed to create order' };
     }
   };

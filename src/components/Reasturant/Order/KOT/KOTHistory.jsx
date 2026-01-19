@@ -18,7 +18,7 @@ const KOTHistory = () => {
       if (response.ok) {
         const data = await response.json();
         const completedKots = (data.kots || []).filter(kot => 
-          kot.status === 'COMPLETE' || kot.status === 'CANCELLED'
+          kot.status === 'DELIVERED' || kot.status === 'CANCELLED' || kot.status === 'PAID'
         );
         setHistoryKots(completedKots);
       }
@@ -26,6 +26,31 @@ const KOTHistory = () => {
       console.error('Error fetching KOT history:', error);
     }
     setLoading(false);
+  };
+
+  const updateKOTStatus = async (kotId, newStatus) => {
+    try {
+      setHistoryKots(prev => prev.map(kot => 
+        kot._id === kotId ? { ...kot, status: newStatus } : kot
+      ));
+
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/kot/${kotId}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+      
+      if (!response.ok) {
+        fetchKOTHistory();
+      }
+    } catch (error) {
+      console.error('Error updating KOT status:', error);
+      fetchKOTHistory();
+    }
   };
 
   if (loading) return <div className="p-6">Loading history...</div>;
@@ -64,11 +89,22 @@ const KOTHistory = () => {
                   ))}
                 </td>
                 <td className="px-4 py-3">
-                  <span className={`px-2 py-1 rounded text-xs font-medium ${
-                    kot.status === 'COMPLETE' ? 'bg-gray-100 text-gray-800' : 'bg-red-100 text-red-800'
-                  }`}>
-                    {kot.status}
-                  </span>
+                  <select
+                    value={kot.status}
+                    onChange={(e) => updateKOTStatus(kot._id, e.target.value)}
+                    className={`px-2 py-1 rounded text-xs font-medium border-0 ${
+                      kot.status === 'DELIVERED' ? 'bg-green-100 text-green-800' :
+                      kot.status === 'PAID' ? 'bg-gray-100 text-gray-800' : 
+                      'bg-red-100 text-red-800'
+                    }`}
+                  >
+                    <option value="PENDING">Pending</option>
+                    <option value="PREPARING">Preparing</option>
+                    <option value="READY">Ready</option>
+                    <option value="DELIVERED">Delivered</option>
+                    <option value="CANCELLED">Cancelled</option>
+                    <option value="PAID">Paid</option>
+                  </select>
                 </td>
                 <td className="px-4 py-3 text-sm text-gray-500">
                   {new Date(kot.createdAt).toLocaleString()}

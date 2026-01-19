@@ -9,12 +9,11 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
 
   const statusColors = {
     PENDING: 'bg-yellow-100 text-yellow-800',
-    ORDER_ACCEPTED: 'bg-blue-100 text-blue-800',
     PREPARING: 'bg-orange-100 text-orange-800',
     READY: 'bg-green-100 text-green-800',
-    SERVED: 'bg-purple-100 text-purple-800',
-    COMPLETE: 'bg-gray-100 text-gray-800',
-    CANCELLED: 'bg-red-100 text-red-800'
+    DELIVERED: 'bg-purple-100 text-purple-800',
+    CANCELLED: 'bg-red-100 text-red-800',
+    PAID: 'bg-gray-100 text-gray-800'
   };
 
   const filteredOrders = filterStatus === 'ALL' 
@@ -45,12 +44,11 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
             >
               <option value="ALL">All Orders</option>
               <option value="PENDING">Pending</option>
-              <option value="ORDER_ACCEPTED">Accepted</option>
               <option value="PREPARING">Preparing</option>
               <option value="READY">Ready</option>
-              <option value="SERVED">Served</option>
-              <option value="COMPLETE">Complete</option>
+              <option value="DELIVERED">Delivered</option>
               <option value="CANCELLED">Cancelled</option>
+              <option value="PAID">Paid</option>
             </select>
           </div>
           
@@ -118,12 +116,11 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
                     className={`px-2 py-1 rounded-full text-xs font-medium border-0 ${statusColors[order.status]}`}
                   >
                     <option value="PENDING">Pending</option>
-                    <option value="ORDER_ACCEPTED">Accepted</option>
                     <option value="PREPARING">Preparing</option>
                     <option value="READY">Ready</option>
-                    <option value="SERVED">Served</option>
-                    <option value="COMPLETE">Complete</option>
+                    <option value="DELIVERED">Delivered</option>
                     <option value="CANCELLED">Cancelled</option>
+                    <option value="PAID">Paid</option>
                   </select>
                 </td>
                 <td className="px-4 py-3 text-sm">

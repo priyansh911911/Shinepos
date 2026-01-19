@@ -8,6 +8,7 @@ import Addon from '../components/Reasturant/Menu/addon/Addon';
 import Variation from '../components/Reasturant/Menu/variation/Variation';
 import StaffList from '../components/Reasturant/Staff/Staff';
 import Order from '../components/Reasturant/Order/Orders/Order';
+import Tables from '../components/Reasturant/Order/Tables/Tables';
 import KOT from '../components/Reasturant/Order/KOT/KOT';
 import Inventory from '../components/Reasturant/Inventory/Inventory';
 import SubscriptionPlans from '../components/Reasturant/Subscription/SubscriptionPlans';
@@ -37,6 +38,8 @@ const RestaurantDashboard = () => {
         return <Variation />;
       case 'orders':
         return <Order />;
+      case 'tables':
+        return <Tables />;
       case 'kot':
         return <KOT />;
       case 'inventory':
