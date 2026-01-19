@@ -11,6 +11,7 @@ import Order from '../components/Reasturant/Order/Orders/Order';
 import KOT from '../components/Reasturant/Order/KOT/KOT';
 import Inventory from '../components/Reasturant/Inventory/Inventory';
 import SubscriptionPlans from '../components/Reasturant/Subscription/SubscriptionPlans';
+import SubscriptionBlocker from './SubscriptionBlocker';
 
 const RestaurantDashboard = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -56,6 +57,7 @@ const RestaurantDashboard = () => {
 
   return (
     <div className="flex h-screen bg-gray-100">
+      <SubscriptionBlocker />
       <RestaurantSidebar activeTab={activeTab} setActiveTab={setActiveTab} onLogout={handleLogout} />
       <div className="flex-1 overflow-auto">
         {renderContent()}

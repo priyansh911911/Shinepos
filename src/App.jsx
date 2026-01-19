@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './pages/Login';
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import RestaurantDashboard from './pages/RestaurantDashboard';
-import EditRestaurant from './components/superadmin/Addreasturant/EditRestaurant';
+import EditRestaurant from './components/superadmin/Addreasturant/EditRestaurantInline';
 
 function App() {
   return (
