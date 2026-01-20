@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FiPlus, FiEye } from 'react-icons/fi';
 import OrderList from './OrderList';
 import CreateOrder from './CreateOrder';
 import OrderDetails from './OrderDetails';
 import PaymentModal from '../Payment/PaymentModal';
 import TransferModal from './TransferModal';
+import AddNewOrder from '../AddNewOrder';
 import { useOrders } from './hooks/useOrders';
 
 const Order = () => {
+  const [showAddItems, setShowAddItems] = useState(null);
   const {
     orders,
     loading,
@@ -30,6 +32,17 @@ const Order = () => {
     handleTransferClick,
     handleTransferSuccess
   } = useOrders();
+
+  const handleAddItems = (orderId) => {
+    console.log('handleAddItems called with orderId:', orderId);
+    setShowAddItems(orderId);
+  };
+
+  const handleAddItemsClose = () => {
+    setShowAddItems(null);
+    fetchOrders();
+    setActiveTab('list'); // Redirect to orders page
+  };
 
   if (loading) {
     return (
@@ -84,8 +97,8 @@ const Order = () => {
           onUpdateStatus={handleUpdateStatus}
           onUpdatePriority={handleUpdatePriority}
           onProcessPayment={handlePaymentClick}
+          onAddItems={handleAddItems}
           onTransfer={handleTransferClick}
-          onRefresh={fetchOrders}
         />
       )}
 
@@ -111,6 +124,16 @@ const Order = () => {
           onProcessPayment={handleProcessPayment}
           onClose={() => setShowPaymentModal(false)}
         />
+      )}
+
+      {showAddItems && (
+        <div>
+          <p>Debug: showAddItems = {showAddItems}</p>
+          <AddNewOrder
+            orderId={showAddItems}
+            onClose={handleAddItemsClose}
+          />
+        </div>
       )}
 
       {showTransferModal && selectedOrder && (

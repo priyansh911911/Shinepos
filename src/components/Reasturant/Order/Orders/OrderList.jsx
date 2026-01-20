@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { FiEye, FiEdit, FiDollarSign, FiRefreshCw, FiArrowRight } from 'react-icons/fi';
+import { FiEye, FiEdit, FiDollarSign, FiRefreshCw, FiArrowRight, FiPlus } from 'react-icons/fi';
 
-const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRefresh, onUpdatePriority, onTransfer }) => {
+const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRefresh, onUpdatePriority, onTransfer, onAddItems }) => {
   const [filterStatus, setFilterStatus] = useState('ALL');
 
   console.log('OrderList loaded with onUpdatePriority:', !!onUpdatePriority);
@@ -150,6 +150,18 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
                     >
                       <FiEye />
                     </button>
+                    {order.status !== 'PAID' && order.status !== 'CANCELLED' && (
+                      <button
+                        onClick={() => {
+                          console.log('Add Items clicked for order:', order._id);
+                          onAddItems && onAddItems(order._id);
+                        }}
+                        className="text-orange-600 hover:text-orange-800"
+                        title="Add Items"
+                      >
+                        <FiPlus />
+                      </button>
+                    )}
                     {order.tableId && order.status !== 'PAID' && order.status !== 'CANCELLED' && (
                       <button
                         onClick={() => onTransfer(order)}
