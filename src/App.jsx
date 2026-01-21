@@ -6,6 +6,7 @@ import RestaurantLogin from './pages/RestaurantLogin';
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import RestaurantDashboard from './pages/RestaurantDashboard';
 import EditRestaurant from './components/superadmin/Addreasturant/EditRestaurantInline';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -15,10 +16,26 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/admin-login" element={<SuperAdminLogin />} />
           <Route path="/restaurant-login" element={<RestaurantLogin />} />
-          <Route path="/super-admin" element={<SuperAdminDashboard />} />
-          <Route path="/superadmin/restaurants/edit/:id" element={<EditRestaurant />} />
-          <Route path="/dashboard" element={<SuperAdminDashboard />} />
-          <Route path="/restaurant-dashboard" element={<RestaurantDashboard />} />
+          <Route path="/super-admin" element={
+            <ProtectedRoute allowedRoles={['SUPER_ADMIN']}>
+              <SuperAdminDashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/superadmin/restaurants/edit/:id" element={
+            <ProtectedRoute allowedRoles={['SUPER_ADMIN']}>
+              <EditRestaurant />
+            </ProtectedRoute>
+          } />
+          <Route path="/dashboard" element={
+            <ProtectedRoute allowedRoles={['SUPER_ADMIN']}>
+              <SuperAdminDashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/restaurant-dashboard" element={
+            <ProtectedRoute allowedRoles={['RESTAURANT_ADMIN', 'MANAGER', 'CHEF', 'WAITER', 'CASHIER']}>
+              <RestaurantDashboard />
+            </ProtectedRoute>
+          } />
           <Route path="/" element={<Navigate to="/restaurant-login" replace />} />
         </Routes>
       </div>
