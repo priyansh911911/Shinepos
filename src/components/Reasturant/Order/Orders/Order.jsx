@@ -83,6 +83,16 @@ const Order = () => {
             setActiveTab={setActiveTab}
           />
         </div>
+        <OrderList
+          orders={orders}
+          onViewOrder={handleViewOrder}
+          onUpdateStatus={handleUpdateStatus}
+          onUpdatePriority={handleUpdatePriority}
+          onProcessPayment={handlePaymentClick}
+          onAddItems={handleAddItems}
+          onTransfer={handleTransferClick}
+          onRefresh={fetchOrders}
+        />
       )}
 
       {activeTab === 'create' && (

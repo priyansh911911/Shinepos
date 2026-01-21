@@ -3,7 +3,9 @@ import { FiRefreshCw } from 'react-icons/fi';
 
 const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRefresh, onUpdatePriority, onTransfer, onAddItems, activeTab, setActiveTab }) => {
   const [filterStatus, setFilterStatus] = useState('ALL');
-  const [selectedOrder, setSelectedOrder] = useState(null);
+
+  console.log('OrderList loaded with onUpdatePriority:', !!onUpdatePriority);
+  console.log('Sample order priority:', orders[0]?.priority);
 
   const statusColors = {
     PENDING: 'bg-gradient-to-r from-yellow-400 to-orange-400 text-white',
@@ -167,79 +169,55 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
                       ))}
                     </div>
                   </div>
-                </div>
-
-                {/* Order Status & Priority + Payment Info in Same Row */}
-                <div className="grid grid-cols-2 gap-4">
-                  {/* Order Status & Priority */}
-                  <div className="bg-white/30 backdrop-blur-md rounded-xl p-4 border border-white/30">
-                    <h4 className="font-bold text-gray-900 mb-3">⚙️ Order Management</h4>
-                    <div className="space-y-3">
-                      <div>
-                        <label className="text-sm font-medium text-gray-900 block mb-1">Status</label>
-                        <select
-                          value={selectedOrder.status}
-                          onChange={(e) => onUpdateStatus(selectedOrder._id, e.target.value)}
-                          className={`w-full px-4 py-2 rounded-xl text-sm font-bold border-0 shadow-md ${statusColors[selectedOrder.status]}`}
-                        >
-                          <option value="PENDING">Pending</option>
-                          <option value="PREPARING">Preparing</option>
-                          <option value="READY">Ready</option>
-                          <option value="DELIVERED">Delivered</option>
-                          <option value="CANCELLED">Cancelled</option>
-                          <option value="PAID">Paid</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium text-gray-900 block mb-1">Priority</label>
-                        <select
-                          value={selectedOrder.priority || 'NORMAL'}
-                          onChange={(e) => onUpdatePriority && onUpdatePriority(selectedOrder._id, e.target.value)}
-                          className="w-full px-4 py-2 bg-white/50 border border-white/40 rounded-xl text-sm font-medium"
-                        >
-                          <option value="LOW">🟢 Low</option>
-                          <option value="NORMAL">🟡 Normal</option>
-                          <option value="HIGH">🟠 High</option>
-                          <option value="URGENT">🔴 Urgent</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Payment Info */}
-                  <div className="bg-white/30 backdrop-blur-md rounded-xl p-4 border border-white/30">
-                    <h4 className="font-bold text-gray-900 mb-3">💰 Payment</h4>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-gray-900">Total Amount:</span>
-                        <span className="text-xl font-bold text-green-700">{formatCurrency(selectedOrder.totalAmount)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-900">Status:</span>
-                        {selectedOrder.paymentDetails ? (
-                          <span className="px-3 py-1 bg-gradient-to-r from-green-400 to-emerald-500 text-white rounded-full text-xs font-bold">
-                            ✓ {selectedOrder.paymentDetails.method}
-                          </span>
-                        ) : (
-                          <span className="px-3 py-1 bg-gradient-to-r from-red-400 to-red-600 text-white rounded-full text-xs font-bold">
-                            ⏳ Unpaid
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-gray-700 text-xs">📅 {formatDate(selectedOrder.createdAt)}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => onViewOrder(selectedOrder)}
-                    className="flex-1 p-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all border border-white/40"
+                </td>
+                <td className="px-4 py-3 text-sm text-gray-900">
+                  {order.items.length} item{order.items.length !== 1 ? 's' : ''}
+                </td>
+                <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                  {formatCurrency(order.totalAmount)}
+                </td>
+                <td className="px-4 py-3">
+                  <select
+                    value={order.priority || 'NORMAL'}
+                    onChange={(e) => onUpdatePriority && onUpdatePriority(order._id, e.target.value)}
+                    className="text-xs px-2 py-1 border rounded"
                   >
-                    👁️ View
-                  </button>
-                  {selectedOrder.status !== 'PAID' && selectedOrder.status !== 'CANCELLED' && (
+                    <option value="LOW">Low</option>
+                    <option value="NORMAL">Normal</option>
+                    <option value="HIGH">High</option>
+                    <option value="URGENT">Urgent</option>
+                  </select>
+                </td>
+                <td className="px-4 py-3">
+                  <select
+                    value={order.status}
+                    onChange={(e) => onUpdateStatus(order._id, e.target.value)}
+                    className={`px-2 py-1 rounded-full text-xs font-medium border-0 ${statusColors[order.status]}`}
+                  >
+                    <option value="PENDING">Pending</option>
+                    <option value="PREPARING">Preparing</option>
+                    <option value="READY">Ready</option>
+                    <option value="DELIVERED">Delivered</option>
+                    <option value="CANCELLED">Cancelled</option>
+                    <option value="PAID">Paid</option>
+                  </select>
+                </td>
+                <td className="px-4 py-3 text-sm">
+                  {order.paymentDetails ? (
+                    <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                      {order.paymentDetails.method}
+                    </span>
+                  ) : (
+                    <span className="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs">
+                      Unpaid
+                    </span>
+                  )}
+                </td>
+                <td className="px-4 py-3 text-sm text-gray-500">
+                  {formatDate(order.createdAt)}
+                </td>
+                <td className="px-4 py-3 text-sm">
+                  <div className="flex space-x-2">
                     <button
                       onClick={() => onAddItems && onAddItems(selectedOrder._id)}
                       className="flex-1 p-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all border border-white/40"
