@@ -10,14 +10,22 @@ const CategoryList = ({ onEdit }) => {
   };
 
   if (loading) {
-    return <div className="text-center py-4">Loading categories...</div>;
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="text-center">
+          <div className="text-6xl mb-4 animate-pulse-slow">🏷️</div>
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent mx-auto"></div>
+          <p className="mt-4 text-gray-900 font-medium">Loading categories...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="bg-white rounded-lg shadow">
+    <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden">
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+          <thead className="bg-gray-50/80">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
@@ -25,14 +33,18 @@ const CategoryList = ({ onEdit }) => {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white/50 divide-y divide-gray-200">
             {categories.length === 0 ? (
               <tr>
-                <td colSpan="4" className="px-6 py-4 text-center text-gray-500">No categories found</td>
+                <td colSpan="4" className="px-6 py-8 text-center">
+                  <div className="text-6xl mb-2">📦</div>
+                  <p className="text-gray-500 font-medium">No categories found</p>
+                  <p className="text-gray-400 text-sm">Create your first category to get started</p>
+                </td>
               </tr>
             ) : (
               categories.map((category) => (
-                <tr key={category._id}>
+                <tr key={category._id} className="hover:bg-white/70 transition-colors">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{category.name}</td>
                   <td className="px-6 py-4 text-sm text-gray-500">{category.description || '-'}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -49,16 +61,16 @@ const CategoryList = ({ onEdit }) => {
                       />
                     </button>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-3">
                     <button
                       onClick={() => onEdit(category)}
-                      className="text-indigo-600 hover:text-indigo-900 mr-4"
+                      className="text-blue-600 hover:text-blue-900 font-medium"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDelete(category._id)}
-                      className="text-red-600 hover:text-red-900"
+                      className="text-red-600 hover:text-red-900 font-medium"
                     >
                       Delete
                     </button>
