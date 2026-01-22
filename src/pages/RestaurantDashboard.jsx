@@ -81,7 +81,7 @@ const RestaurantDashboard = () => {
           backgroundImage: `url(${backgroundImages[activeTab] || backgroundImages.dashboard})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          filter: 'blur(8px)',
+          filter: 'blur(8px) brightness(0.4)',
           transform: 'scale(1.1)',
           zIndex: 0
         }}

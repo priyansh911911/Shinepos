@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { FiPlus, FiLoader } from 'react-icons/fi';
 import TableList from './TableList';
 import AddTable from './AddTable';
 import EditTable from './EditTable';
@@ -63,8 +64,7 @@ const Tables = () => {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="text-center">
-          <div className="text-6xl mb-4 animate-pulse-slow">🪑</div>
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-orange-500 border-t-transparent mx-auto"></div>
+          <FiLoader className="text-6xl mb-4 animate-spin mx-auto text-orange-500" size={64} />
           <p className="mt-4 text-gray-900 font-medium">Loading tables...</p>
         </div>
       </div>
@@ -76,9 +76,10 @@ const Tables = () => {
       <div className="flex justify-end items-center mb-6">
         <button
           onClick={() => setView('add')}
-          className="px-6 py-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl flex items-center space-x-2 font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105 border border-white/40"
+          className="px-6 py-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl flex items-center space-x-2 font-medium transition-all border border-white/40"
         >
-          <span>➕ Add Table</span>
+          <FiPlus />
+          <span>Add Table</span>
         </button>
       </div>
 

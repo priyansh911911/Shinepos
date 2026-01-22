@@ -41,12 +41,12 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
   return (
     <div className="space-y-6">
       {/* Filter Bar with Tab Buttons */}
-      <div className="bg-white/20 backdrop-blur-xl rounded-2xl shadow-2xl p-4 border border-white/30">
+      <div className="bg-white/20 backdrop-blur-xl rounded-2xl p-4 border border-white/30 isolate">
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-3">
             <button
               onClick={() => setActiveTab('list')}
-              className={`px-6 py-3 rounded-xl flex items-center space-x-2 font-medium transition-all transform hover:scale-105 shadow-lg ${
+              className={`px-6 py-3 rounded-xl flex items-center space-x-2 font-medium transition-colors shadow-lg isolate ${
                 activeTab === 'list' 
                   ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white' 
                   : 'bg-white/30 text-gray-900 hover:bg-white/40'
@@ -57,7 +57,7 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
             
             <button
               onClick={() => setActiveTab('create')}
-              className={`px-6 py-3 rounded-xl flex items-center space-x-2 font-medium transition-all transform hover:scale-105 shadow-lg ${
+              className={`px-6 py-3 rounded-xl flex items-center space-x-2 font-medium transition-colors shadow-lg isolate ${
                 activeTab === 'create' 
                   ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white' 
                   : 'bg-white/30 text-gray-900 hover:bg-white/40'
@@ -80,7 +80,7 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="bg-white/30 backdrop-blur-md border border-white/40 text-gray-900 rounded-xl px-6 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all font-medium"
+              className="bg-white/30 backdrop-blur-md border border-white/40 text-gray-900 rounded-xl px-6 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors font-medium isolate"
             >
               <option value="ALL">🍽️ All Orders</option>
               <option value="PENDING">⏳ Pending</option>
@@ -94,7 +94,7 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
           
           <button
             onClick={onRefresh}
-            className="flex items-center space-x-2 px-6 py-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl transition-all transform hover:scale-105 border border-white/40 font-medium"
+            className="flex items-center space-x-2 px-6 py-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl transition-colors border border-white/40 font-medium isolate"
           >
             <FiRefreshCw />
             <span>Refresh</span>
@@ -105,7 +105,7 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
       {/* Split View */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         {/* Left Side - Order List */}
-        <div className="bg-white/20 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/30 overflow-hidden lg:col-span-1 self-start sticky top-6">
+        <div className="bg-white/20 backdrop-blur-xl rounded-2xl border border-white/30 overflow-hidden lg:col-span-1 self-start sticky top-6">
           <div className="p-4 border-b border-white/30">
             <h3 className="text-xl font-bold text-gray-900">📋 Orders ({filteredOrders.length})</h3>
           </div>
@@ -114,7 +114,7 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
               <div
                 key={order._id}
                 onClick={() => handleOrderClick(order)}
-                className={`bg-white/30 backdrop-blur-md rounded-xl p-4 cursor-pointer transition-all hover:bg-white/40 border ${
+                className={`bg-white/30 backdrop-blur-md rounded-xl p-4 cursor-pointer transition-colors hover:bg-white/40 border ${
                   selectedOrder?._id === order._id ? 'border-purple-500 ring-2 ring-purple-500' : 'border-white/30'
                 }`}
               >
@@ -143,7 +143,7 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
         </div>
 
         {/* Right Side - Order Details */}
-        <div className="bg-white/15 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/30 overflow-hidden lg:col-span-2">
+        <div className="bg-white/15 backdrop-blur-xl rounded-2xl border border-white/30 overflow-hidden lg:col-span-2">
           {selectedOrder ? (
             <>
               <div className="p-4 border-b border-white/30">
@@ -193,14 +193,14 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
                   <div className="flex space-x-2">
                     <button
                       onClick={() => onAddItems && onAddItems(selectedOrder._id)}
-                      className="flex-1 p-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all border border-white/40"
+                      className="flex-1 p-3 bg-white/30 backdrop-blur-md hover:bg-white/50 text-gray-900 rounded-xl font-medium border border-white/40"
                     >
                       ➕ Add
                     </button>
                     {selectedOrder.tableId && selectedOrder.status !== 'PAID' && selectedOrder.status !== 'CANCELLED' && (
                       <button
                         onClick={() => onTransfer(selectedOrder)}
-                        className="flex-1 p-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all border border-white/40"
+                        className="flex-1 p-3 bg-white/30 backdrop-blur-md hover:bg-white/50 text-gray-900 rounded-xl font-medium border border-white/40"
                       >
                         🔄 Transfer
                       </button>
@@ -208,7 +208,7 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
                     {!selectedOrder.paymentDetails && (
                       <button
                         onClick={() => onProcessPayment(selectedOrder)}
-                        className="flex-1 p-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all border border-white/40"
+                        className="flex-1 p-3 bg-white/30 backdrop-blur-md hover:bg-white/50 text-gray-900 rounded-xl font-medium border border-white/40"
                       >
                         💳 Pay
                       </button>

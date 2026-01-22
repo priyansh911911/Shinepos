@@ -57,64 +57,74 @@ const EditCategory = ({ category, onBack, onSuccess }) => {
   };
 
   return (
-    <div>
-      <button
-        onClick={onBack}
-        className="mb-4 flex items-center text-gray-600 hover:text-gray-900"
-      >
-        <span className="mr-2">←</span> Back to List
-      </button>
-      <h2 className="text-2xl font-bold mb-4">Edit Category</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Category Name</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Category Description</label>
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            rows="3"
-          ></textarea>
-        </div>
-        <div>
-          <label className="flex items-center">
+    <form onSubmit={handleSubmit} className="animate-fadeIn p-6">
+      <div className="bg-white/20 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/40 p-6">
+        <h3 className="text-lg font-bold text-gray-900 mb-6">✏️ Edit Category</h3>
+        
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-900 mb-1">Category Name *</label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+              placeholder="Enter category name"
+              className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900 placeholder-gray-600"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-900 mb-1">Description</label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              placeholder="Enter category description (optional)"
+              className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900 placeholder-gray-600"
+              rows="4"
+            ></textarea>
+          </div>
+
+          <div className="flex items-center space-x-2">
             <input
               type="checkbox"
               name="isActive"
+              id="isActive"
               checked={formData.isActive}
               onChange={handleChange}
-              className="mr-2"
+              className="w-4 h-4"
             />
-            <span className="text-sm text-gray-700">Active</span>
-          </label>
-        </div>
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-            {error}
+            <label htmlFor="isActive" className="text-sm font-medium text-gray-900">Active</label>
           </div>
-        )}
-        <div>
+
+          {error && (
+            <div className="bg-red-100/80 backdrop-blur-lg border border-red-300 text-red-700 px-4 py-3 rounded-xl flex items-start">
+              <span className="text-xl mr-2">⚠️</span>
+              <span>{error}</span>
+            </div>
+          )}
+        </div>
+
+        <div className="flex justify-end space-x-4 mt-6">
+          <button
+            type="button"
+            onClick={onBack}
+            className="px-6 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl border border-white/40"
+          >
+            ← Back
+          </button>
           <button
             type="submit"
             disabled={loading}
-            className="w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:bg-indigo-700 disabled:bg-indigo-400"
+            className="px-6 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl border border-white/40 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Updating...' : 'Update Category'}
+            {loading ? 'Updating...' : '✓ Update Category'}
           </button>
         </div>
-      </form>
-    </div>
+      </div>
+    </form>
   );
 };
 

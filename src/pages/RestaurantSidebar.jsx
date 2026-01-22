@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FiHome, FiGrid, FiUsers, FiCreditCard, FiClipboard, FiPackage, FiShoppingBag, FiTag, FiStar, FiTarget, FiList, FiPlus, FiSettings, FiLogOut, FiChevronDown } from 'react-icons/fi';
 
 const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout }) => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -6,27 +7,27 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout }) => {
   const [inventoryOpen, setInventoryOpen] = useState(false);
 
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: '📊' },
-    { id: 'tables', label: 'Tables', icon: '🪑' },
-    { id: 'staff', label: 'Staff', icon: '👥' },
-    { id: 'subscription', label: 'Subscription', icon: '💳' }
+    { id: 'dashboard', label: 'Dashboard', icon: <FiHome /> },
+    { id: 'tables', label: 'Tables', icon: <FiGrid /> },
+    { id: 'staff', label: 'Staff', icon: <FiUsers /> },
+    { id: 'subscription', label: 'Subscription', icon: <FiCreditCard /> }
   ];
 
   const orderSubItems = [
-    { id: 'orders', label: 'Orders', icon: '📝' },
-    { id: 'kot', label: 'Kitchen (KOT)', icon: '🍳' }
+    { id: 'orders', label: 'Orders', icon: <FiClipboard /> },
+    { id: 'kot', label: 'Kitchen (KOT)', icon: <FiPackage /> }
   ];
 
   const inventorySubItems = [
-    { id: 'inventory', label: 'Inventory List', icon: '📋' },
-    { id: 'add-inventory', label: 'Add Item', icon: '➕' }
+    { id: 'inventory', label: 'Inventory List', icon: <FiList /> },
+    { id: 'add-inventory', label: 'Add Item', icon: <FiPlus /> }
   ];
 
   const menuSubItems = [
-    { id: 'category', label: 'Category', icon: '🏷️' },
-    { id: 'menu', label: 'Menu Items', icon: '🍔' },
-    { id: 'addons', label: 'Addons', icon: '✨' },
-    { id: 'variations', label: 'Variations', icon: '🎯' }
+    { id: 'category', label: 'Category', icon: <FiTag /> },
+    { id: 'menu', label: 'Menu Items', icon: <FiShoppingBag /> },
+    { id: 'addons', label: 'Addons', icon: <FiStar /> },
+    { id: 'variations', label: 'Variations', icon: <FiTarget /> }
   ];
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -47,7 +48,7 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout }) => {
         {/* Header */}
         <div className="p-6 border-b border-white/20">
           <div className="flex items-center gap-3 mb-2">
-            <div className="text-4xl">🍽️</div>
+            <div className="text-4xl text-gray-900">🍽️</div>
             <div>
               <h2 className="text-xl font-bold text-gray-900">Restaurant POS</h2>
               <p className="text-xs text-gray-700">{user.name || 'Admin'}</p>
@@ -63,11 +64,11 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout }) => {
               onClick={() => setActiveTab(item.id)}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                 activeTab === item.id
-                  ? 'bg-white/40 backdrop-blur-lg text-gray-900 shadow-lg border border-white/50'
-                  : 'text-gray-800 hover:bg-white/20 backdrop-blur-md border border-transparent'
+                  ? 'bg-white/40 backdrop-blur-lg text-black shadow-lg border border-white/50'
+                  : 'text-black hover:bg-white/20 backdrop-blur-md border border-transparent'
               }`}
             >
-              <span className="text-xl">{item.icon}</span>
+              <span className="text-lg">{item.icon}</span>
               <span>{item.label}</span>
             </button>
           ))}
@@ -77,14 +78,14 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout }) => {
             <button
               onClick={() => setOrderOpen(!orderOpen)}
               className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-                orderOpen ? 'bg-white/40 backdrop-blur-lg text-gray-900 border border-white/50' : 'text-gray-800 hover:bg-white/20 backdrop-blur-md border border-transparent'
+                orderOpen ? 'bg-white/40 backdrop-blur-lg text-black border border-white/50' : 'text-black hover:bg-white/20 backdrop-blur-md border border-transparent'
               }`}
             >
               <div className="flex items-center gap-3">
-                <span className="text-xl">📋</span>
+                <span className="text-lg"><FiClipboard /></span>
                 <span>Orders</span>
               </div>
-              <span className={`text-xs transition-transform ${orderOpen ? 'rotate-180' : ''}`}>▼</span>
+              <FiChevronDown className={`transition-transform ${orderOpen ? 'rotate-180' : ''}`} />
             </button>
             {orderOpen && (
               <div className="ml-6 mt-1 space-y-1 animate-slideIn">
@@ -94,8 +95,8 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout }) => {
                     onClick={() => setActiveTab(subItem.id)}
                     className={`w-full flex items-center gap-2 text-left px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                       activeTab === subItem.id
-                        ? 'bg-white/40 backdrop-blur-lg text-gray-900 shadow-md border border-white/50'
-                        : 'text-gray-800 hover:bg-white/20 backdrop-blur-md border border-transparent'
+                        ? 'bg-white/40 backdrop-blur-lg text-black shadow-md border border-white/50'
+                        : 'text-black hover:bg-white/20 backdrop-blur-md border border-transparent'
                     }`}
                   >
                     <span className="text-lg">{subItem.icon}</span>
@@ -111,14 +112,14 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout }) => {
             <button
               onClick={() => setInventoryOpen(!inventoryOpen)}
               className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-                inventoryOpen ? 'bg-white/40 backdrop-blur-lg text-gray-900 border border-white/50' : 'text-gray-800 hover:bg-white/20 backdrop-blur-md border border-transparent'
+                inventoryOpen ? 'bg-white/40 backdrop-blur-lg text-black border border-white/50' : 'text-black hover:bg-white/20 backdrop-blur-md border border-transparent'
               }`}
             >
               <div className="flex items-center gap-3">
-                <span className="text-xl">📦</span>
+                <span className="text-lg"><FiPackage /></span>
                 <span>Inventory</span>
               </div>
-              <span className={`text-xs transition-transform ${inventoryOpen ? 'rotate-180' : ''}`}>▼</span>
+              <FiChevronDown className={`transition-transform ${inventoryOpen ? 'rotate-180' : ''}`} />
             </button>
             {inventoryOpen && (
               <div className="ml-6 mt-1 space-y-1 animate-slideIn">
@@ -128,8 +129,8 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout }) => {
                     onClick={() => setActiveTab(subItem.id)}
                     className={`w-full flex items-center gap-2 text-left px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                       activeTab === subItem.id
-                        ? 'bg-white/40 backdrop-blur-lg text-gray-900 shadow-md border border-white/50'
-                        : 'text-gray-800 hover:bg-white/20 backdrop-blur-md border border-transparent'
+                        ? 'bg-white/40 backdrop-blur-lg text-black shadow-md border border-white/50'
+                        : 'text-black hover:bg-white/20 backdrop-blur-md border border-transparent'
                     }`}
                   >
                     <span className="text-lg">{subItem.icon}</span>
@@ -145,14 +146,14 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout }) => {
             <button
               onClick={() => setMenuOpen(!menuOpen)}
               className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-                menuOpen ? 'bg-white/40 backdrop-blur-lg text-gray-900 border border-white/50' : 'text-gray-800 hover:bg-white/20 backdrop-blur-md border border-transparent'
+                menuOpen ? 'bg-white/40 backdrop-blur-lg text-black border border-white/50' : 'text-black hover:bg-white/20 backdrop-blur-md border border-transparent'
               }`}
             >
               <div className="flex items-center gap-3">
-                <span className="text-xl">🍕</span>
+                <span className="text-lg"><FiShoppingBag /></span>
                 <span>Menu</span>
               </div>
-              <span className={`text-xs transition-transform ${menuOpen ? 'rotate-180' : ''}`}>▼</span>
+              <FiChevronDown className={`transition-transform ${menuOpen ? 'rotate-180' : ''}`} />
             </button>
             {menuOpen && (
               <div className="ml-6 mt-1 space-y-1 animate-slideIn">
@@ -162,8 +163,8 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout }) => {
                     onClick={() => setActiveTab(subItem.id)}
                     className={`w-full flex items-center gap-2 text-left px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                       activeTab === subItem.id
-                        ? 'bg-white/40 backdrop-blur-lg text-gray-900 shadow-md border border-white/50'
-                        : 'text-gray-800 hover:bg-white/20 backdrop-blur-md border border-transparent'
+                        ? 'bg-white/40 backdrop-blur-lg text-black shadow-md border border-white/50'
+                        : 'text-black hover:bg-white/20 backdrop-blur-md border border-transparent'
                     }`}
                   >
                     <span className="text-lg">{subItem.icon}</span>
@@ -181,19 +182,19 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout }) => {
             onClick={() => setActiveTab('settings')}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
               activeTab === 'settings'
-                ? 'bg-white/40 backdrop-blur-lg text-gray-900 shadow-lg border border-white/50'
-                : 'text-gray-800 hover:bg-white/20 backdrop-blur-md border border-transparent'
+                ? 'bg-white/40 backdrop-blur-lg text-black shadow-lg border border-white/50'
+                : 'text-black hover:bg-white/20 backdrop-blur-md border border-transparent'
             }`}
           >
-            <span className="text-xl">⚙️</span>
+            <span className="text-lg"><FiSettings /></span>
             <span>Settings</span>
           </button>
           
           <button
             onClick={onLogout}
-            className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-lg transition-all transform hover:scale-105"
+            className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-lg transition-all"
           >
-            <span className="text-xl">🚪</span>
+            <FiLogOut className="text-lg" />
             <span>Logout</span>
           </button>
         </div>

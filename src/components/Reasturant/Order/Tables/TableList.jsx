@@ -1,7 +1,15 @@
-import React from 'react';
-import { FiLink } from 'react-icons/fi';
+import React, { useState } from 'react';
+import { FiLink, FiCheckCircle, FiXCircle, FiAlertCircle, FiTool, FiUsers, FiMapPin, FiEdit2, FiChevronDown } from 'react-icons/fi';
 
 const TableList = ({ tables, onUpdateStatus, onEdit }) => {
+  const [openDropdown, setOpenDropdown] = useState(null);
+
+  const statuses = [
+    { value: 'AVAILABLE', label: 'Available', icon: <FiCheckCircle /> },
+    { value: 'OCCUPIED', label: 'Occupied', icon: <FiXCircle /> },
+    { value: 'RESERVED', label: 'Reserved', icon: <FiAlertCircle /> },
+    { value: 'MAINTENANCE', label: 'Maintenance', icon: <FiTool /> }
+  ];
   const getStatusColor = (status) => {
     switch (status) {
       case 'AVAILABLE': return 'bg-gradient-to-r from-green-400 to-emerald-500 text-white';
@@ -12,13 +20,13 @@ const TableList = ({ tables, onUpdateStatus, onEdit }) => {
     }
   };
 
-  const getStatusEmoji = (status) => {
+  const getStatusIcon = (status) => {
     switch (status) {
-      case 'AVAILABLE': return '✅';
-      case 'OCCUPIED': return '🔴';
-      case 'RESERVED': return '🟡';
-      case 'MAINTENANCE': return '🔧';
-      default: return '❓';
+      case 'AVAILABLE': return <FiCheckCircle />;
+      case 'OCCUPIED': return <FiXCircle />;
+      case 'RESERVED': return <FiAlertCircle />;
+      case 'MAINTENANCE': return <FiTool />;
+      default: return <FiAlertCircle />;
     }
   };
 
@@ -32,30 +40,30 @@ const TableList = ({ tables, onUpdateStatus, onEdit }) => {
         >
           <div className="flex justify-between items-start mb-4">
             <div className="flex items-center space-x-2">
-              <div className="text-3xl">🪑</div>
+              <div className="text-2xl text-gray-900">🪑</div>
               <h3 className="text-2xl font-bold text-gray-900">{table.tableNumber}</h3>
               {table.mergedWith && table.mergedWith.length > 0 && (
                 <FiLink className="text-purple-600 animate-pulse-slow" title="Merged Table" size={20} />
               )}
             </div>
-            <span className={`px-3 py-1 rounded-xl text-xs font-bold shadow-md ${getStatusColor(table.status)}`}>
-              {getStatusEmoji(table.status)} {table.status}
+            <span className={`px-3 py-1 rounded-xl text-xs font-bold shadow-md flex items-center gap-1 ${getStatusColor(table.status)}`}>
+              {getStatusIcon(table.status)} {table.status}
             </span>
           </div>
           
           <div className="space-y-3 mb-4">
             <div className="flex items-center space-x-2 text-gray-900">
-              <span className="text-xl">👥</span>
+              <FiUsers className="text-lg" />
               <p className="text-sm font-medium">Capacity: {table.capacity} people</p>
             </div>
             <div className="flex items-center space-x-2 text-gray-900">
-              <span className="text-xl">🏠</span>
+              <FiMapPin className="text-lg" />
               <p className="text-sm font-medium">Location: {table.location}</p>
             </div>
             {table.mergedWith && table.mergedWith.length > 0 && (
               <div className="bg-purple-50 rounded-lg p-3 mt-3 border-2 border-purple-200">
                 <div className="flex items-center space-x-2 mb-2">
-                  <span className="text-lg">🔗</span>
+                  <FiLink className="text-lg text-purple-700" />
                   <p className="text-sm font-bold text-purple-700">Merged Tables:</p>
                 </div>
                 <p className="text-xs text-purple-600 font-medium">
@@ -65,29 +73,51 @@ const TableList = ({ tables, onUpdateStatus, onEdit }) => {
                   }).filter(Boolean).join(', ')}
                 </p>
                 {table.mergedGuestCount && (
-                  <p className="text-xs text-purple-600 font-medium mt-1">👥 Guests: {table.mergedGuestCount}</p>
+                  <p className="text-xs text-purple-600 font-medium mt-1 flex items-center gap-1">
+                    <FiUsers /> Guests: {table.mergedGuestCount}
+                  </p>
                 )}
               </div>
             )}
           </div>
 
           <div className="flex gap-2">
-            <select
-              value={table.status}
-              onChange={(e) => onUpdateStatus(table._id, e.target.value)}
-              className="flex-1 px-4 py-2 bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl text-sm font-medium focus:ring-2 focus:ring-purple-500 text-gray-900"
-            >
-              <option value="AVAILABLE">✅ Available</option>
-              <option value="OCCUPIED">🔴 Occupied</option>
-              <option value="RESERVED">🟡 Reserved</option>
-              <option value="MAINTENANCE">🔧 Maintenance</option>
-            </select>
+            <div className="flex-1 relative">
+              <button
+                onClick={() => setOpenDropdown(openDropdown === table._id ? null : table._id)}
+                className="w-full px-4 py-2 bg-white/30 backdrop-blur-md border border-white/40 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900 flex items-center justify-between"
+              >
+                <span className="flex items-center gap-2">
+                  {getStatusIcon(table.status)}
+                  {table.status}
+                </span>
+                <FiChevronDown className={`transition-transform ${openDropdown === table._id ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {openDropdown === table._id && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white/90 backdrop-blur-xl border border-white/40 rounded-xl overflow-hidden z-10">
+                  {statuses.map((status) => (
+                    <button
+                      key={status.value}
+                      onClick={() => {
+                        onUpdateStatus(table._id, status.value);
+                        setOpenDropdown(null);
+                      }}
+                      className="w-full px-4 py-2 text-left text-sm font-medium text-gray-900 hover:bg-purple-500/20 flex items-center gap-2 transition-colors"
+                    >
+                      {status.icon}
+                      {status.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
             
             <button
               onClick={() => onEdit(table)}
-              className="px-4 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl text-sm font-medium transition-all border border-white/40"
+              className="px-4 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl text-sm font-medium transition-all border border-white/40 flex items-center justify-center"
             >
-              ✏️
+              <FiEdit2 />
             </button>
           </div>
         </div>

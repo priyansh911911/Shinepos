@@ -66,3 +66,17 @@
   transform: translateY(-4px);
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
 }
+
+/* Glassmorphism select dropdown */
+select option {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(10px);
+  color: #1f2937 !important;
+  padding: 8px;
+}
+
+select option:checked,
+select option:hover {
+  background: linear-gradient(135deg, rgba(147, 51, 234, 0.3), rgba(168, 85, 247, 0.3)) !important;
+  color: #1f2937 !important;
+}
