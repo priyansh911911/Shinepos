@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FiPlus, FiEdit2, FiTrash2, FiLoader, FiCheckCircle, FiXCircle, FiClock, FiTag, FiSearch } from 'react-icons/fi';
-import AddItem from './AddItem';
-import EditItem from './EditItem';
+import { FiEdit2, FiTrash2, FiLoader, FiCheckCircle, FiXCircle, FiClock, FiTag, FiSearch } from 'react-icons/fi';
 
 const ItemList = ({ onEdit }) => {
   const [items, setItems] = useState([]);
@@ -84,14 +82,6 @@ const ItemList = ({ onEdit }) => {
 
   const handleEdit = (item) => {
     if (onEdit) onEdit(item);
-  };
-
-  const handleAddSuccess = () => {
-    loadItems();
-  };
-
-  const handleEditSuccess = () => {
-    loadItems();
   };
 
   if (loading) {

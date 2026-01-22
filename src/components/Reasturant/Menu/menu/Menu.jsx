@@ -30,7 +30,7 @@ const Menu = () => {
         <div className="flex justify-end items-center mb-6">
           <button
             onClick={() => setView('add')}
-            className="px-6 py-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl flex items-center space-x-2 font-medium transition-all border border-white/40"
+            className="px-6 py-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl flex items-center space-x-2 font-medium transition-colors"
           >
             <FiPlus />
             <span>Add Item</span>
