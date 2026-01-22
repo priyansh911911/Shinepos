@@ -30,16 +30,18 @@ export const useOrders = () => {
       });
       const tables = tablesResponse.data.tables;
       
-      // Enrich orders with merged table info
-      const enrichedOrders = response.data.orders.map(order => {
-        if (order.mergedTables && order.mergedTables.length > 0) {
-          const mergedTableNumbers = order.mergedTables
-            .map(tableId => tables.find(t => t._id === tableId)?.tableNumber)
-            .filter(Boolean);
-          return { ...order, mergedTableNumbers };
-        }
-        return order;
-      });
+      // Enrich orders with merged table info and filter out completed orders
+      const enrichedOrders = response.data.orders
+        .filter(order => order.status !== 'PAID' && order.status !== 'CANCELLED')
+        .map(order => {
+          if (order.mergedTables && order.mergedTables.length > 0) {
+            const mergedTableNumbers = order.mergedTables
+              .map(tableId => tables.find(t => t._id === tableId)?.tableNumber)
+              .filter(Boolean);
+            return { ...order, mergedTableNumbers };
+          }
+          return order;
+        });
       
       setOrders(enrichedOrders);
     } catch (err) {
