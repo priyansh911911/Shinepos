@@ -7,6 +7,7 @@ export const useAddNewOrder = (orderId) => {
   const [menuItems, setMenuItems] = useState([]);
   const [orderItems, setOrderItems] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingMenu, setLoadingMenu] = useState(true);
   const [error, setError] = useState('');
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedVariation, setSelectedVariation] = useState(null);
@@ -18,6 +19,7 @@ export const useAddNewOrder = (orderId) => {
   }, []);
 
   const fetchMenuItems = async () => {
+    setLoadingMenu(true);
     try {
       const token = localStorage.getItem('token');
       const response = await axios.get(`${API_BASE_URL}/api/menus/get/all-menu-items`, {
@@ -27,6 +29,8 @@ export const useAddNewOrder = (orderId) => {
     } catch (err) {
       console.error('Fetch menu items error:', err);
       setError('Failed to fetch menu items');
+    } finally {
+      setLoadingMenu(false);
     }
   };
 
@@ -165,6 +169,7 @@ export const useAddNewOrder = (orderId) => {
     menuItems,
     orderItems,
     loading,
+    loadingMenu,
     error,
     selectedItem,
     selectedVariation,

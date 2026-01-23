@@ -30,18 +30,7 @@ export const useOrders = () => {
       });
       const tables = tablesResponse.data.tables;
       
-      // Fetch menu items to get prices
-      let menuItems = [];
-      try {
-        const menuResponse = await axios.get(`${API_BASE_URL}/api/menu/items`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        menuItems = menuResponse.data.items || [];
-      } catch (menuError) {
-        console.log('Menu API not available, skipping price enrichment');
-      }
-      
-      // Enrich orders with merged table info and item prices
+      // Enrich orders with merged table info
       const enrichedOrders = response.data.orders
         .filter(order => order.status !== 'PAID' && order.status !== 'CANCELLED')
         .map(order => {
@@ -52,22 +41,6 @@ export const useOrders = () => {
               .map(tableId => tables.find(t => t._id === tableId)?.tableNumber)
               .filter(Boolean);
             enrichedOrder.mergedTableNumbers = mergedTableNumbers;
-          }
-          
-          // Add item prices from menu
-          if (enrichedOrder.items) {
-            enrichedOrder.items = enrichedOrder.items.map(orderItem => {
-              const menuItem = menuItems.find(item => item._id === orderItem.itemId || item.name === orderItem.name);
-              if (menuItem && !orderItem.price) {
-                const variation = orderItem.variation ? 
-                  menuItem.variations?.find(v => v._id === orderItem.variation._id || v.name === orderItem.variation.name) : null;
-                return {
-                  ...orderItem,
-                  price: variation ? variation.price : menuItem.price
-                };
-              }
-              return orderItem;
-            });
           }
           
           return enrichedOrder;

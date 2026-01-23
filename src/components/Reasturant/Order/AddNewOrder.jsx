@@ -7,6 +7,7 @@ const AddNewOrder = ({ onClose, orderId }) => {
     menuItems,
     orderItems,
     loading,
+    loadingMenu,
     error,
     selectedItem,
     selectedVariation,
@@ -26,114 +27,120 @@ const AddNewOrder = ({ onClose, orderId }) => {
 
   return (
     <>
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg shadow-xl max-w-6xl w-full mx-4 max-h-[90vh] overflow-hidden">
-          <div className="p-6 border-b border-gray-200 flex justify-between items-center">
-            <h2 className="text-xl font-semibold text-gray-800">Add Items to Order</h2>
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center pl-34 p-4">
+        <div className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl max-w-5xl w-full max-h-[85vh] overflow-hidden">
+          <div className="p-4 border-b border-white/20 flex justify-between items-center">
+            <h2 className="text-lg font-semibold text-gray-900">Add Items to Order</h2>
             <button
-              onClick={onClose}
-              className="text-gray-500 hover:text-gray-700"
+              onClick={() => onClose()}
+              className="text-gray-600 hover:text-gray-900 transition-colors"
             >
               <FiX size={24} />
             </button>
           </div>
 
-          <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+          <div className="p-4 overflow-y-auto max-h-[calc(85vh-120px)]">
             {error && (
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+              <div className="bg-red-500/80 backdrop-blur-md border border-red-600/50 text-white px-4 py-3 rounded-xl mb-4 text-sm">
                 {error}
               </div>
             )}
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium text-gray-800">Selected Items</h3>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div className="space-y-3">
+                <h3 className="text-base font-medium text-gray-900">Selected Items</h3>
                 
                 {orderItems.length > 0 ? (
-                  <div className="space-y-2 max-h-64 overflow-y-auto">
+                  <div className="space-y-2 max-h-56 overflow-y-auto">
                     {orderItems.map((item) => (
-                      <div key={item.key} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
-                        <div className="flex-1">
-                          <div className="font-medium">{item.name}</div>
-                          <div className="text-sm text-gray-600">
+                      <div key={item.key} className="flex items-center justify-between bg-white/40 backdrop-blur-md p-2 rounded-xl border border-white/30">
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-gray-900 text-sm truncate">{item.name}</div>
+                          <div className="text-xs text-gray-700">
                             {item.variation.name} - ₹{item.price}
                             {item.addons.length > 0 && (
-                              <div className="text-xs text-gray-500">
+                              <div className="text-xs text-gray-600 truncate">
                                 + {item.addons.map(a => a.name).join(', ')}
                               </div>
                             )}
                           </div>
                         </div>
                         
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-1 flex-shrink-0">
                           <button
                             type="button"
                             onClick={() => updateItemQuantity(item.key, item.quantity - 1)}
-                            className="w-8 h-8 flex items-center justify-center bg-red-100 text-red-600 rounded-full hover:bg-red-200"
+                            className="w-7 h-7 flex items-center justify-center bg-red-500 text-white rounded-full hover:bg-red-600 transition-all shadow-lg"
                           >
-                            <FiMinus size={14} />
+                            <FiMinus size={12} />
                           </button>
                           
-                          <span className="w-8 text-center font-medium">{item.quantity}</span>
+                          <span className="w-6 text-center font-medium text-gray-900 text-sm">{item.quantity}</span>
                           
                           <button
                             type="button"
                             onClick={() => updateItemQuantity(item.key, item.quantity + 1)}
-                            className="w-8 h-8 flex items-center justify-center bg-green-100 text-green-600 rounded-full hover:bg-green-200"
+                            className="w-7 h-7 flex items-center justify-center bg-green-500 text-white rounded-full hover:bg-green-600 transition-all shadow-lg"
                           >
-                            <FiPlus size={14} />
+                            <FiPlus size={12} />
                           </button>
                           
                           <button
                             type="button"
                             onClick={() => removeItem(item.key)}
-                            className="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded-full hover:bg-gray-200"
+                            className="w-7 h-7 flex items-center justify-center bg-gray-600 text-white rounded-full hover:bg-gray-700 transition-all shadow-lg"
                           >
-                            <FiX size={14} />
+                            <FiX size={12} />
                           </button>
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <div className="text-gray-500 text-center py-4">
-                    No items selected
+                  <div className="text-gray-600 text-center py-6 bg-white/30 backdrop-blur-md rounded-xl">
+                    <div className="text-3xl mb-2">🍽️</div>
+                    <p className="text-sm">No items selected</p>
                   </div>
                 )}
 
-                <div className="text-right">
-                  <div className="text-lg font-semibold">
+                <div className="text-right bg-white/40 backdrop-blur-md p-2 rounded-xl border border-white/30">
+                  <div className="text-base font-semibold text-gray-900">
                     Total: ₹{calculateTotal().toFixed(2)}
                   </div>
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-medium text-gray-800">Menu Items</h3>
-                  <div className="relative">
-                    <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+              <div className="space-y-3">
+                <div className="flex justify-between items-center gap-2">
+                  <h3 className="text-base font-medium text-gray-900">Menu Items</h3>
+                  <div className="relative flex-1 max-w-xs">
+                    <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600" size={14} />
                     <input
                       type="text"
-                      placeholder="Search items..."
+                      placeholder="Search..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full pl-9 pr-3 py-1.5 text-sm bg-white/40 backdrop-blur-md border border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
                     />
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-1 gap-3 max-h-96 overflow-y-auto">
-                  {menuItems
+                <div className="grid grid-cols-2 gap-2 max-h-80 overflow-y-auto">
+                  {loadingMenu ? (
+                    <div className="col-span-2 text-center py-8 text-gray-600">
+                      <div className="text-3xl mb-2">🔄</div>
+                      <p className="text-sm">Loading menu items...</p>
+                    </div>
+                  ) : menuItems
                     .filter(item => 
                       item.itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                       (item.description && item.description.toLowerCase().includes(searchTerm.toLowerCase()))
                     )
                     .map((item) => (
-                      <div key={item._id} className="border border-gray-200 rounded-lg p-4">
-                        <div className="flex justify-between items-start mb-2">
-                          <h4 className="font-medium text-gray-800">{item.itemName}</h4>
-                          <span className="text-sm font-semibold text-green-600">
+                      <div key={item._id} className="bg-white/40 backdrop-blur-md border border-white/30 rounded-xl p-2">
+                        <div className="flex justify-between items-start mb-1">
+                          <h4 className="font-medium text-gray-900 text-xs truncate">{item.itemName}</h4>
+                          <span className="text-xs font-semibold text-green-600 whitespace-nowrap ml-1">
                             ₹{item.variation && item.variation.length > 0 
                               ? Math.min(...item.variation.map(v => v.price || 0))
                               : 0}
@@ -141,20 +148,20 @@ const AddNewOrder = ({ onClose, orderId }) => {
                         </div>
                         
                         {item.description && (
-                          <p className="text-sm text-gray-600 mb-3">{item.description}</p>
+                          <p className="text-xs text-gray-700 mb-1 line-clamp-1">{item.description}</p>
                         )}
                         
                         <button
                           type="button"
                           onClick={() => openItemModal(item)}
                           disabled={item.status !== 'active'}
-                          className={`w-full py-2 px-4 rounded-lg text-sm font-medium ${
+                          className={`w-full py-1 px-2 rounded-lg text-xs font-medium transition-all ${
                             item.status === 'active'
-                              ? 'bg-blue-600 text-white hover:bg-blue-700'
-                              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                              ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 shadow-lg'
+                              : 'bg-gray-400 text-gray-200 cursor-not-allowed'
                           }`}
                         >
-                          {item.status === 'active' ? 'Add to Order' : 'Not Available'}
+                          {item.status === 'active' ? '➕' : 'N/A'}
                         </button>
                       </div>
                     ))}
@@ -162,11 +169,11 @@ const AddNewOrder = ({ onClose, orderId }) => {
               </div>
             </div>
 
-            <div className="flex justify-end space-x-4 mt-6 pt-6 border-t border-gray-200">
+            <div className="flex justify-end space-x-3 mt-4 pt-4 border-t border-white/20">
               <button
                 type="button"
-                onClick={onClose}
-                className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                onClick={() => onClose()}
+                className="px-4 py-2 text-sm bg-white/30 backdrop-blur-md border border-white/30 text-gray-900 rounded-xl hover:bg-white/40 transition-all"
               >
                 Cancel
               </button>
@@ -175,10 +182,10 @@ const AddNewOrder = ({ onClose, orderId }) => {
                 type="button"
                 onClick={async () => {
                   await handleAddItemsToOrder();
-                  onClose(); // Always close and redirect
+                  onClose(true);
                 }}
                 disabled={loading || orderItems.length === 0}
-                className={`px-6 py-2 rounded-lg ${orderItems.length === 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'} text-white disabled:opacity-50`}
+                className="px-4 py-2 text-sm bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl hover:from-green-600 hover:to-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg transition-all"
               >
                 {loading ? 'Adding...' : 'Add Items'}
               </button>
@@ -188,14 +195,14 @@ const AddNewOrder = ({ onClose, orderId }) => {
       </div>
 
       {selectedItem && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-lg font-semibold mb-4">{selectedItem.itemName}</h3>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
+          <div className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl p-6 max-w-md w-full">
+            <h3 className="text-lg font-semibold mb-4 text-gray-900">{selectedItem.itemName}</h3>
             
             <div className="mb-4">
-              <label className="block text-sm font-medium mb-2">Select Variation</label>
+              <label className="block text-sm font-medium text-gray-900 mb-2">Select Variation</label>
               {selectedItem.variation?.map(variation => (
-                <label key={variation._id} className="flex items-center mb-2">
+                <label key={variation._id} className="flex items-center mb-2 p-2 bg-white/40 backdrop-blur-md rounded-lg hover:bg-white/50 cursor-pointer">
                   <input
                     type="radio"
                     name="variation"
@@ -203,16 +210,16 @@ const AddNewOrder = ({ onClose, orderId }) => {
                     onChange={() => setSelectedVariation(variation)}
                     className="mr-2"
                   />
-                  {variation.name} - ₹{variation.price}
+                  <span className="text-gray-900">{variation.name} - ₹{variation.price}</span>
                 </label>
               ))}
             </div>
             
             {selectedItem.addon?.length > 0 && (
               <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">Select Addons</label>
+                <label className="block text-sm font-medium text-gray-900 mb-2">Select Addons</label>
                 {selectedItem.addon.map(addon => (
-                  <label key={addon._id} className="flex items-center mb-2">
+                  <label key={addon._id} className="flex items-center mb-2 p-2 bg-white/40 backdrop-blur-md rounded-lg hover:bg-white/50 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={selectedAddons.some(a => a._id === addon._id)}
@@ -225,7 +232,7 @@ const AddNewOrder = ({ onClose, orderId }) => {
                       }}
                       className="mr-2"
                     />
-                    {addon.name} - ₹{addon.price}
+                    <span className="text-gray-900">{addon.name} - ₹{addon.price}</span>
                   </label>
                 ))}
               </div>
@@ -235,7 +242,7 @@ const AddNewOrder = ({ onClose, orderId }) => {
               <button
                 type="button"
                 onClick={closeItemModal}
-                className="px-4 py-2 bg-gray-300 rounded-lg"
+                className="px-4 py-2 bg-white/30 backdrop-blur-md border border-white/30 text-gray-900 rounded-xl hover:bg-white/40 transition-all"
               >
                 Cancel
               </button>
@@ -243,9 +250,9 @@ const AddNewOrder = ({ onClose, orderId }) => {
                 type="button"
                 onClick={addItemToOrder}
                 disabled={!selectedVariation}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50"
+                className="px-3 py-1.5 text-sm bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:from-purple-600 hover:to-pink-600 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg transition-all"
               >
-                Add to Order
+                Add
               </button>
             </div>
           </div>

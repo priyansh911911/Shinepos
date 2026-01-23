@@ -43,13 +43,13 @@ const PaymentModal = ({ order, onProcessPayment, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-800">Process Payment</h3>
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-md">
+        <div className="flex items-center justify-between p-6 border-b border-white/20">
+          <h3 className="text-lg font-semibold text-gray-900">Process Payment</h3>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-gray-600 hover:text-gray-900 transition-colors"
           >
             <FiX size={24} />
           </button>
@@ -57,23 +57,23 @@ const PaymentModal = ({ order, onProcessPayment, onClose }) => {
 
         <form onSubmit={handleSubmit} className="p-6">
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <div className="bg-red-500/80 backdrop-blur-md border border-red-600/50 text-white px-4 py-3 rounded-xl mb-4 text-sm">
               {error}
             </div>
           )}
 
           {/* Order Summary */}
-          <div className="bg-gray-50 rounded-lg p-4 mb-6">
+          <div className="bg-white/40 backdrop-blur-md rounded-xl p-4 mb-6 border border-white/30">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-sm text-gray-600">Order Number:</span>
-              <span className="font-medium">{order.orderNumber}</span>
+              <span className="text-sm text-gray-700">Order Number:</span>
+              <span className="font-medium text-gray-900">{order.orderNumber}</span>
             </div>
             <div className="flex justify-between items-center mb-2">
-              <span className="text-sm text-gray-600">Customer:</span>
-              <span className="font-medium">{order.customerName}</span>
+              <span className="text-sm text-gray-700">Customer:</span>
+              <span className="font-medium text-gray-900">{order.customerName}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Total Amount:</span>
+              <span className="text-sm text-gray-700">Total Amount:</span>
               <span className="text-xl font-bold text-green-600">
                 {formatCurrency(order.totalAmount)}
               </span>
@@ -82,7 +82,7 @@ const PaymentModal = ({ order, onProcessPayment, onClose }) => {
 
           {/* Payment Method */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-3">
+            <label className="block text-sm font-medium text-gray-900 mb-3">
               Payment Method
             </label>
             <div className="grid grid-cols-2 gap-3">
@@ -93,10 +93,10 @@ const PaymentModal = ({ order, onProcessPayment, onClose }) => {
                     key={method.value}
                     type="button"
                     onClick={() => setPaymentMethod(method.value)}
-                    className={`flex items-center justify-center space-x-2 p-3 border rounded-lg transition-colors ${
+                    className={`flex items-center justify-center space-x-2 p-3 rounded-xl transition-all ${
                       paymentMethod === method.value
-                        ? 'border-blue-500 bg-blue-50 text-blue-700'
-                        : 'border-gray-300 hover:border-gray-400'
+                        ? 'bg-white/60 backdrop-blur-lg text-gray-900 shadow-lg border border-white/50'
+                        : 'bg-white/30 backdrop-blur-md text-gray-700 hover:bg-white/40 border border-white/30'
                     }`}
                   >
                     <IconComponent size={18} />
@@ -110,14 +110,14 @@ const PaymentModal = ({ order, onProcessPayment, onClose }) => {
           {/* Transaction ID */}
           {paymentMethod !== 'CASH' && (
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-900 mb-2">
                 Transaction ID *
               </label>
               <input
                 type="text"
                 value={transactionId}
                 onChange={(e) => setTransactionId(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full bg-white/40 backdrop-blur-md border border-white/30 rounded-xl px-4 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 placeholder="Enter transaction ID"
                 required
               />
@@ -129,7 +129,7 @@ const PaymentModal = ({ order, onProcessPayment, onClose }) => {
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+              className="px-4 py-2 bg-white/30 backdrop-blur-md border border-white/30 text-gray-900 rounded-xl hover:bg-white/40 transition-all"
               disabled={loading}
             >
               Cancel
@@ -137,7 +137,7 @@ const PaymentModal = ({ order, onProcessPayment, onClose }) => {
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl hover:from-green-600 hover:to-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg transition-all"
             >
               {loading ? 'Processing...' : `Process ${formatCurrency(order.totalAmount)}`}
             </button>

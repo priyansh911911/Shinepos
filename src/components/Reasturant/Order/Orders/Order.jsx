@@ -39,10 +39,11 @@ const Order = () => {
     setShowAddItems(orderId);
   };
 
-  const handleAddItemsClose = () => {
+  const handleAddItemsClose = (shouldRefresh = false) => {
     setShowAddItems(null);
-    fetchOrders();
-    setActiveTab('list'); // Redirect to orders page
+    if (shouldRefresh) {
+      fetchOrders();
+    }
   };
 
   return (
