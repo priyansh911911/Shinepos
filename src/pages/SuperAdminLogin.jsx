@@ -35,8 +35,9 @@ const SuperAdminLogin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-white/50">
+    <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100 opacity-0 animate-[fadeIn_0.3s_ease-out_forwards]"></div>
+      <div className="max-w-md w-full bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-white/50 relative z-10">
         <div className="text-center mb-8">
           <div className="text-6xl mb-4">👑</div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Super Admin Login</h1>

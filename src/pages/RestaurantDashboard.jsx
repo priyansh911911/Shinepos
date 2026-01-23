@@ -77,10 +77,10 @@ const RestaurantDashboard = () => {
     return (
       <motion.div
         key={activeTab}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        transition={{ duration: 0.2, ease: 'easeOut' }}
+        initial={{ opacity: 1 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.1 }}
         className="h-full"
       >
         {content}
@@ -89,9 +89,9 @@ const RestaurantDashboard = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100 relative overflow-hidden">
+    <div className="flex h-screen bg-gray-900 relative overflow-hidden">
       <div 
-        className="fixed inset-0 transition-opacity duration-500"
+        className="fixed inset-0 transition-opacity duration-700"
         style={{
           backgroundImage: `url(${backgroundImages[activeTab] || backgroundImages.dashboard})`,
           backgroundSize: 'cover',

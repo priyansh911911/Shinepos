@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 import VariationList from './VariationList';
 import AddVariation from './AddVariation';
 import EditVariation from './EditVariation';
@@ -52,12 +53,20 @@ const Variation = () => {
   const renderView = () => {
     switch (view) {
       case 'add':
-        return <AddVariation onSuccess={handleBackToList} onBack={() => setView('list')} />;
+        return (
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.2 }}>
+            <AddVariation onSuccess={handleBackToList} onBack={() => setView('list')} />
+          </motion.div>
+        );
       case 'edit':
-        return <EditVariation variation={editingVariation} onSuccess={handleBackToList} onBack={() => setView('list')} />;
+        return (
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.2 }}>
+            <EditVariation variation={editingVariation} onSuccess={handleBackToList} onBack={() => setView('list')} />
+          </motion.div>
+        );
       default:
         return (
-          <div>
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
             <div className="flex justify-end items-center mb-6">
               <button
                 onClick={handleAddVariation}
@@ -67,7 +76,7 @@ const Variation = () => {
               </button>
             </div>
             <VariationList variations={variations} loading={loading} onAdd={handleAddVariation} onEdit={handleEditVariation} onDelete={fetchVariations} />
-          </div>
+          </motion.div>
         );
     }
   };

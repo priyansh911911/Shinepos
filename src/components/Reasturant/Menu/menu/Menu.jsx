@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { FiPlus } from 'react-icons/fi';
 import ItemList from './ItemList';
 import AddItem from './AddItem';
@@ -10,22 +11,22 @@ const Menu = () => {
 
   if (view === 'add') {
     return (
-      <div className="p-6">
+      <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="p-6">
         <AddItem onSuccess={() => setView('list')} onBack={() => setView('list')} />
-      </div>
+      </motion.div>
     );
   }
 
   if (view === 'edit') {
     return (
-      <div className="p-6">
+      <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="p-6">
         <EditItem item={editingItem} onSuccess={() => setView('list')} onBack={() => setView('list')} />
-      </div>
+      </motion.div>
     );
   }
 
   return (
-    <div className="p-6">
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} className="p-6">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-end items-center mb-6">
           <button
@@ -40,7 +41,7 @@ const Menu = () => {
           <ItemList onEdit={(item) => { setEditingItem(item); setView('edit'); }} />
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 import AddonList from './AddonList';
 import AddAddon from './AddAddon';
 import EditAddon from './EditAddon';
@@ -52,12 +53,20 @@ const Addon = () => {
   const renderView = () => {
     switch (view) {
       case 'add':
-        return <AddAddon onSuccess={handleBackToList} onBack={() => setView('list')} />;
+        return (
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.2 }}>
+            <AddAddon onSuccess={handleBackToList} onBack={() => setView('list')} />
+          </motion.div>
+        );
       case 'edit':
-        return <EditAddon addon={editingAddon} onSuccess={handleBackToList} onBack={() => setView('list')} />;
+        return (
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.2 }}>
+            <EditAddon addon={editingAddon} onSuccess={handleBackToList} onBack={() => setView('list')} />
+          </motion.div>
+        );
       default:
         return (
-          <div>
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
             <div className="flex justify-end items-center mb-6">
               <button
                 onClick={handleAddAddon}
@@ -67,7 +76,7 @@ const Addon = () => {
               </button>
             </div>
             <AddonList addons={addons} loading={loading} onAdd={handleAddAddon} onEdit={handleEditAddon} onDelete={fetchAddons} />
-          </div>
+          </motion.div>
         );
     }
   };

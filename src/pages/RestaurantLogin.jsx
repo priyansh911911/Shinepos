@@ -36,12 +36,13 @@ const RestaurantLogin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-pink-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-gradient-to-br from-orange-50 via-red-50 to-pink-100 opacity-0 animate-[fadeIn_0.3s_ease-out_forwards]"></div>
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="max-w-md w-full bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-white/50"
+        className="max-w-md w-full bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-white/50 relative z-10"
       >
         <motion.div 
           initial={{ scale: 0 }}

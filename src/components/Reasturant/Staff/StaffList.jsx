@@ -65,7 +65,7 @@ const StaffList = ({ onAdd, onEdit }) => {
       <div className="flex justify-center items-center h-64">
         <div className="text-center">
           <FiLoader className="text-6xl mb-4 animate-spin mx-auto text-orange-500" size={64} />
-          <p className="mt-4 text-gray-900 font-medium">Loading staff...</p>
+          <p className="mt-4 text-white font-medium">Loading staff...</p>
         </div>
       </div>
     );
@@ -76,7 +76,7 @@ const StaffList = ({ onAdd, onEdit }) => {
       <div className="flex justify-end items-center mb-6">
         <button
           onClick={onAdd}
-          className="px-6 py-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl flex items-center space-x-2 font-medium transition-all border border-white/40"
+          className="px-6 py-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-white rounded-xl flex items-center space-x-2 font-medium transition-all border border-white/40"
         >
           <FiPlus />
           <span>Add Staff</span>
@@ -93,10 +93,10 @@ const StaffList = ({ onAdd, onEdit }) => {
             {/* Header */}
             <div className="bg-gradient-to-r from-orange-500/20 to-red-500/20 p-4 border-b border-white/30">
               <div className="flex items-center gap-3">
-                <div className="text-4xl text-gray-900">{getRoleIcon(member.role)}</div>
+                <div className="text-4xl text-white">{getRoleIcon(member.role)}</div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-bold text-gray-900">{member.name}</h3>
-                  <p className="text-sm text-gray-700">{member.role.replace('_', ' ')}</p>
+                  <h3 className="text-lg font-bold text-white">{member.name}</h3>
+                  <p className="text-sm text-gray-200">{member.role.replace('_', ' ')}</p>
                 </div>
                 <span className={`px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 ${
                   member.isActive ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
@@ -109,23 +109,23 @@ const StaffList = ({ onAdd, onEdit }) => {
             {/* Content */}
             <div className="p-4 space-y-3">
               <div className="flex items-center gap-2 text-sm">
-                <FiMail className="text-lg" />
-                <span className="text-gray-900 font-medium">{member.email}</span>
+                <FiMail className="text-lg text-white" />
+                <span className="text-white font-medium">{member.email}</span>
               </div>
               
               <div className="flex items-center gap-2 text-sm">
-                <FiPhone className="text-lg" />
-                <span className="text-gray-900 font-medium">{member.phone}</span>
+                <FiPhone className="text-lg text-white" />
+                <span className="text-white font-medium">{member.phone}</span>
               </div>
               
               <div className="flex items-center gap-2 text-sm">
-                <FiDollarSign className="text-lg" />
-                <span className="text-gray-900 font-medium">₹{member.hourlyRate || 0}/hr</span>
+                <FiDollarSign className="text-lg text-white" />
+                <span className="text-white font-medium">₹{member.hourlyRate || 0}/hr</span>
               </div>
               
               <div className="flex items-center gap-2 text-sm">
-                <FiCalendar className="text-lg" />
-                <span className="text-gray-700">Joined {new Date(member.createdAt).toLocaleDateString()}</span>
+                <FiCalendar className="text-lg text-white" />
+                <span className="text-gray-200">Joined {new Date(member.createdAt).toLocaleDateString()}</span>
               </div>
             </div>
 
@@ -133,7 +133,7 @@ const StaffList = ({ onAdd, onEdit }) => {
             <div className="p-4 pt-0 flex gap-2">
               <button
                 onClick={() => onEdit(member)}
-                className="flex-1 px-4 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-lg text-sm font-medium transition-all border border-white/40 flex items-center justify-center gap-2"
+                className="flex-1 px-4 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-white rounded-lg text-sm font-medium transition-all border border-white/40 flex items-center justify-center gap-2"
               >
                 <FiEdit2 /> Edit
               </button>

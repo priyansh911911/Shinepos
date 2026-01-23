@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { motion } from 'framer-motion'
 import AddCategory from './AddCategory'
 import EditCategory from './EditCategory'
 import CategoryList from './CategoryList'
@@ -24,15 +25,23 @@ const MainCategorys = () => {
   };
 
   if (view === 'add') {
-    return <AddCategory onSuccess={handleAddSuccess} onBack={() => setView('list')} />;
+    return (
+      <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.2 }}>
+        <AddCategory onSuccess={handleAddSuccess} onBack={() => setView('list')} />
+      </motion.div>
+    );
   }
 
   if (view === 'edit') {
-    return <EditCategory category={editingCategory} onSuccess={handleEditSuccess} onBack={() => setView('list')} />;
+    return (
+      <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.2 }}>
+        <EditCategory category={editingCategory} onSuccess={handleEditSuccess} onBack={() => setView('list')} />
+      </motion.div>
+    );
   }
 
   return (
-    <div className="p-6">
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} className="p-6">
       <div className="flex justify-end items-center mb-6">
         <button
           onClick={() => setView('add')}
@@ -43,7 +52,7 @@ const MainCategorys = () => {
       </div>
       
       <CategoryList key={refreshKey} onEdit={handleEdit} />
-    </div>
+    </motion.div>
   )
 }
 
