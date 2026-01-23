@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { FiAward, FiBarChart2, FiDollarSign, FiUsers, FiUser, FiMail, FiPhone, FiCalendar, FiEdit2, FiTrash2, FiPlus, FiLoader, FiCheckCircle, FiXCircle } from 'react-icons/fi';
 
 const StaffList = ({ onAdd, onEdit }) => {
   const [staff, setStaff] = useState([]);
@@ -50,12 +51,12 @@ const StaffList = ({ onAdd, onEdit }) => {
 
   const getRoleIcon = (role) => {
     switch(role) {
-      case 'RESTAURANT_ADMIN': return '👑';
-      case 'MANAGER': return '📊';
-      case 'CASHIER': return '💰';
-      case 'KITCHEN_STAFF': return '👨‍🍳';
-      case 'WAITER': return '🍽️';
-      default: return '👤';
+      case 'RESTAURANT_ADMIN': return <FiAward />;
+      case 'MANAGER': return <FiBarChart2 />;
+      case 'CASHIER': return <FiDollarSign />;
+      case 'KITCHEN_STAFF': return <FiUsers />;
+      case 'WAITER': return <FiUser />;
+      default: return <FiUser />;
     }
   };
 
@@ -63,8 +64,7 @@ const StaffList = ({ onAdd, onEdit }) => {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="text-center">
-          <div className="text-6xl mb-4 animate-pulse-slow">👥</div>
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-orange-500 border-t-transparent mx-auto"></div>
+          <FiLoader className="text-6xl mb-4 animate-spin mx-auto text-orange-500" size={64} />
           <p className="mt-4 text-gray-900 font-medium">Loading staff...</p>
         </div>
       </div>
@@ -76,9 +76,10 @@ const StaffList = ({ onAdd, onEdit }) => {
       <div className="flex justify-end items-center mb-6">
         <button
           onClick={onAdd}
-          className="px-6 py-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl flex items-center space-x-2 font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105 border border-white/40"
+          className="px-6 py-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl flex items-center space-x-2 font-medium transition-all border border-white/40"
         >
-          <span>➕ Add Staff</span>
+          <FiPlus />
+          <span>Add Staff</span>
         </button>
       </div>
       
@@ -92,15 +93,15 @@ const StaffList = ({ onAdd, onEdit }) => {
             {/* Header */}
             <div className="bg-gradient-to-r from-orange-500/20 to-red-500/20 p-4 border-b border-white/30">
               <div className="flex items-center gap-3">
-                <div className="text-4xl">{getRoleIcon(member.role)}</div>
+                <div className="text-4xl text-gray-900">{getRoleIcon(member.role)}</div>
                 <div className="flex-1">
                   <h3 className="text-lg font-bold text-gray-900">{member.name}</h3>
                   <p className="text-sm text-gray-700">{member.role.replace('_', ' ')}</p>
                 </div>
-                <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                <span className={`px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 ${
                   member.isActive ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
                 }`}>
-                  {member.isActive ? '✓ Active' : '✕ Inactive'}
+                  {member.isActive ? <><FiCheckCircle /> Active</> : <><FiXCircle /> Inactive</>}
                 </span>
               </div>
             </div>
@@ -108,22 +109,22 @@ const StaffList = ({ onAdd, onEdit }) => {
             {/* Content */}
             <div className="p-4 space-y-3">
               <div className="flex items-center gap-2 text-sm">
-                <span className="text-lg">📧</span>
+                <FiMail className="text-lg" />
                 <span className="text-gray-900 font-medium">{member.email}</span>
               </div>
               
               <div className="flex items-center gap-2 text-sm">
-                <span className="text-lg">📱</span>
+                <FiPhone className="text-lg" />
                 <span className="text-gray-900 font-medium">{member.phone}</span>
               </div>
               
               <div className="flex items-center gap-2 text-sm">
-                <span className="text-lg">💵</span>
+                <FiDollarSign className="text-lg" />
                 <span className="text-gray-900 font-medium">₹{member.hourlyRate || 0}/hr</span>
               </div>
               
               <div className="flex items-center gap-2 text-sm">
-                <span className="text-lg">📅</span>
+                <FiCalendar className="text-lg" />
                 <span className="text-gray-700">Joined {new Date(member.createdAt).toLocaleDateString()}</span>
               </div>
             </div>
@@ -132,15 +133,15 @@ const StaffList = ({ onAdd, onEdit }) => {
             <div className="p-4 pt-0 flex gap-2">
               <button
                 onClick={() => onEdit(member)}
-                className="flex-1 px-4 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-lg text-sm font-medium transition-all border border-white/40"
+                className="flex-1 px-4 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-lg text-sm font-medium transition-all border border-white/40 flex items-center justify-center gap-2"
               >
-                ✏️ Edit
+                <FiEdit2 /> Edit
               </button>
               <button
                 onClick={() => deleteStaff(member._id)}
-                className="flex-1 px-4 py-2 bg-red-500/80 backdrop-blur-md hover:bg-red-600 text-white rounded-lg text-sm font-medium transition-all"
+                className="flex-1 px-4 py-2 bg-red-500/80 backdrop-blur-md hover:bg-red-600 text-white rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2"
               >
-                🗑️ Delete
+                <FiTrash2 /> Delete
               </button>
             </div>
           </div>
@@ -148,8 +149,8 @@ const StaffList = ({ onAdd, onEdit }) => {
       </div>
       
       {staff.length === 0 && (
-        <div className="text-center py-16 bg-white/70 backdrop-blur-md rounded-2xl shadow-xl">
-          <div className="text-6xl mb-4 animate-pulse-slow">👥</div>
+        <div className="text-center py-16 bg-white/70 backdrop-blur-md rounded-2xl">
+          <FiUsers className="text-6xl mb-4 mx-auto text-gray-400" size={64} />
           <p className="text-gray-500 text-lg font-medium">No staff members found</p>
           <p className="text-gray-400 text-sm mt-2">Add some staff to get started</p>
         </div>

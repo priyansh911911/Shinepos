@@ -56,12 +56,24 @@ const Addon = () => {
       case 'edit':
         return <EditAddon addon={editingAddon} onSuccess={handleBackToList} onBack={() => setView('list')} />;
       default:
-        return <AddonList addons={addons} loading={loading} onAdd={handleAddAddon} onEdit={handleEditAddon} onDelete={fetchAddons} />;
+        return (
+          <div>
+            <div className="flex justify-end items-center mb-6">
+              <button
+                onClick={handleAddAddon}
+                className="px-6 py-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl flex items-center space-x-2 font-medium transition-all border border-white/40"
+              >
+                <span>➕ Add Addon</span>
+              </button>
+            </div>
+            <AddonList addons={addons} loading={loading} onAdd={handleAddAddon} onEdit={handleEditAddon} onDelete={fetchAddons} />
+          </div>
+        );
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 p-6">
+    <div className="p-6">
       <div className="max-w-7xl mx-auto animate-fadeIn">
         {renderView()}
       </div>

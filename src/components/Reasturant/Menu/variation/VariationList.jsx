@@ -1,7 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import AddVariation from './AddVariation';
+import React, { useState } from 'react';
+import { FiLoader, FiSearch } from 'react-icons/fi';
 
 const VariationList = ({ variations, loading, onAdd, onEdit, onDelete }) => {
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredVariations = variations.filter(variation =>
+    variation.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const toggleVariationStatus = async (id, currentStatus) => {
     const newStatus = !currentStatus;
     
@@ -47,8 +53,7 @@ const VariationList = ({ variations, loading, onAdd, onEdit, onDelete }) => {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="text-center">
-          <div className="text-6xl mb-4 animate-pulse-slow">🎯</div>
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-cyan-500 border-t-transparent mx-auto"></div>
+          <FiLoader className="text-6xl mb-4 animate-spin mx-auto text-cyan-500" size={64} />
           <p className="mt-4 text-gray-600 font-medium">Loading variations...</p>
         </div>
       </div>
@@ -57,83 +62,87 @@ const VariationList = ({ variations, loading, onAdd, onEdit, onDelete }) => {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h2 className="text-4xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">🎯 Variations</h2>
-          <p className="text-gray-600 mt-1">Manage size and portion variations</p>
+      <div className="mb-4">
+        <div className="relative">
+          <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 z-10" size={20} />
+          <input
+            type="text"
+            placeholder="Search variations..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+          />
         </div>
-        <button
-          onClick={onAdd}
-          className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-xl flex items-center space-x-2 font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
-        >
-          <span>➕ Add Variation</span>
-        </button>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {variations.map((variation, index) => (
-          <div 
-            key={variation._id} 
-            className="bg-white p-6 rounded-2xl shadow-xl border-2 border-gray-100 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 animate-fadeIn card-hover"
-            style={{ animationDelay: `${index * 0.05}s` }}
-          >
-            <div className="flex justify-between items-start mb-4">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-3xl">🎯</span>
-                  <h3 className="text-xl font-bold text-gray-800">{variation.name}</h3>
-                </div>
-                
-                <div className="flex items-center space-x-2 mb-3">
-                  <span className="text-2xl">💵</span>
-                  <span className="text-2xl font-bold text-green-600">₹{variation.price}</span>
-                </div>
-                
-                <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold shadow-md ${
-                  variation.available ? 'bg-gradient-to-r from-blue-400 to-cyan-500 text-white' : 'bg-gray-300 text-gray-600'
-                }`}>
-                  {variation.available ? '✅ Available' : '❌ Unavailable'}
-                </span>
-              </div>
-            </div>
-            
-            <div className="flex gap-2 mt-4 pt-4 border-t border-gray-100">
-              <button
-                onClick={() => toggleVariationStatus(variation._id, variation.available)}
-                className={`relative inline-flex h-8 w-14 items-center rounded-full transition-all shadow-md ${
-                  variation.available ? 'bg-gradient-to-r from-green-400 to-emerald-500' : 'bg-gray-300'
-                }`}
-              >
-                <span
-                  className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform shadow-md ${
-                    variation.available ? 'translate-x-7' : 'translate-x-1'
-                  }`}
-                />
-              </button>
-              <button
-                onClick={() => onEdit && onEdit(variation)}
-                className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl text-sm font-medium hover:shadow-lg transition-all transform hover:scale-105"
-              >
-                ✏️ Edit
-              </button>
-              <button
-                onClick={() => deleteVariation(variation._id)}
-                className="flex-1 px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl text-sm font-medium hover:shadow-lg transition-all transform hover:scale-105"
-              >
-                🗑️ Delete
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-      
-      {variations.length === 0 && (
-        <div className="text-center py-16 bg-white rounded-2xl shadow-xl">
-          <div className="text-6xl mb-4 animate-pulse-slow">🎯</div>
-          <p className="text-gray-500 text-lg font-medium">No variations found</p>
-          <p className="text-gray-400 text-sm mt-2">Add some variations to get started</p>
+      <div className="bg-white/30 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50/80">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Toggle</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white/50 divide-y divide-gray-200">
+              {filteredVariations.length === 0 ? (
+                <tr>
+                  <td colSpan="4" className="px-6 py-8 text-center">
+                    <div className="text-6xl mb-2">📦</div>
+                    <p className="text-gray-500 font-medium">{searchQuery ? 'No variations found matching your search' : 'No variations found'}</p>
+                    <p className="text-gray-400 text-sm">Create your first variation to get started</p>
+                  </td>
+                </tr>
+              ) : (
+                filteredVariations.map((variation) => (
+                  <tr key={variation._id} className="hover:bg-white/70 transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{variation.name}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold">₹{variation.price}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                        variation.available ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+                      }`}>
+                        {variation.available ? 'Active' : 'Inactive'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <button
+                        onClick={() => toggleVariationStatus(variation._id, variation.available)}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
+                          variation.available ? 'bg-green-600' : 'bg-gray-300'
+                        }`}
+                      >
+                        <span
+                          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                            variation.available ? 'translate-x-6' : 'translate-x-1'
+                          }`}
+                        />
+                      </button>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-3">
+                      <button
+                        onClick={() => onEdit && onEdit(variation)}
+                        className="text-blue-600 hover:text-blue-900 font-medium"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => deleteVariation(variation._id)}
+                        className="text-red-600 hover:text-red-900 font-medium"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
-      )}
+      </div>
     </div>
   );
 };

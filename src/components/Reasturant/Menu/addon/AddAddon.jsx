@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FiStar } from 'react-icons/fi';
 
 const AddAddon = ({ onSuccess, onBack }) => {
   const [formData, setFormData] = useState({
@@ -60,41 +61,35 @@ const AddAddon = ({ onSuccess, onBack }) => {
   };
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Add New Addon</h2>
-        {onBack && (
-          <button
-            onClick={onBack}
-            className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
-          >
-            Back
-          </button>
-        )}
-      </div>
+    <div className="max-w-2xl mx-auto animate-fadeIn">
+      <div className="bg-white/20 backdrop-blur-2xl rounded-2xl border border-white/50 p-8">
+        <div className="flex items-center gap-3 mb-6">
+          <FiStar className="text-3xl text-purple-600" />
+          <h2 className="text-2xl font-bold text-gray-900">Add New Addon</h2>
+        </div>
       
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium mb-2">Addon Name</label>
+          <label className="block text-sm font-medium mb-2 text-gray-900">Addon Name *</label>
           <input
             type="text"
             name="name"
             value={formData.name}
             onChange={handleInputChange}
-            className="w-full p-3 border rounded-lg"
+            className="w-full p-3 bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
             placeholder="e.g., Extra Cheese"
             required
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">Price (₹)</label>
+          <label className="block text-sm font-medium mb-2 text-gray-900">Price (₹) *</label>
           <input
             type="number"
             name="price"
             value={formData.price}
             onChange={handleInputChange}
-            className="w-full p-3 border rounded-lg"
+            className="w-full p-3 bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
             min="0"
             step="0.01"
             placeholder="0.00"
@@ -103,12 +98,12 @@ const AddAddon = ({ onSuccess, onBack }) => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">Description</label>
+          <label className="block text-sm font-medium mb-2 text-gray-900">Description</label>
           <textarea
             name="description"
             value={formData.description}
             onChange={handleInputChange}
-            className="w-full p-3 border rounded-lg"
+            className="w-full p-3 bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
             rows="3"
             placeholder="Optional description"
           />
@@ -121,9 +116,9 @@ const AddAddon = ({ onSuccess, onBack }) => {
             id="veg"
             checked={formData.veg}
             onChange={handleInputChange}
-            className="w-4 h-4 text-green-600"
+            className="w-4 h-4 text-green-600 rounded focus:ring-2 focus:ring-purple-500"
           />
-          <label htmlFor="veg" className="text-sm font-medium">
+          <label htmlFor="veg" className="text-sm font-medium text-gray-900">
             Vegetarian
           </label>
         </div>
@@ -135,22 +130,34 @@ const AddAddon = ({ onSuccess, onBack }) => {
             id="available"
             checked={formData.available}
             onChange={handleInputChange}
-            className="w-4 h-4 text-blue-600"
+            className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-purple-500"
           />
-          <label htmlFor="available" className="text-sm font-medium">
+          <label htmlFor="available" className="text-sm font-medium text-gray-900">
             Available
           </label>
         </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 disabled:opacity-50"
-        >
-          {loading ? 'Adding...' : 'Add Addon'}
-        </button>
+        <div className="flex gap-3">
+          {onBack && (
+            <button
+              type="button"
+              onClick={onBack}
+              className="flex-1 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 py-3 rounded-xl font-medium transition-all border border-white/40"
+            >
+              Back
+            </button>
+          )}
+          <button
+            type="submit"
+            disabled={loading}
+            className="flex-1 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 py-3 rounded-xl font-medium transition-all border border-white/40 disabled:opacity-50"
+          >
+            {loading ? 'Adding...' : 'Add Addon'}
+          </button>
+        </div>
       </form>
     </div>
+  </div>
   );
 };
 

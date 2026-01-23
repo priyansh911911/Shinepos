@@ -1,49 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { FiPlus, FiEdit2, FiTrash2, FiLoader, FiCheckCircle, FiXCircle, FiClock, FiTag, FiSearch } from 'react-icons/fi';
 import AddItem from './AddItem';
 import EditItem from './EditItem';
 
-const ItemList = () => {
-  const [view, setView] = useState('list');
+const ItemList = ({ onEdit }) => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [editingItem, setEditingItem] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    let isMounted = true;
-    
-    if (view === 'list') {
-      const loadItems = async () => {
-        if (!isMounted) return;
-        
-        try {
-          const token = localStorage.getItem('token');
-          const response = await fetch(`${import.meta.env.VITE_API_URL}/api/menus/get/all-menu-items`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-          });
-          
-          if (response.ok && isMounted) {
-            const data = await response.json();
-            setItems(data.menuItems || []);
-          }
-        } catch (error) {
-          if (isMounted) {
-            console.error('Error fetching items:', error);
-          }
-        }
-        if (isMounted) {
-          setLoading(false);
-        }
-      };
+    loadItems();
+  }, []);
 
-      loadItems();
-    }
-    
-    return () => {
-      isMounted = false;
-    };
-  }, [view]);
-
-  const fetchItems = async () => {
+  const loadItems = async () => {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/menus/get/all-menu-items`, {
@@ -114,33 +83,22 @@ const ItemList = () => {
   };
 
   const handleEdit = (item) => {
-    setEditingItem(item);
-    setView('edit');
+    if (onEdit) onEdit(item);
   };
 
   const handleAddSuccess = () => {
-    setView('list');
+    loadItems();
   };
 
   const handleEditSuccess = () => {
-    setView('list');
-    setEditingItem(null);
+    loadItems();
   };
-
-  if (view === 'add') {
-    return <AddItem onSuccess={handleAddSuccess} onBack={() => setView('list')} />;
-  }
-
-  if (view === 'edit') {
-    return <EditItem item={editingItem} onSuccess={handleEditSuccess} onBack={() => setView('list')} />;
-  }
 
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="text-center">
-          <div className="text-6xl mb-4 animate-pulse-slow">🍕</div>
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-orange-500 border-t-transparent mx-auto"></div>
+          <FiLoader className="text-6xl mb-4 animate-spin mx-auto text-orange-500" size={64} />
           <p className="mt-4 text-gray-600 font-medium">Loading menu items...</p>
         </div>
       </div>
@@ -149,17 +107,23 @@ const ItemList = () => {
 
   return (
     <div>
-      <div className="flex justify-end items-center mb-6">
-        <button
-          onClick={() => setView('add')}
-          className="px-6 py-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl flex items-center space-x-2 font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105 border border-white/40"
-        >
-          <span>➕ Add Item</span>
-        </button>
+      <div className="mb-4">
+        <div className="relative">
+          <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 z-10" size={20} />
+          <input
+            type="text"
+            placeholder="Search menu items..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+          />
+        </div>
       </div>
       
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {items.map((item, index) => (
+        {items.filter(item => 
+          item.itemName.toLowerCase().includes(searchQuery.toLowerCase())
+        ).map((item, index) => (
           <div 
             key={item._id} 
             className="bg-white/30 backdrop-blur-md rounded-xl shadow-lg overflow-hidden border border-white/40 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 animate-fadeIn"
@@ -179,17 +143,6 @@ const ItemList = () => {
                 </div>
               )}
               
-              {/* Status Badge */}
-              <div className="absolute top-2 right-2">
-                <span className={`px-2 py-0.5 rounded-full text-xs font-bold shadow-md ${
-                  item.status === 'active' 
-                    ? 'bg-green-500 text-white' 
-                    : 'bg-gray-400 text-white'
-                }`}>
-                  {item.status === 'active' ? '✓' : '✕'}
-                </span>
-              </div>
-              
               {/* Food Type Badge */}
               <div className="absolute top-2 left-2">
                 <span className={`px-2 py-0.5 rounded-full text-xs font-bold shadow-md ${
@@ -204,17 +157,26 @@ const ItemList = () => {
             
             {/* Content Section */}
             <div className="p-3">
-              <h3 className="text-sm font-bold text-gray-900 mb-2 truncate">{item.itemName}</h3>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-bold text-gray-900 truncate flex-1">{item.itemName}</h3>
+                <span className={`px-2 py-0.5 rounded-full text-xs font-bold shadow-md flex items-center gap-1 ml-2 ${
+                  item.status === 'active' 
+                    ? 'bg-green-500 text-white' 
+                    : 'bg-red-500 text-white'
+                }`}>
+                  {item.status === 'active' ? <FiCheckCircle size={12} /> : <FiXCircle size={12} />}
+                </span>
+              </div>
               
               <div className="space-y-1 mb-3 text-xs text-gray-900">
                 <div className="flex items-center justify-between">
-                  <span>🏷️ {item.categoryID?.name || 'N/A'}</span>
+                  <span className="flex items-center gap-1"><FiTag size={12} /> {item.categoryID?.name || 'N/A'}</span>
                 </div>
                 
                 <div className="flex items-center justify-between">
-                  <span>⏰ {item.timeToPrepare} min</span>
+                  <span className="flex items-center gap-1"><FiClock size={12} /> {item.timeToPrepare} min</span>
                   {item.variation && item.variation.length > 0 ? (
-                    <span className="text-sm font-bold text-green-600">
+                    <span className="text-sm font-bold text-black">
                       ₹{Math.min(...item.variation.map(v => v.price || 0))}
                     </span>
                   ) : (
@@ -240,16 +202,16 @@ const ItemList = () => {
                 
                 <button
                   onClick={() => handleEdit(item)}
-                  className="flex-1 px-2 py-1.5 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-lg text-xs font-medium transition-all border border-white/40"
+                  className="flex-1 px-2 py-1.5 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-lg text-xs font-medium transition-all border border-white/40 flex items-center justify-center gap-1"
                 >
-                  ✏️
+                  <FiEdit2 size={12} />
                 </button>
                 
                 <button
                   onClick={() => deleteItem(item._id)}
-                  className="flex-1 px-2 py-1.5 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-lg text-xs font-medium transition-all border border-white/40"
+                  className="flex-1 px-2 py-1.5 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-lg text-xs font-medium transition-all border border-white/40 flex items-center justify-center gap-1"
                 >
-                  🗑️
+                  <FiTrash2 size={12} />
                 </button>
               </div>
             </div>

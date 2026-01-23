@@ -142,7 +142,7 @@ const AddItem = ({ onSuccess, onBack }) => {
                 />
                 <div className="flex-1">
                   <div className="font-medium text-gray-900">{addon.name}</div>
-                  <div className="text-sm text-gray-700">₹{addon.price}</div>
+                  <div className="text-sm text-black font-bold">₹{addon.price}</div>
                 </div>
                 <span>{addon.veg ? '🟢' : '🔴'}</span>
               </label>
@@ -171,7 +171,7 @@ const AddItem = ({ onSuccess, onBack }) => {
                 />
                 <div className="flex-1">
                   <div className="font-medium text-gray-900">{variation.name}</div>
-                  <div className="text-sm text-gray-700">₹{variation.price}</div>
+                  <div className="text-sm text-black font-bold">₹{variation.price}</div>
                 </div>
               </label>
             ))}
@@ -285,12 +285,12 @@ const AddItem = ({ onSuccess, onBack }) => {
           <h3 className="text-lg font-bold text-gray-900 mb-4">📋 Summary</h3>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <span className="text-gray-700">Selected Addons:</span>
-              <span className="ml-2 font-bold text-gray-900">{selectedAddons.length}</span>
+              <span className="text-gray-900">Selected Addons:</span>
+              <span className="ml-2 font-bold text-black">{selectedAddons.length}</span>
             </div>
             <div>
-              <span className="text-gray-700">Selected Variations:</span>
-              <span className="ml-2 font-bold text-gray-900">{selectedVariations.length}</span>
+              <span className="text-gray-900">Selected Variations:</span>
+              <span className="ml-2 font-bold text-black">{selectedVariations.length}</span>
             </div>
           </div>
         </div>

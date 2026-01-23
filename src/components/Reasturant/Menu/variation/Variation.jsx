@@ -56,12 +56,24 @@ const Variation = () => {
       case 'edit':
         return <EditVariation variation={editingVariation} onSuccess={handleBackToList} onBack={() => setView('list')} />;
       default:
-        return <VariationList variations={variations} loading={loading} onAdd={handleAddVariation} onEdit={handleEditVariation} onDelete={fetchVariations} />;
+        return (
+          <div>
+            <div className="flex justify-end items-center mb-6">
+              <button
+                onClick={handleAddVariation}
+                className="px-6 py-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl flex items-center space-x-2 font-medium transition-all border border-white/40"
+              >
+                <span>➕ Add Variation</span>
+              </button>
+            </div>
+            <VariationList variations={variations} loading={loading} onAdd={handleAddVariation} onEdit={handleEditVariation} onDelete={fetchVariations} />
+          </div>
+        );
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-50 p-6">
+    <div className="p-6">
       <div className="max-w-7xl mx-auto animate-fadeIn">
         {renderView()}
       </div>
