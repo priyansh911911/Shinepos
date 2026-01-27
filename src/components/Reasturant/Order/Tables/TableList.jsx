@@ -35,7 +35,7 @@ const TableList = ({ tables, onUpdateStatus, onEdit }) => {
       {tables.map((table, index) => (
         <div 
           key={table._id} 
-          className="bg-white/50 backdrop-blur-md rounded-2xl shadow-xl p-6 border-2 border-gray-100 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 animate-fadeIn card-hover"
+          className={`bg-white/50 backdrop-blur-md rounded-2xl shadow-xl p-6 border-2 border-gray-100 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 animate-fadeIn card-hover ${openDropdown === table._id ? 'z-50' : 'z-0'}`}
           style={{ animationDelay: `${index * 0.05}s` }}
         >
           <div className="flex justify-between items-start mb-4">
@@ -95,7 +95,7 @@ const TableList = ({ tables, onUpdateStatus, onEdit }) => {
               </button>
               
               {openDropdown === table._id && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white/90 backdrop-blur-xl border border-white/40 rounded-xl overflow-hidden z-10">
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white/90 backdrop-blur-xl border border-white/40 rounded-xl overflow-hidden z-50 shadow-2xl">
                   {statuses.map((status) => (
                     <button
                       key={status.value}
