@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
-import { FiLink, FiCheckCircle, FiXCircle, FiAlertCircle, FiTool, FiUsers, FiMapPin, FiEdit2, FiChevronDown } from 'react-icons/fi';
+import { FiLink, FiCheckCircle, FiXCircle, FiAlertCircle, FiTool, FiUsers, FiMapPin, FiEdit2, FiChevronDown, FiRefreshCw } from 'react-icons/fi';
+import TransferAndMergeModal from './TransferAndMergeModal';
+import MergeTablesModal from './MergeTablesModal';
 
 const TableList = ({ tables, onUpdateStatus, onEdit }) => {
   const [openDropdown, setOpenDropdown] = useState(null);
+  const [showTransferMergeModal, setShowTransferMergeModal] = useState(false);
+  const [showMergeModal, setShowMergeModal] = useState(false);
+  const [selectedTable, setSelectedTable] = useState(null);
 
   const statuses = [
     { value: 'AVAILABLE', label: 'Available', icon: <FiCheckCircle /> },
@@ -113,15 +118,67 @@ const TableList = ({ tables, onUpdateStatus, onEdit }) => {
               )}
             </div>
             
-            <button
-              onClick={() => onEdit(table)}
-              className="px-4 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl text-sm font-medium transition-all border border-white/40 flex items-center justify-center"
-            >
-              <FiEdit2 />
-            </button>
+            <div className="flex gap-1">
+              {table.status === 'MAINTENANCE' && (
+                <button
+                  onClick={() => {
+                    setSelectedTable(table);
+                    setShowTransferMergeModal(true);
+                  }}
+                  className="px-2 py-2 bg-red-500/20 backdrop-blur-md hover:bg-red-500/30 text-red-700 rounded-xl text-xs font-medium transition-all border border-red-300 flex items-center gap-1"
+                  title="Transfer & Merge"
+                >
+                  <FiRefreshCw size={12} />
+                </button>
+              )}
+              
+              <button
+                onClick={() => {
+                  setSelectedTable(table);
+                  setShowMergeModal(true);
+                }}
+                className="px-2 py-2 bg-blue-500/20 backdrop-blur-md hover:bg-blue-500/30 text-blue-700 rounded-xl text-xs font-medium transition-all border border-blue-300 flex items-center gap-1"
+                title="Merge Tables"
+              >
+                <FiLink size={12} />
+              </button>
+              
+              <button
+                onClick={() => onEdit(table)}
+                className="px-2 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl text-sm font-medium transition-all border border-white/40 flex items-center justify-center"
+              >
+                <FiEdit2 size={14} />
+              </button>
+            </div>
           </div>
         </div>
       ))}
+      
+      {showTransferMergeModal && selectedTable && (
+        <TransferAndMergeModal
+          brokenTable={selectedTable}
+          onClose={() => {
+            setShowTransferMergeModal(false);
+            setSelectedTable(null);
+          }}
+          onSuccess={() => {
+            window.location.reload();
+          }}
+        />
+      )}
+      
+      {showMergeModal && selectedTable && (
+        <MergeTablesModal
+          primaryTable={selectedTable}
+          onClose={() => {
+            setShowMergeModal(false);
+            setSelectedTable(null);
+          }}
+          onSuccess={() => {
+            window.location.reload();
+          }}
+        />
+      )}
     </div>
   );
 };
