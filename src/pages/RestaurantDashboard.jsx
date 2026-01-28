@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import MobileHeader from '../components/MobileHeader';
 import RestaurantSidebar from './RestaurantSidebar';
 import RestaurantDashboardHome from '../components/Reasturant/Dashboard/Dashboard';
+import AnalyticsDashboard from '../components/Reasturant/Dashboard/AnalyticsDashboard';
+import DashboardHeader from '../components/Reasturant/Dashboard/DashboardHeader';
 import Category from '../components/Reasturant/Menu/Category/MainCategorys';
 import Menu from '../components/Reasturant/Menu/menu/Menu';
 import Addon from '../components/Reasturant/Menu/addon/Addon';
@@ -20,6 +22,7 @@ const RestaurantDashboard = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
 
   const backgroundImages = {
     dashboard: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1920&q=80',
@@ -47,6 +50,8 @@ const RestaurantDashboard = () => {
       switch (activeTab) {
         case 'dashboard':
           return <RestaurantDashboardHome />;
+        case 'analytics':
+          return <AnalyticsDashboard />;
         case 'category':
           return <Category />;
         case 'menu':
@@ -93,6 +98,7 @@ const RestaurantDashboard = () => {
   const getPageTitle = () => {
     const titles = {
       dashboard: 'Dashboard',
+      analytics: 'Analytics',
       category: 'Categories',
       menu: 'Menu Items',
       addons: 'Addons',
@@ -111,7 +117,11 @@ const RestaurantDashboard = () => {
 
   return (
     <div className="flex h-screen bg-gray-900 relative overflow-hidden">
-      <MobileHeader title={getPageTitle()} onMenuClick={() => setSidebarOpen(true)} />
+      {/* Mobile Header - Only show on mobile */}
+      <div className="lg:hidden">
+        <MobileHeader title={getPageTitle()} onMenuClick={() => setSidebarOpen(true)} />
+      </div>
+      
       <div 
         className="fixed inset-0 transition-opacity duration-700"
         style={{
@@ -125,10 +135,23 @@ const RestaurantDashboard = () => {
       />
       <SubscriptionBlocker />
       <RestaurantSidebar activeTab={activeTab} setActiveTab={setActiveTab} onLogout={handleLogout} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-      <div className="flex-1 overflow-auto relative z-10 bg-transparent pt-16 lg:pt-0">
-        <AnimatePresence mode="wait">
-          {renderContent()}
-        </AnimatePresence>
+      
+      <div className="flex-1 flex flex-col overflow-hidden relative z-10 bg-transparent">
+        {/* Desktop Header */}
+        <div className="hidden lg:block">
+          <DashboardHeader 
+            title={getPageTitle()} 
+            onMenuClick={() => setSidebarOpen(true)} 
+            user={user}
+          />
+        </div>
+        
+        {/* Main Content */}
+        <div className="flex-1 overflow-auto pt-16 lg:pt-0">
+          <AnimatePresence mode="wait">
+            {renderContent()}
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );
