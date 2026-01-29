@@ -19,10 +19,10 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "npx vite build",
+    "build": "vite build",
     "preview": "vite preview"
   },
   "engines": {
-    "node": "20.x"
+    "node": "18.x"
   }
 }
