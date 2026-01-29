@@ -40,12 +40,14 @@ const Menu = () => {
     <motion.div key={`list-${refreshKey}`} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} className="p-6">
       <div className="max-w-auto mx-auto">
         <div className="flex justify-end items-center gap-3 mb-6">
-          <button
-            onClick={() => setView('sync')}
-            className="px-6 py-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl flex items-center space-x-2 font-medium transition-colors"
-          >
-            <span>🔄 Sync Zomato</span>
-          </button>
+          {import.meta.env.DEV && (
+            <button
+              onClick={() => setView('sync')}
+              className="px-6 py-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl flex items-center space-x-2 font-medium transition-colors"
+            >
+              <span>🔄 Sync Zomato</span>
+            </button>
+          )}
           <button
             onClick={() => setView('add')}
             className="px-6 py-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl flex items-center space-x-2 font-medium transition-colors"

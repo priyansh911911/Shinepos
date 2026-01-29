@@ -8,9 +8,11 @@ import PaymentModal from '../Payment/PaymentModal';
 import TransferModal from './TransferModal';
 import AddNewOrder from '../AddNewOrder';
 import { useOrders } from './hooks/useOrders';
+import axios from 'axios';
 
 const Order = () => {
   const [showAddItems, setShowAddItems] = useState(null);
+  const [syncing, setSyncing] = useState(false);
   const {
     orders,
     loading,
@@ -43,6 +45,26 @@ const Order = () => {
     setShowAddItems(null);
     if (shouldRefresh) {
       fetchOrders();
+    }
+  };
+
+  const handleSyncOrders = async () => {
+    const resId = prompt('Enter Restaurant ID (e.g., 21351606):');
+    if (!resId) return;
+    
+    setSyncing(true);
+    try {
+      const token = localStorage.getItem('token');
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const response = await axios.post(`${API_URL}/api/dyno/sync-orders`, { resId }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      alert(`✓ Synced ${response.data.stats.synced} orders`);
+      fetchOrders();
+    } catch (error) {
+      alert(error.response?.data?.error || 'Sync failed');
+    } finally {
+      setSyncing(false);
     }
   };
 
@@ -111,13 +133,25 @@ const Order = () => {
               </select>
             </div>
             
-            <button
-              onClick={fetchOrders}
-              className="flex items-center justify-center space-x-2 px-4 sm:px-6 py-2 sm:py-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl transition-colors font-medium text-sm"
-            >
-              <FiRefreshCw />
-              <span className="hidden sm:inline">Refresh</span>
-            </button>
+            <div className="flex gap-2">
+              {import.meta.env.DEV && (
+                <button
+                  onClick={handleSyncOrders}
+                  disabled={syncing}
+                  className="flex items-center justify-center space-x-2 px-4 sm:px-6 py-2 sm:py-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl transition-colors font-medium text-sm disabled:opacity-50"
+                >
+                  <span>{syncing ? '⏳' : '🔄'}</span>
+                  <span className="hidden sm:inline">{syncing ? 'Syncing...' : 'Sync Orders'}</span>
+                </button>
+              )}
+              <button
+                onClick={fetchOrders}
+                className="flex items-center justify-center space-x-2 px-4 sm:px-6 py-2 sm:py-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl transition-colors font-medium text-sm"
+              >
+                <FiRefreshCw />
+                <span className="hidden sm:inline">Refresh</span>
+              </button>
+            </div>
           </div>
         </div>
 
