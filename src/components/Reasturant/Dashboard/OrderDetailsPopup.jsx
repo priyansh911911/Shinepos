@@ -75,7 +75,6 @@ const OrderDetailsPopup = ({ order, position, onClose }) => {
                     <tr>
                       <th className="px-3 py-1.5 text-left font-semibold text-gray-300 uppercase">Item</th>
                       <th className="px-3 py-1.5 text-center font-semibold text-gray-300 uppercase">Qty</th>
-                      <th className="px-3 py-1.5 text-right font-semibold text-gray-300 uppercase">Price</th>
                       <th className="px-3 py-1.5 text-right font-semibold text-gray-300 uppercase">Total</th>
                     </tr>
                   </thead>
@@ -85,7 +84,6 @@ const OrderDetailsPopup = ({ order, position, onClose }) => {
                         <tr key={index} className="border-b border-white/5 last:border-0">
                           <td className="px-3 py-1.5 text-white">{item.name || item.menuItem?.name || 'Unknown'}</td>
                           <td className="px-3 py-1.5 text-center text-gray-300">{item.quantity}</td>
-                          <td className="px-3 py-1.5 text-right text-gray-300">₹{item.price || item.menuItem?.price || 0}</td>
                           <td className="px-3 py-1.5 text-right font-semibold text-white">₹{item.itemTotal || (item.quantity * (item.price || item.menuItem?.price || 0))}</td>
                         </tr>
                       ))
