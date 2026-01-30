@@ -6,6 +6,20 @@ const KOT = () => {
   const [kots, setKots] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('active');
+  const [openDropdown, setOpenDropdown] = useState(null);
+
+  const statuses = [
+    { value: 'PENDING', label: 'Pending', emoji: '⏳' },
+    { value: 'PREPARING', label: 'Preparing', emoji: '👨🍳' },
+    { value: 'READY', label: 'Ready', emoji: '✅' },
+    { value: 'DELIVERED', label: 'Delivered', emoji: '🚀' },
+    { value: 'CANCELLED', label: 'Cancelled', emoji: '❌' }
+  ];
+
+  const getStatusDisplay = (status) => {
+    const statusObj = statuses.find(s => s.value === status);
+    return statusObj ? `${statusObj.emoji} ${statusObj.label}` : status;
+  };
 
   useEffect(() => {
     fetchKitchenOrders();
@@ -90,7 +104,6 @@ const KOT = () => {
       transition={{ duration: 0.2 }}
     >
       <div className="flex justify-between items-center mb-6">
-        {/* <h2 className="text-3xl font-bold text-gray-900">👨🍳 Kitchen Orders (KOT)</h2> */}
         <div className="flex space-x-3">
           <button
             onClick={() => setActiveTab('active')}
@@ -122,92 +135,93 @@ const KOT = () => {
       </div>
 
       {activeTab === 'active' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {kots.map((kot, index) => (
             <motion.div 
               key={kot._id} 
-              className={`bg-white/30 backdrop-blur-md rounded-2xl overflow-hidden transition-colors hover:bg-white/35 ${
-                kot.priority === 'URGENT' ? 'ring-4 ring-red-500' : 
+              className={`bg-white/30 backdrop-blur-md rounded-xl overflow-visible transition-colors hover:bg-white/35 ${openDropdown === kot._id ? 'z-50' : 'z-0'} ${
+                kot.priority === 'URGENT' ? 'ring-2 ring-red-500' : 
                 kot.priority === 'HIGH' ? 'ring-2 ring-orange-400' : ''
               }`}
               initial={{ opacity: 0, y: 10 }}
-              animate={kot.priority === 'URGENT' ? { opacity: 1, y: 0, scale: [1, 1.02, 1] } : { opacity: 1, y: 0 }}
+              animate={kot.priority === 'URGENT' ? { opacity: 1, y: 0, scale: [1, 1.01, 1] } : { opacity: 1, y: 0 }}
               transition={kot.priority === 'URGENT' ? { opacity: { delay: index * 0.05, duration: 0.2 }, y: { delay: index * 0.05, duration: 0.2 }, scale: { duration: 1.5, repeat: Infinity } } : { delay: index * 0.05, duration: 0.2 }}
             >
               {/* Header */}
-              <div className={`p-4 ${
+              <div className={`p-3 rounded-t-xl ${
                 kot.priority === 'URGENT' ? 'bg-red-500/80' :
                 kot.priority === 'HIGH' ? 'bg-orange-500/80' :
                 kot.priority === 'NORMAL' ? 'bg-yellow-500/80' :
                 'bg-green-500/80'
-              } text-white backdrop-blur-md`}>
-                <div className="flex justify-between items-start mb-2">
+              } text-white`}>
+                <div className="flex justify-between items-center">
                   <div>
-                    <h3 className="font-bold text-2xl">{kot.kotNumber}</h3>
-                    <p className="text-sm opacity-90">📝 {kot.orderNumber}</p>
+                    <h3 className="font-bold text-lg">{kot.kotNumber}</h3>
+                    <p className="text-xs opacity-90">{kot.orderNumber}</p>
                   </div>
-                  <div className="text-right">
-                    <div className="text-2xl mb-1">
-                      {kot.priority === 'URGENT' ? '🔴' :
-                       kot.priority === 'HIGH' ? '🟠' :
-                       kot.priority === 'NORMAL' ? '🟡' : '🟢'}
-                    </div>
-                    <p className="text-xs font-bold">{kot.priority || 'NORMAL'}</p>
+                  <div className="text-lg">
+                    {kot.priority === 'URGENT' ? '🔴' :
+                     kot.priority === 'HIGH' ? '🟠' :
+                     kot.priority === 'NORMAL' ? '🟡' : '🟢'}
                   </div>
                 </div>
-                <div className="flex items-center space-x-2 text-sm">
-                  <span>⏰</span>
-                  <span>{new Date(kot.createdAt).toLocaleTimeString()}</span>
+                <div className="flex items-center justify-between text-xs mt-1">
+                  <span>⏰ {new Date(kot.createdAt).toLocaleTimeString()}</span>
+                  {kot.tableNumber && <span>🪑 {kot.tableNumber}</span>}
                 </div>
-                {kot.tableNumber && (
-                  <div className="flex items-center space-x-2 text-sm mt-1">
-                    <span>🪑</span>
-                    <span>Table: {kot.tableNumber}</span>
-                  </div>
-                )}
               </div>
 
               {/* Items */}
-              <div className="p-4">
-                <div className="space-y-3 mb-4">
-                  {kot.items?.map((item, index) => (
-                    <div key={index} className="bg-white/40 backdrop-blur-lg rounded-lg p-3">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-2">
-                            <span className="bg-orange-500 text-white font-bold px-2 py-1 rounded-full text-xs">
-                              {item.quantity}x
-                            </span>
-                            <span className="font-bold text-gray-900">{item.name}</span>
-                          </div>
-                          {item.variation && (
-                            <div className="text-sm text-gray-700 ml-8 mt-1">
-                              🎯 {item.variation.name}
-                            </div>
-                          )}
-                          {item.addons?.map((addon, addonIndex) => (
-                            <div key={addonIndex} className="text-sm text-purple-700 ml-8 mt-1">
-                              ➕ {addon.name}
-                            </div>
-                          ))}
-                        </div>
+              <div className="p-3">
+                <div className="space-y-1 mb-3 max-h-32 overflow-y-auto">
+                  {kot.items?.map((item, idx) => (
+                    <div key={idx} className="text-xs">
+                      <div className="flex items-center gap-1">
+                        <span className="bg-orange-500 text-white font-bold px-1.5 py-0.5 rounded text-xs">
+                          {item.quantity}x
+                        </span>
+                        <span className="font-medium text-white">{item.name}</span>
                       </div>
+                      {item.variation && (
+                        <div className="text-xs text-gray-300 ml-6">🎯 {item.variation.name}</div>
+                      )}
+                      {item.addons?.map((addon, addonIdx) => (
+                        <div key={addonIdx} className="text-xs text-white ml-6">➕ {addon.name}</div>
+                      ))}
                     </div>
                   ))}
                 </div>
 
-                {/* Status Selector */}
-                <select
-                  value={kot.status}
-                  onChange={(e) => updateKOTStatus(kot._id, e.target.value)}
-                  className="w-full px-4 py-3 bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                >
-                  <option value="PENDING">⏳ Pending</option>
-                  <option value="PREPARING">👨🍳 Preparing</option>
-                  <option value="READY">✅ Ready</option>
-                  <option value="DELIVERED">🚀 Delivered</option>
-                  <option value="CANCELLED">❌ Cancelled</option>
-                </select>
+                {/* Status Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={() => kot.status !== 'READY' && kot.status !== 'DELIVERED' && kot.status !== 'CANCELLED' && setOpenDropdown(openDropdown === kot._id ? null : kot._id)}
+                    disabled={kot.status === 'READY' || kot.status === 'DELIVERED' || kot.status === 'CANCELLED'}
+                    className={`w-full px-3 py-2 bg-white/40 backdrop-blur-lg rounded-lg text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500 flex items-center justify-between ${
+                      (kot.status === 'READY' || kot.status === 'DELIVERED' || kot.status === 'CANCELLED') ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'
+                    }`}
+                  >
+                    <span>{getStatusDisplay(kot.status)}</span>
+                    <span className={`transition-transform ${openDropdown === kot._id ? 'rotate-180' : ''}`}>▼</span>
+                  </button>
+                  
+                  {openDropdown === kot._id && (
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-white/90 backdrop-blur-xl rounded-lg overflow-hidden z-50 shadow-xl">
+                      {statuses.map((status) => (
+                        <button
+                          key={status.value}
+                          onClick={() => {
+                            updateKOTStatus(kot._id, status.value);
+                            setOpenDropdown(null);
+                          }}
+                          className="w-full px-3 py-2 text-left text-xs font-medium text-gray-900 hover:bg-purple-500/20 transition-colors"
+                        >
+                          {status.emoji} {status.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </motion.div>
           ))}

@@ -1,32 +1,42 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FiClock, FiTool, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
+import { FiClock, FiTool, FiCheckCircle, FiAlertCircle, FiDollarSign } from 'react-icons/fi';
 
 const OrderStatus = ({ stats, delay = 0 }) => {
+  const totalOrders = (stats.pendingOrders || 0) + (stats.preparingOrders || 0) + (stats.completedOrders || 0) + (stats.paidOrders || 0);
+  
   const statusItems = [
     {
       label: 'Pending',
       count: stats.pendingOrders || 0,
-      percentage: stats.pendingOrders ? (stats.pendingOrders / (stats.pendingOrders + stats.completedOrders + 15)) * 100 : 0,
+      percentage: totalOrders ? (stats.pendingOrders / totalOrders) * 100 : 0,
       color: 'bg-red-500',
       icon: <FiAlertCircle />,
       textColor: 'text-red-400'
     },
     {
       label: 'Preparing',
-      count: 15,
-      percentage: 15 / (stats.pendingOrders + stats.completedOrders + 15) * 100,
+      count: stats.preparingOrders || 0,
+      percentage: totalOrders ? (stats.preparingOrders / totalOrders) * 100 : 0,
       color: 'bg-yellow-500',
       icon: <FiTool />,
       textColor: 'text-yellow-400'
     },
     {
-      label: 'Completed',
+      label: 'Delivered',
       count: stats.completedOrders || 0,
-      percentage: stats.completedOrders ? (stats.completedOrders / (stats.pendingOrders + stats.completedOrders + 15)) * 100 : 0,
+      percentage: totalOrders ? (stats.completedOrders / totalOrders) * 100 : 0,
       color: 'bg-green-500',
       icon: <FiCheckCircle />,
       textColor: 'text-green-400'
+    },
+    {
+      label: 'Paid',
+      count: stats.paidOrders || 0,
+      percentage: totalOrders ? (stats.paidOrders / totalOrders) * 100 : 0,
+      color: 'bg-blue-500',
+      icon: <FiDollarSign />,
+      textColor: 'text-blue-400'
     }
   ];
 
@@ -84,7 +94,7 @@ const OrderStatus = ({ stats, delay = 0 }) => {
         <div className="flex justify-between items-center">
           <span className="text-gray-300">Total Orders Today</span>
           <span className="text-white font-bold text-xl">
-            {stats.pendingOrders + stats.completedOrders + 15}
+            {totalOrders}
           </span>
         </div>
       </motion.div>
