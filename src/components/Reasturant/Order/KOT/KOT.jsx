@@ -195,8 +195,11 @@ const KOT = () => {
                 {/* Status Dropdown */}
                 <div className="relative">
                   <button
-                    onClick={() => setOpenDropdown(openDropdown === kot._id ? null : kot._id)}
-                    className="w-full px-3 py-2 bg-white/40 backdrop-blur-lg rounded-lg text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500 flex items-center justify-between"
+                    onClick={() => kot.status !== 'READY' && kot.status !== 'DELIVERED' && kot.status !== 'CANCELLED' && setOpenDropdown(openDropdown === kot._id ? null : kot._id)}
+                    disabled={kot.status === 'READY' || kot.status === 'DELIVERED' || kot.status === 'CANCELLED'}
+                    className={`w-full px-3 py-2 bg-white/40 backdrop-blur-lg rounded-lg text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500 flex items-center justify-between ${
+                      (kot.status === 'READY' || kot.status === 'DELIVERED' || kot.status === 'CANCELLED') ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'
+                    }`}
                   >
                     <span>{getStatusDisplay(kot.status)}</span>
                     <span className={`transition-transform ${openDropdown === kot._id ? 'rotate-180' : ''}`}>▼</span>

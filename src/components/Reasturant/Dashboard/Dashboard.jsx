@@ -7,6 +7,7 @@ import RecentOrders from './RecentOrders';
 import TopSellingItems from './TopSellingItems';
 import QuickActions from './QuickActions';
 import OrderStatus from './OrderStatus';
+import PaymentStatistics from './PaymentStatistics';
 import MyAttendance from '../Attendance/MyAttendance';
 
 const Dashboard = () => {
@@ -18,7 +19,14 @@ const Dashboard = () => {
     avgOrderValue: 0,
     customerSatisfaction: 0,
     pendingOrders: 0,
-    completedOrders: 0
+    completedOrders: 0,
+    paidOrders: 0,
+    cashPayments: 0,
+    cardPayments: 0,
+    upiPayments: 0,
+    cashPercentage: 0,
+    cardPercentage: 0,
+    upiPercentage: 0
   });
 
   const [recentOrders, setRecentOrders] = useState([]);
@@ -66,7 +74,14 @@ const Dashboard = () => {
         avgOrderValue: 250,
         customerSatisfaction: 4.8,
         pendingOrders: 2,
-        completedOrders: 3
+        completedOrders: 3,
+        paidOrders: 0,
+        cashPayments: 0,
+        cardPayments: 0,
+        upiPayments: 0,
+        cashPercentage: 0,
+        cardPercentage: 0,
+        upiPercentage: 0
       });
       
       setRecentOrders([
@@ -198,7 +213,10 @@ const Dashboard = () => {
 
       {/* Charts and Analytics Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-         <RecentOrders orders={recentOrders} delay={0.9} />
+        <PaymentStatistics stats={stats} delay={1.0} />
+        <RecentOrders
+          className="bg-white/10 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20"
+          orders={recentOrders} delay={0.9} />
 
         {/* Customer Satisfaction - Hidden */}
         {/* <motion.div 
@@ -234,10 +252,10 @@ const Dashboard = () => {
         {/* <QuickActions onActionClick={handleQuickAction} delay={0.8} /> */}
       </div>
 
-      {/* Recent Orders and Top Items */}
+      {/* Payment Statistics and Top Selling Items */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-       <OrderStatus stats={stats} delay={0.6} />
-        <TopSellingItems items={topItems} delay={1.0} />
+        <OrderStatus stats={stats} delay={0.6} />
+        <TopSellingItems items={topItems} delay={1.1} />
       </div>
     </motion.div>
   );

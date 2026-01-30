@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FiRefreshCw, FiUser, FiPhone, FiGrid, FiShoppingBag, FiFileText, FiPlus, FiRotateCcw, FiCreditCard, FiChevronDown } from 'react-icons/fi';
+import { FiRefreshCw, FiUser, FiPhone, FiGrid, FiShoppingBag, FiFileText, FiPlus, FiRotateCcw, FiCreditCard, FiChevronDown, FiCheckCircle } from 'react-icons/fi';
 
 const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRefresh, onUpdatePriority, onTransfer, onAddItems, activeTab, setActiveTab }) => {
   const [filterStatus, setFilterStatus] = useState('ALL');
@@ -163,7 +163,21 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
                 {/* Order Summary & Actions */}
                 <div className="bg-white/30 backdrop-blur-md rounded-xl p-4">
                   <div className="flex justify-between items-center mb-4">
-                    <span className="text-gray-900 font-medium">Total Amount:</span>
+                    <div className="flex items-center gap-3">
+                      <span className="text-gray-900 font-medium">Status:</span>
+                      <select
+                        value={selectedOrder.status}
+                        onChange={(e) => onUpdateStatus(selectedOrder._id, e.target.value)}
+                        className="px-3 py-2 bg-white/50 backdrop-blur-md border border-white/30 rounded-lg text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      >
+                        <option value="PENDING">Pending</option>
+                        <option value="PREPARING">Preparing</option>
+                        <option value="READY">Ready</option>
+                        <option value="DELIVERED">Delivered</option>
+                        <option value="CANCELLED">Cancelled</option>
+                        <option value="PAID">Paid</option>
+                      </select>
+                    </div>
                     <span className="text-2xl font-bold text-gray-900">{formatCurrency(selectedOrder.totalAmount)}</span>
                   </div>
                   <div className="flex space-x-2">

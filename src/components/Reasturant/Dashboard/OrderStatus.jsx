@@ -1,9 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FiClock, FiTool, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
+import { FiClock, FiTool, FiCheckCircle, FiAlertCircle, FiDollarSign } from 'react-icons/fi';
 
 const OrderStatus = ({ stats, delay = 0 }) => {
-  const totalOrders = (stats.pendingOrders || 0) + (stats.preparingOrders || 0) + (stats.completedOrders || 0);
+  const totalOrders = (stats.pendingOrders || 0) + (stats.preparingOrders || 0) + (stats.completedOrders || 0) + (stats.paidOrders || 0);
   
   const statusItems = [
     {
@@ -23,12 +23,20 @@ const OrderStatus = ({ stats, delay = 0 }) => {
       textColor: 'text-yellow-400'
     },
     {
-      label: 'Completed',
+      label: 'Delivered',
       count: stats.completedOrders || 0,
       percentage: totalOrders ? (stats.completedOrders / totalOrders) * 100 : 0,
       color: 'bg-green-500',
       icon: <FiCheckCircle />,
       textColor: 'text-green-400'
+    },
+    {
+      label: 'Paid',
+      count: stats.paidOrders || 0,
+      percentage: totalOrders ? (stats.paidOrders / totalOrders) * 100 : 0,
+      color: 'bg-blue-500',
+      icon: <FiDollarSign />,
+      textColor: 'text-blue-400'
     }
   ];
 
