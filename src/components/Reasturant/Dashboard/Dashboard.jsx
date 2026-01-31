@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { FiShoppingBag, FiDollarSign, FiTarget, FiUsers, FiStar } from 'react-icons/fi';
+import { FiShoppingBag, FiDollarSign, FiTarget, FiUsers, FiStar, FiLoader } from 'react-icons/fi';
 import axios from 'axios';
 import AnalyticsCard from './AnalyticsCard';
 import RecentOrders from './RecentOrders';
@@ -150,9 +150,9 @@ const Dashboard = () => {
   if (loading) {
     return (
       <div className="p-6 bg-transparent min-h-screen flex items-center justify-center">
-        <div className="bg-white/10 backdrop-blur-md rounded-xl p-8 border border-white/20">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-white text-center">Loading dashboard...</p>
+        <div className="text-center">
+          <FiLoader className="text-6xl mb-4 animate-spin mx-auto text-orange-500" size={64} />
+          <p className="mt-4 text-white font-medium">Loading dashboard...</p>
         </div>
       </div>
     );
