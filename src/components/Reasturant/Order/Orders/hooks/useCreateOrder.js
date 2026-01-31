@@ -12,6 +12,7 @@ export const useCreateOrder = (onCreateOrder) => {
   const [customerPhone, setCustomerPhone] = useState('');
   const [guestCount, setGuestCount] = useState('');
   const [selectedTable, setSelectedTable] = useState('');
+  const [discount, setDiscount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [loadingMenu, setLoadingMenu] = useState(true);
   const [error, setError] = useState('');
@@ -119,9 +120,11 @@ export const useCreateOrder = (onCreateOrder) => {
   };
 
   const calculateTotal = () => {
-    return orderItems.reduce((total, item) => {
+    const subtotal = orderItems.reduce((total, item) => {
       return total + (item.price * item.quantity);
     }, 0);
+    const discountAmount = (subtotal * discount) / 100;
+    return subtotal - discountAmount;
   };
 
   const handleSubmit = async (e) => {
@@ -166,7 +169,8 @@ export const useCreateOrder = (onCreateOrder) => {
         })),
         customerName: customerName.trim(),
         customerPhone: customerPhone.trim(),
-        tableId: tableId || undefined
+        tableId: tableId || undefined,
+        discount: discount > 0 ? { percentage: discount } : undefined
       };
 
       const result = await onCreateOrder(orderData);
@@ -177,6 +181,7 @@ export const useCreateOrder = (onCreateOrder) => {
         setCustomerPhone('');
         setGuestCount('');
         setSelectedTable('');
+        setDiscount(0);
       } else {
         setError(result.error);
       }
@@ -204,6 +209,8 @@ export const useCreateOrder = (onCreateOrder) => {
     selectedCapacity,
     isCapacityMet,
     toggleTableSelection,
+    discount,
+    setDiscount,
     loading,
     loadingMenu,
     error,

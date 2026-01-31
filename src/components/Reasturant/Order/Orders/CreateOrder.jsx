@@ -16,6 +16,8 @@ const CreateOrder = ({ onCreateOrder, onCancel }) => {
     setGuestCount,
     selectedTable,
     setSelectedTable,
+    discount,
+    setDiscount,
     showMergeOption,
     selectedTablesForMerge,
     selectedCapacity,
@@ -73,10 +75,10 @@ const CreateOrder = ({ onCreateOrder, onCancel }) => {
             menuItems.filter(item => 
               item.itemName.toLowerCase().includes(searchQuery.toLowerCase())
             ).map((item) => (
-              <div key={item._id} className="bg-white/20 backdrop-blur-md rounded-xl p-3 lg:p-4 border border-white/20 hover:bg-white/25 transition-all">
+              <div key={item._id} className="bg-white/20 backdrop-blur-md rounded-xl p-3 lg:p-4 border border-white/20 hover:bg-white/25 transition-all h-32 flex flex-col">
                 <div className="flex justify-between items-start mb-2">
-                  <h4 className="font-medium text-white text-sm lg:text-base">{item.itemName}</h4>
-                  <span className="text-xs lg:text-sm font-semibold text-green-300">
+                  <h4 className="font-medium text-white text-sm lg:text-base line-clamp-1">{item.itemName}</h4>
+                  <span className="text-xs lg:text-sm font-semibold text-green-300 flex-shrink-0 ml-2">
                     ₹{item.variation && item.variation.length > 0 
                       ? Math.min(...item.variation.map(v => v.price || 0))
                       : 0}
@@ -84,14 +86,14 @@ const CreateOrder = ({ onCreateOrder, onCancel }) => {
                 </div>
                 
                 {item.description && (
-                  <p className="text-xs text-gray-300 mb-2 lg:mb-3 line-clamp-2">{item.description}</p>
+                  <p className="text-xs text-gray-300 mb-2 line-clamp-2">{item.description}</p>
                 )}
                 
                 <button
                   type="button"
                   onClick={() => openItemModal(item)}
                   disabled={item.status !== 'active'}
-                  className={`w-full py-1.5 px-2 rounded-lg text-xs font-medium transition-all ${
+                  className={`w-full py-1.5 px-2 rounded-lg text-xs font-medium transition-all mt-auto ${
                     item.status === 'active'
                       ? 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg'
                       : 'bg-gray-600/50 text-gray-400 cursor-not-allowed'
@@ -148,6 +150,21 @@ const CreateOrder = ({ onCreateOrder, onCancel }) => {
                 className="w-full bg-white/20 backdrop-blur-md border border-white/30 rounded-xl px-3 lg:px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 text-white placeholder-gray-300"
                 min="1"
                 required
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs lg:text-sm font-medium text-white mb-1">
+                Discount (%)
+              </label>
+              <input
+                type="number"
+                value={discount}
+                onChange={(e) => setDiscount(Math.min(100, Math.max(0, Number(e.target.value))))}
+                className="w-full bg-white/20 backdrop-blur-md border border-white/30 rounded-xl px-3 lg:px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 text-white placeholder-gray-300"
+                min="0"
+                max="100"
+                placeholder="0"
               />
             </div>
 
@@ -214,15 +231,15 @@ const CreateOrder = ({ onCreateOrder, onCancel }) => {
           {orderItems.length > 0 ? (
             <div className="space-y-2 max-h-48 lg:max-h-64 overflow-y-auto">
               {orderItems.map((item) => (
-                <div key={item.key} className="flex items-center justify-between bg-white/20 backdrop-blur-md p-2 lg:p-3 rounded-xl border border-white/20 gap-2">
+                <div key={item.key} className="flex items-center justify-between bg-white/20 backdrop-blur-md p-2 lg:p-3 rounded-xl border border-white/20 gap-2 h-16">
                   <div className="flex-1 min-w-0">
                     <div className="font-medium text-white text-sm lg:text-base truncate">{item.name}</div>
-                    <div className="text-xs lg:text-sm text-gray-300">
+                    <div className="text-xs lg:text-sm text-gray-300 truncate">
                       {item.variation.name} - ₹{item.price}
                       {item.addons.length > 0 && (
-                        <div className="text-xs text-gray-400 truncate">
+                        <span className="text-xs text-gray-400 ml-1">
                           + {item.addons.map(a => a.name).join(', ')}
-                        </div>
+                        </span>
                       )}
                     </div>
                   </div>
