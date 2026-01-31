@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FiClock, FiLogIn, FiLogOut, FiUser } from 'react-icons/fi';
+import { FiClock, FiLogIn, FiLogOut, FiUser, FiLoader } from 'react-icons/fi';
 
 const MyAttendance = () => {
   const [todayAttendance, setTodayAttendance] = useState(null);
@@ -92,7 +92,10 @@ const MyAttendance = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-32">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+        <div className="text-center">
+          <FiLoader className="text-4xl mb-2 animate-spin mx-auto text-orange-500" size={32} />
+          <p className="mt-2 text-white font-medium text-sm">Loading attendance...</p>
+        </div>
       </div>
     );
   }

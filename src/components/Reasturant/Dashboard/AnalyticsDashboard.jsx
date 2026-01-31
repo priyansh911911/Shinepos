@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FiTrendingUp, FiTrendingDown, FiCalendar, FiFilter, FiDownload, FiRefreshCw } from 'react-icons/fi';
+import { FiTrendingUp, FiTrendingDown, FiCalendar, FiFilter, FiDownload, FiRefreshCw, FiLoader } from 'react-icons/fi';
 import axios from 'axios';
 
 const AnalyticsDashboard = () => {
@@ -304,9 +304,11 @@ const AnalyticsDashboard = () => {
       )}
 
       {isLoading && (
-        <div className="text-center py-16">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-white">Loading analytics...</p>
+        <div className="flex justify-center items-center h-64">
+          <div className="text-center">
+            <FiLoader className="text-6xl mb-4 animate-spin mx-auto text-orange-500" size={64} />
+            <p className="mt-4 text-white font-medium">Loading analytics...</p>
+          </div>
         </div>
       )}
 
