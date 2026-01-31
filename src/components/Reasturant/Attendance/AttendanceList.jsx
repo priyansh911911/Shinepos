@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FiClock, FiUser, FiCalendar, FiFilter } from 'react-icons/fi';
+import { FiClock, FiUser, FiCalendar, FiFilter, FiLoader } from 'react-icons/fi';
 
 const getShiftName = (startTime, endTime) => {
   const shiftMap = {
@@ -70,7 +70,10 @@ const AttendanceList = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+        <div className="text-center">
+          <FiLoader className="text-6xl mb-4 animate-spin mx-auto text-orange-500" size={64} />
+          <p className="mt-4 text-white font-medium">Loading attendance...</p>
+        </div>
       </div>
     );
   }

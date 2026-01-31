@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FiClock, FiUser, FiLogIn, FiLogOut } from 'react-icons/fi';
+import { FiClock, FiUser, FiLogIn, FiLogOut, FiLoader } from 'react-icons/fi';
 
 const StaffCheckIn = () => {
   const [staff, setStaff] = useState([]);
@@ -60,7 +60,10 @@ const StaffCheckIn = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+        <div className="text-center">
+          <FiLoader className="text-6xl mb-4 animate-spin mx-auto text-orange-500" size={64} />
+          <p className="mt-4 text-white font-medium">Loading staff check-in...</p>
+        </div>
       </div>
     );
   }

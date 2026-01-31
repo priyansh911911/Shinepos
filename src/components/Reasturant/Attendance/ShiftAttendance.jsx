@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { FiLoader } from 'react-icons/fi';
 
 const ShiftAttendance = () => {
   const [staff, setStaff] = useState([]);
@@ -34,7 +35,16 @@ const ShiftAttendance = () => {
     return shiftMap[`${startTime}-${endTime}`] || `${startTime}-${endTime}`;
   };
 
-  if (loading) return <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto"></div>;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="text-center">
+          <FiLoader className="text-6xl mb-4 animate-spin mx-auto text-orange-500" size={64} />
+          <p className="mt-4 text-white font-medium">Loading shift schedules...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6">
