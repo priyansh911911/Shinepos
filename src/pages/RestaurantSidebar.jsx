@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FiHome, FiGrid, FiUsers, FiCreditCard, FiClipboard, FiPackage, FiShoppingBag, FiTag, FiStar, FiTarget, FiList, FiPlus, FiSettings, FiLogOut, FiChevronDown, FiMenu, FiX, FiBarChart, FiClock } from 'react-icons/fi';
 import { hasAccess } from '../utils/rolePermissions';
+import { useModules } from '../context/ModuleContext';
 
 const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout, sidebarOpen, setSidebarOpen }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [orderOpen, setOrderOpen] = useState(false);
   const [inventoryOpen, setInventoryOpen] = useState(false);
+  const { isModuleEnabled } = useModules();
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: <FiHome /> },
@@ -18,13 +20,13 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout, sidebarOpen, set
   ];
 
   const orderSubItems = [
-    { id: 'orders', label: 'Orders', icon: <FiClipboard /> },
-    { id: 'kot', label: 'Kitchen (KOT)', icon: <FiPackage /> }
+    { id: 'orders', label: 'Orders', icon: <FiClipboard />, module: 'orderTaking' },
+    { id: 'kot', label: 'Kitchen (KOT)', icon: <FiPackage />, module: 'kot' }
   ];
 
   const inventorySubItems = [
-    { id: 'inventory', label: 'Inventory List', icon: <FiList /> },
-    { id: 'add-inventory', label: 'Add Item', icon: <FiPlus /> }
+    { id: 'inventory', label: 'Inventory List', icon: <FiList />, module: 'inventory' },
+    { id: 'add-inventory', label: 'Add Item', icon: <FiPlus />, module: 'inventory' }
   ];
 
   const menuSubItems = [
@@ -42,10 +44,14 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout, sidebarOpen, set
     setSidebarOpen(false);
   };
 
-  // Filter menu items based on role permissions
+  // Filter menu items based on role permissions AND module status
   const filteredMenuItems = menuItems.filter(item => hasAccess(userRole, item.id));
-  const filteredOrderSubItems = orderSubItems.filter(item => hasAccess(userRole, item.id));
-  const filteredInventorySubItems = inventorySubItems.filter(item => hasAccess(userRole, item.id));
+  const filteredOrderSubItems = orderSubItems.filter(item => 
+    hasAccess(userRole, item.id) && isModuleEnabled(item.module)
+  );
+  const filteredInventorySubItems = inventorySubItems.filter(item => 
+    hasAccess(userRole, item.id) && isModuleEnabled(item.module)
+  );
   const filteredMenuSubItems = menuSubItems.filter(item => hasAccess(userRole, item.id));
 
   // Check if dropdowns should be shown

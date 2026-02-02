@@ -16,9 +16,26 @@ import Tables from '../components/Reasturant/Order/Tables/Tables';
 import KOT from '../components/Reasturant/Order/KOT/KOT';
 import Inventory from '../components/Reasturant/Inventory/Inventory';
 import SubscriptionPlans from '../components/Reasturant/Subscription/SubscriptionPlans';
+import Settings from '../components/Reasturant/Settings/Settings';
 import SubscriptionBlocker from './SubscriptionBlocker';
 import Attendance from '../components/Reasturant/Attendance/Attendance';
 import { getDefaultPage, hasAccess } from '../utils/rolePermissions';
+import { useModules } from '../context/ModuleContext';
+
+const ModuleDisabledMessage = ({ module }) => (
+  <div className="flex items-center justify-center min-h-[60vh]">
+    <div className="bg-white/10 backdrop-blur-md p-8 rounded-xl border border-white/20 max-w-md text-center">
+      <div className="text-6xl mb-4">🔒</div>
+      <h2 className="text-2xl font-bold text-white mb-2">Module Disabled</h2>
+      <p className="text-gray-200 mb-4">
+        The {module} module has been disabled by the restaurant owner.
+      </p>
+      <p className="text-sm text-gray-300">
+        Contact your administrator to enable this feature.
+      </p>
+    </div>
+  </div>
+);
 
 const RestaurantDashboard = () => {
   const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -26,6 +43,7 @@ const RestaurantDashboard = () => {
   const [activeTab, setActiveTab] = useState(defaultPage);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
+  const { isModuleEnabled } = useModules();
 
   const backgroundImages = {
     dashboard: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1920&q=80',
@@ -48,12 +66,21 @@ const RestaurantDashboard = () => {
     navigate('/restaurant-login');
   };
 
-  // Redirect if user tries to access unauthorized page
+  // Redirect if user tries to access unauthorized page OR disabled module
   React.useEffect(() => {
-    if (!hasAccess(user.role, activeTab)) {
+    const moduleMap = {
+      'orders': 'orderTaking',
+      'kot': 'kot',
+      'inventory': 'inventory',
+      'add-inventory': 'inventory'
+    };
+    
+    const requiredModule = moduleMap[activeTab];
+    
+    if (!hasAccess(user.role, activeTab) || (requiredModule && !isModuleEnabled(requiredModule))) {
       setActiveTab(defaultPage);
     }
-  }, [activeTab, user.role, defaultPage]);
+  }, [activeTab, user.role, defaultPage, isModuleEnabled]);
 
   const renderContent = () => {
     const content = (() => {
@@ -71,15 +98,15 @@ const RestaurantDashboard = () => {
         case 'variations':
           return <Variation />;
         case 'orders':
-          return <Order />;
+          return isModuleEnabled('orderTaking') ? <Order /> : <ModuleDisabledMessage module="Order Taking" />;
         case 'tables':
           return <Tables />;
         case 'kot':
-          return <KOT />;
+          return isModuleEnabled('kot') ? <KOT /> : <ModuleDisabledMessage module="KOT" />;
         case 'inventory':
-          return <Inventory initialTab="list" onTabChange={(tab) => setActiveTab(tab === 'list' ? 'inventory' : 'add-inventory')} />;
+          return isModuleEnabled('inventory') ? <Inventory initialTab="list" onTabChange={(tab) => setActiveTab(tab === 'list' ? 'inventory' : 'add-inventory')} /> : <ModuleDisabledMessage module="Inventory" />;
         case 'add-inventory':
-          return <Inventory initialTab="add" onTabChange={(tab) => setActiveTab(tab === 'list' ? 'inventory' : 'add-inventory')} />;
+          return isModuleEnabled('inventory') ? <Inventory initialTab="add" onTabChange={(tab) => setActiveTab(tab === 'list' ? 'inventory' : 'add-inventory')} /> : <ModuleDisabledMessage module="Inventory" />;
         case 'staff':
           return <StaffList />;
         case 'attendance':
@@ -87,7 +114,7 @@ const RestaurantDashboard = () => {
         case 'subscription':
           return <SubscriptionPlans />;
         case 'settings':
-          return <div className="p-6"><h2 className="text-2xl font-bold">Settings</h2></div>;
+          return <Settings />;
         default:
           return <RestaurantDashboardHome />;
       }
