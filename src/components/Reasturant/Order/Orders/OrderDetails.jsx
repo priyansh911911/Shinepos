@@ -92,6 +92,35 @@ const OrderDetails = ({ order, onUpdateStatus, onProcessPayment, onBack }) => {
                 </div>
               </div>
             </div>
+
+            {/* Payment Breakdown */}
+            <div className="mt-6 pt-4 border-t border-gray-200">
+              <h4 className="text-md font-medium text-gray-800 mb-3">Payment Breakdown</h4>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Items Total:</span>
+                  <span className="font-medium">{formatCurrency(order.subtotal || order.totalAmount)}</span>
+                </div>
+                {order.discount && order.discount.amount > 0 && (
+                  <div className="flex justify-between text-red-600">
+                    <span>Discount ({order.discount.percentage}%):</span>
+                    <span className="font-medium">-{formatCurrency(order.discount.amount)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between">
+                  <span className="text-gray-600">GST (2.5%):</span>
+                  <span className="font-medium">{formatCurrency(order.gst || 0)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">SGST (2.5%):</span>
+                  <span className="font-medium">{formatCurrency(order.sgst || 0)}</span>
+                </div>
+                <div className="flex justify-between pt-2 border-t border-gray-300">
+                  <span className="font-semibold text-gray-800">Total Amount:</span>
+                  <span className="font-bold text-lg">{formatCurrency(order.totalAmount)}</span>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Order Status */}
@@ -269,7 +298,45 @@ const OrderDetails = ({ order, onUpdateStatus, onProcessPayment, onBack }) => {
               </tbody>
               <tfoot className="bg-gray-50">
                 <tr>
-                  <td colSpan="5" className="px-4 py-3 text-right font-medium text-gray-900">
+                  <td colSpan="5" className="px-4 py-2 text-right text-sm text-gray-600">
+                    Subtotal:
+                  </td>
+                  <td className="px-4 py-2 text-sm font-medium text-gray-900">
+                    {formatCurrency(order.subtotal || order.totalAmount)}
+                  </td>
+                </tr>
+                {order.discount && order.discount.amount > 0 && (
+                  <tr>
+                    <td colSpan="5" className="px-4 py-2 text-right text-sm text-gray-600">
+                      Discount ({order.discount.percentage}%):
+                    </td>
+                    <td className="px-4 py-2 text-sm font-medium text-red-600">
+                      -{formatCurrency(order.discount.amount)}
+                    </td>
+                  </tr>
+                )}
+                {(order.gst > 0 || order.sgst > 0) && (
+                  <>
+                    <tr>
+                      <td colSpan="5" className="px-4 py-2 text-right text-sm text-gray-600">
+                        GST (2.5%):
+                      </td>
+                      <td className="px-4 py-2 text-sm font-medium text-gray-900">
+                        {formatCurrency(order.gst || 0)}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colSpan="5" className="px-4 py-2 text-right text-sm text-gray-600">
+                        SGST (2.5%):
+                      </td>
+                      <td className="px-4 py-2 text-sm font-medium text-gray-900">
+                        {formatCurrency(order.sgst || 0)}
+                      </td>
+                    </tr>
+                  </>
+                )}
+                <tr className="border-t-2 border-gray-300">
+                  <td colSpan="5" className="px-4 py-3 text-right font-bold text-gray-900">
                     Total Amount:
                   </td>
                   <td className="px-4 py-3 text-lg font-bold text-gray-900">

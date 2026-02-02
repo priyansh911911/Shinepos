@@ -28,6 +28,13 @@ const ModuleSettings = () => {
       description: 'Generate KOT for kitchen operations and order tracking',
       icon: <FiFileText className="text-3xl" />,
       color: 'from-orange-500 to-orange-600'
+    },
+    {
+      key: 'gst',
+      name: 'GST & Tax Management',
+      description: 'Enable GST (2.5%) and SGST (2.5%) calculations on orders',
+      icon: <FiFileText className="text-3xl" />,
+      color: 'from-purple-500 to-purple-600'
     }
   ];
 

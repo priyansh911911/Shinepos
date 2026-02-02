@@ -141,6 +141,39 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
                         <p className="text-purple-700 font-medium"><FiRotateCcw className="inline mr-1" />Merged: {selectedOrder.mergedTableNumbers.join(', ')}</p>
                       )}
                     </div>
+
+                    {/* Payment Breakdown */}
+                    <div className="mt-4 pt-3 border-t border-gray-400">
+                      <h5 className="font-semibold text-gray-900 mb-2 text-xs">Payment Breakdown</h5>
+                      <div className="space-y-1 text-xs">
+                        <div className="flex justify-between text-gray-800">
+                          <span>Items Total:</span>
+                          <span className="font-medium">{formatCurrency(selectedOrder.subtotal || selectedOrder.totalAmount)}</span>
+                        </div>
+                        {selectedOrder.discount && selectedOrder.discount.amount > 0 && (
+                          <div className="flex justify-between text-red-600">
+                            <span>Discount ({selectedOrder.discount.percentage}%):</span>
+                            <span className="font-medium">-{formatCurrency(selectedOrder.discount.amount)}</span>
+                          </div>
+                        )}
+                        {(selectedOrder.gst > 0 || selectedOrder.sgst > 0) && (
+                          <>
+                            <div className="flex justify-between text-gray-800">
+                              <span>GST (2.5%):</span>
+                              <span className="font-medium">{formatCurrency(selectedOrder.gst || 0)}</span>
+                            </div>
+                            <div className="flex justify-between text-gray-800">
+                              <span>SGST (2.5%):</span>
+                              <span className="font-medium">{formatCurrency(selectedOrder.sgst || 0)}</span>
+                            </div>
+                          </>
+                        )}
+                        <div className="flex justify-between pt-1 border-t border-gray-400 font-bold text-gray-900">
+                          <span>Total:</span>
+                          <span className="text-sm">{formatCurrency(selectedOrder.totalAmount)}</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Order Items */}
