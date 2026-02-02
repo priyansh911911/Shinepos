@@ -36,12 +36,14 @@ const Dashboard = () => {
   const [topItems, setTopItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('today');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [clickPosition, setClickPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     fetchDashboardData();
-  }, [filter]);
+  }, [filter, startDate, endDate]);
 
   const fetchDashboardData = async () => {
     try {
@@ -52,7 +54,12 @@ const Dashboard = () => {
 
       console.log('Fetching dashboard data from:', import.meta.env.VITE_API_URL);
 
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/dashboard/stats?filter=${filter}`, config);
+      let url = `${import.meta.env.VITE_API_URL}/api/dashboard/stats?filter=${filter}`;
+      if (filter === 'custom' && startDate && endDate) {
+        url += `&startDate=${startDate}&endDate=${endDate}`;
+      }
+
+      const response = await axios.get(url, config);
       
       if (response.data.success) {
         setStats(response.data.stats);
@@ -191,7 +198,24 @@ const Dashboard = () => {
               <option value="today" className="bg-gray-800">Today</option>
               <option value="weekly" className="bg-gray-800">This Week</option>
               <option value="monthly" className="bg-gray-800">This Month</option>
+              <option value="custom" className="bg-gray-800">Custom Range</option>
             </select>
+            {filter === 'custom' && (
+              <>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </>
+            )}
             <div className="text-right">
               <p className="text-sm text-gray-300">Date</p>
               <p className="text-lg font-semibold text-white">{new Date().toLocaleDateString()}</p>

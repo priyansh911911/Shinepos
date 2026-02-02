@@ -5,6 +5,8 @@ import axios from 'axios';
 
 const AnalyticsDashboard = () => {
   const [timeRange, setTimeRange] = useState('today');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [analytics, setAnalytics] = useState({
     revenue: { current: 0, previous: 0, growth: 0 },
@@ -23,10 +25,11 @@ const AnalyticsDashboard = () => {
     const loadData = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/dashboard/stats?filter=${timeRange}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        let url = `${import.meta.env.VITE_API_URL}/api/dashboard/stats?filter=${timeRange}`;
+        if (timeRange === 'custom' && startDate && endDate) {
+          url += `&startDate=${startDate}&endDate=${endDate}`;
+        }
+        const response = await axios.get(url, { headers: { Authorization: `Bearer ${token}` } });
 
         if (response.data.success && mounted) {
           const { stats, analytics: analyticsData } = response.data;
@@ -59,22 +62,24 @@ const AnalyticsDashboard = () => {
     
     loadData();
     return () => { mounted = false; };
-  }, [timeRange]);
+  }, [timeRange, startDate, endDate]);
 
   const timeRanges = [
     { value: 'today', label: 'Today' },
     { value: 'week', label: 'This Week' },
     { value: 'month', label: 'This Month' },
-    { value: 'quarter', label: 'This Quarter' }
+    { value: 'quarter', label: 'This Quarter' },
+    { value: 'custom', label: 'Custom Range' }
   ];
 
   const refreshData = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/dashboard/stats?filter=${timeRange}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      let url = `${import.meta.env.VITE_API_URL}/api/dashboard/stats?filter=${timeRange}`;
+      if (timeRange === 'custom' && startDate && endDate) {
+        url += `&startDate=${startDate}&endDate=${endDate}`;
+      }
+      const response = await axios.get(url, { headers: { Authorization: `Bearer ${token}` } });
 
       if (response.data.success) {
         const { stats, analytics: analyticsData } = response.data;
@@ -237,6 +242,23 @@ const AnalyticsDashboard = () => {
               </option>
             ))}
           </select>
+          
+          {timeRange === 'custom' && (
+            <>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </>
+          )}
           
           <button 
             onClick={refreshData}
