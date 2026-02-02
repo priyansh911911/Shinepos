@@ -1,6 +1,6 @@
 import React from 'react';
-import { FiPlus, FiMinus, FiX } from 'react-icons/fi';
 import { useCreateOrder } from './hooks/useCreateOrder';
+import FloatingCart from './FloatingCart';
 
 const CreateOrder = ({ onCreateOrder, onCancel }) => {
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -107,8 +107,8 @@ const CreateOrder = ({ onCreateOrder, onCancel }) => {
         </div>
       </div>
 
-      {/* Right Side - Customer Info & Order Items */}
-      <div className="lg:col-span-2 space-y-4 lg:space-y-6">
+      {/* Right Side - Customer Info */}
+      <div className="lg:col-span-2">
         {/* Customer Information */}
         <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-4 lg:p-6 border border-white/20">
           <h3 className="text-base lg:text-lg font-bold text-white mb-3 lg:mb-4">👤 Customer Information</h3>
@@ -208,7 +208,7 @@ const CreateOrder = ({ onCreateOrder, onCancel }) => {
                   className="w-full bg-white/20 backdrop-blur-md border border-white/30 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400 text-white"
                 >
                   <option value="">No Table</option>
-                  {tables.filter(t => t.status === 'AVAILABLE').map(table => (
+                  {tables.filter(t => t.status === 'AVAILABLE' && (!guestCount || t.capacity >= parseInt(guestCount))).map(table => (
                     <option key={table._id} value={table._id}>
                       {table.tableNumber} (Capacity: {table.capacity})
                     </option>
@@ -218,89 +218,17 @@ const CreateOrder = ({ onCreateOrder, onCancel }) => {
             )}
           </div>
         </div>
-
-        {/* Order Items */}
-        <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-4 lg:p-6 border border-white/20">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 lg:mb-4 gap-2">
-            <h3 className="text-base lg:text-lg font-bold text-white">🍕 Order Items</h3>
-            <div className="text-lg lg:text-xl font-bold text-green-300">
-              Total: ₹{calculateTotal().toFixed(2)}
-            </div>
-          </div>
-          
-          {orderItems.length > 0 ? (
-            <div className="space-y-2 max-h-48 lg:max-h-64 overflow-y-auto">
-              {orderItems.map((item) => (
-                <div key={item.key} className="flex items-center justify-between bg-white/20 backdrop-blur-md p-2 lg:p-3 rounded-xl border border-white/20 gap-2 h-16">
-                  <div className="flex-1 min-w-0">
-                    <div className="font-medium text-white text-sm lg:text-base truncate">{item.name}</div>
-                    <div className="text-xs lg:text-sm text-gray-300 truncate">
-                      {item.variation.name} - ₹{item.price}
-                      {item.addons.length > 0 && (
-                        <span className="text-xs text-gray-400 ml-1">
-                          + {item.addons.map(a => a.name).join(', ')}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center space-x-1 lg:space-x-2 flex-shrink-0">
-                    <button
-                      type="button"
-                      onClick={() => updateItemQuantity(item.key, item.quantity - 1)}
-                      className="w-7 h-7 lg:w-8 lg:h-8 flex items-center justify-center bg-red-500 text-white rounded-full hover:bg-red-600 transition-all shadow-lg"
-                    >
-                      <FiMinus size={12} />
-                    </button>
-                    
-                    <span className="w-6 lg:w-8 text-center font-medium text-white text-sm">{item.quantity}</span>
-                    
-                    <button
-                      type="button"
-                      onClick={() => updateItemQuantity(item.key, item.quantity + 1)}
-                      className="w-7 h-7 lg:w-8 lg:h-8 flex items-center justify-center bg-green-500 text-white rounded-full hover:bg-green-600 transition-all shadow-lg"
-                    >
-                      <FiPlus size={12} />
-                    </button>
-                    
-                    <button
-                      type="button"
-                      onClick={() => removeItem(item.key)}
-                      className="w-7 h-7 lg:w-8 lg:h-8 flex items-center justify-center bg-gray-600 text-white rounded-full hover:bg-gray-700 transition-all shadow-lg"
-                    >
-                      <FiX size={12} />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8 lg:py-10 text-gray-300">
-              <div className="text-3xl lg:text-4xl mb-2">🍽️</div>
-              <p className="text-sm">No items added yet</p>
-            </div>
-          )}
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row justify-end gap-3 lg:gap-4">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="w-full sm:w-auto px-4 lg:px-6 py-2 lg:py-3 bg-white/20 backdrop-blur-md hover:bg-white/30 text-white rounded-xl transition-all border border-white/30 font-medium text-sm lg:text-base"
-          >
-            Cancel
-          </button>
-          
-          <button
-            type="submit"
-            disabled={loading || orderItems.length === 0}
-            className="w-full sm:w-auto px-4 lg:px-6 py-2 lg:py-3 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-lg text-sm lg:text-base"
-          >
-            {loading ? 'Creating...' : '✓ Create Order'}
-          </button>
-        </div>
       </div>
+
+      {/* Floating Cart */}
+      <FloatingCart
+        orderItems={orderItems}
+        updateItemQuantity={updateItemQuantity}
+        removeItem={removeItem}
+        calculateTotal={calculateTotal}
+        onCheckout={() => handleSubmit()}
+        loading={loading}
+      />
 
       {/* Item Selection Modal */}
       {selectedItem && (

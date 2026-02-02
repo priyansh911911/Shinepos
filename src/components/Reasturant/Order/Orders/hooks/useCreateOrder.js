@@ -128,7 +128,7 @@ export const useCreateOrder = (onCreateOrder) => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     
     if (!customerName.trim()) {
       setError('Customer name is required');
