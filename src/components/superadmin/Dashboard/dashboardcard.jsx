@@ -1,18 +1,33 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 
 const DashboardCard = ({ title, count, icon, bgColor }) => {
   return (
-    <div className={`${bgColor} rounded-xl shadow-lg p-6 text-white`}>
+    <motion.div
+      whileHover={{ scale: 1.02, y: -5 }}
+      transition={{ type: "spring", stiffness: 300 }}
+      className={`${bgColor} rounded-2xl shadow-lg hover:shadow-2xl p-6 text-white transition-all border border-white/20`}
+    >
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium opacity-90">{title}</p>
-          <p className="text-3xl font-bold mt-2">{count}</p>
+          <p className="text-sm font-medium opacity-90 mb-2">{title}</p>
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-4xl font-bold"
+          >
+            {count}
+          </motion.p>
         </div>
-        <div className="bg-white bg-opacity-30 rounded-full p-3">
+        <motion.div
+          whileHover={{ rotate: 360 }}
+          transition={{ duration: 0.5 }}
+          className="bg-white bg-opacity-30 backdrop-blur-sm rounded-2xl p-4 shadow-lg"
+        >
           {icon}
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

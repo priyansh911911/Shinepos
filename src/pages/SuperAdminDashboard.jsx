@@ -25,16 +25,16 @@ const SuperAdminDashboard = () => {
   }, [location.state]);
 
   return (
-    <div className="flex bg-gray-900 min-h-screen">
+    <div className="flex bg-gradient-to-br from-gray-900 to-gray-800 min-h-screen">
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} onLogout={handleLogout} />
-      <div className="flex-1 bg-gray-100">
+      <div className="flex-1 overflow-auto ml-72">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={activeTab}
-            initial={{ opacity: 1 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.1 }}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.2 }}
           >
             {activeTab === 'dashboard' && <Dashboard />}
             {activeTab === 'restaurants' && <Restaurants />}
