@@ -1,14 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { FiChevronDown, FiPhone } from 'react-icons/fi';
+import { FiChevronDown, FiPhone, FiFileText } from 'react-icons/fi';
+import Invoice from './Invoice';
 
 const OrderHistory = () => {
   const [historyOrders, setHistoryOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expandedOrder, setExpandedOrder] = useState(null);
+  const [selectedInvoice, setSelectedInvoice] = useState(null);
+  const [restaurantInfo, setRestaurantInfo] = useState(null);
 
   useEffect(() => {
     fetchOrderHistory();
+    fetchRestaurantInfo();
   }, []);
+
+  const fetchRestaurantInfo = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (user?.restaurantId) {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/restaurants/${user.restaurantId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setRestaurantInfo(data.restaurant);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching restaurant info:', error);
+    }
+  };
 
   const fetchOrderHistory = async () => {
     try {
@@ -46,6 +68,14 @@ const OrderHistory = () => {
 
   return (
     <div className="animate-fadeIn space-y-4">
+      {selectedInvoice && (
+        <Invoice 
+          order={selectedInvoice} 
+          onClose={() => setSelectedInvoice(null)}
+          restaurantInfo={restaurantInfo}
+        />
+      )}
+      
       {historyOrders.length > 0 ? (
         <div className="bg-white/20 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/30 overflow-x-auto">
           <table className="w-full min-w-[800px]">
@@ -57,18 +87,23 @@ const OrderHistory = () => {
                 <th className="px-3 lg:px-4 py-3 text-left font-bold text-gray-900 text-sm">Amount</th>
                 <th className="px-3 lg:px-4 py-3 text-left font-bold text-gray-900 text-sm">Status</th>
                 <th className="px-3 lg:px-4 py-3 text-left font-bold text-gray-900 text-sm">Date</th>
+                <th className="px-3 lg:px-4 py-3 text-left font-bold text-gray-900 text-sm">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white/20 backdrop-blur-md">
               {historyOrders.map((order, index) => (
                 <React.Fragment key={order._id}>
                   <tr 
-                    className="border-t border-white/20 hover:bg-white/10 transition-all cursor-pointer"
-                    onClick={() => setExpandedOrder(expandedOrder === order._id ? null : order._id)}
+                    className="border-t border-white/20 hover:bg-white/10 transition-all"
                   >
                     <td className="px-3 lg:px-4 py-3">
                       <div className="flex items-center gap-2">
-                        <FiChevronDown className={`transition-transform flex-shrink-0 ${expandedOrder === order._id ? 'rotate-180' : ''}`} />
+                        <button
+                          onClick={() => setExpandedOrder(expandedOrder === order._id ? null : order._id)}
+                          className="flex-shrink-0"
+                        >
+                          <FiChevronDown className={`transition-transform ${expandedOrder === order._id ? 'rotate-180' : ''}`} />
+                        </button>
                         <div className="min-w-0">
                           <p className="font-medium text-gray-900 text-sm truncate">{order.customerName}</p>
                           {order.customerPhone && (
@@ -113,6 +148,15 @@ const OrderHistory = () => {
                         <p>{new Date(order.createdAt).toLocaleDateString()}</p>
                         <p>{new Date(order.createdAt).toLocaleTimeString()}</p>
                       </div>
+                    </td>
+                    <td className="px-3 lg:px-4 py-3">
+                      <button
+                        onClick={() => setSelectedInvoice(order)}
+                        className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-lg text-xs font-medium transition-colors"
+                        title="View Invoice"
+                      >
+                        <FiFileText /> Invoice
+                      </button>
                     </td>
                   </tr>
                 </React.Fragment>
