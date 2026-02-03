@@ -10,15 +10,15 @@ export const ROLES = {
 // Define which pages each role can access
 export const rolePermissions = {
   [ROLES.RESTAURANT_ADMIN]: {
-    pages: ['dashboard', 'analytics', 'tables', 'staff', 'attendance', 'subscription', 'orders', 'kot', 'inventory', 'add-inventory', 'category', 'menu', 'addons', 'variations', 'settings'],
+    pages: ['dashboard', 'analytics', 'tables', 'staff', 'attendance', 'subscription', 'orders', 'kot', 'inventory', 'add-inventory', 'smart-inventory', 'vendors', 'category', 'menu', 'addons', 'variations', 'settings'],
     defaultPage: 'dashboard'
   },
   [ROLES.MANAGER]: {
-    pages: ['dashboard', 'analytics', 'tables', 'staff', 'attendance', 'orders', 'kot', 'inventory', 'add-inventory', 'category', 'menu', 'addons', 'variations'],
+    pages: ['dashboard', 'analytics', 'tables', 'staff', 'attendance', 'orders', 'kot', 'inventory', 'add-inventory', 'smart-inventory', 'vendors', 'category', 'menu', 'addons', 'variations'],
     defaultPage: 'dashboard'
   },
   [ROLES.CHEF]: {
-    pages: ['dashboard', 'kot', 'orders', 'inventory'],
+    pages: ['dashboard', 'kot', 'orders', 'inventory', 'smart-inventory'],
     defaultPage: 'kot'
   },
   [ROLES.WAITER]: {

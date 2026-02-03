@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FiHome, FiGrid, FiUsers, FiCreditCard, FiClipboard, FiPackage, FiShoppingBag, FiTag, FiStar, FiTarget, FiList, FiPlus, FiSettings, FiLogOut, FiChevronDown, FiMenu, FiX, FiBarChart, FiClock } from 'react-icons/fi';
+import { FiHome, FiGrid, FiUsers, FiCreditCard, FiClipboard, FiPackage, FiShoppingBag, FiTag, FiStar, FiTarget, FiList, FiPlus, FiSettings, FiLogOut, FiChevronDown, FiMenu, FiX, FiBarChart, FiClock, FiCpu, FiTruck } from 'react-icons/fi';
 import { hasAccess } from '../utils/rolePermissions';
 import { useModules } from '../context/ModuleContext';
 
@@ -26,7 +26,9 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout, sidebarOpen, set
 
   const inventorySubItems = [
     { id: 'inventory', label: 'Inventory List', icon: <FiList />, module: 'inventory' },
-    { id: 'add-inventory', label: 'Add Item', icon: <FiPlus />, module: 'inventory' }
+    { id: 'add-inventory', label: 'Add Item', icon: <FiPlus />, module: 'inventory' },
+    { id: 'smart-inventory', label: 'Smart Inventory', icon: <FiCpu />, module: 'inventory' },
+    { id: 'vendors', label: 'Vendors', icon: <FiTruck />, module: 'inventory' }
   ];
 
   const menuSubItems = [

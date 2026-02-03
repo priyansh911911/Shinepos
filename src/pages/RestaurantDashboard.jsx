@@ -15,6 +15,8 @@ import Order from '../components/Reasturant/Order/Orders/Order';
 import Tables from '../components/Reasturant/Order/Tables/Tables';
 import KOT from '../components/Reasturant/Order/KOT/KOT';
 import Inventory from '../components/Reasturant/Inventory/Inventory';
+import SmartInventory from '../components/Reasturant/Inventory/SmartInventory';
+import Vendor from '../components/Reasturant/Inventory/Vendor';
 import SubscriptionPlans from '../components/Reasturant/Subscription/SubscriptionPlans';
 import Settings from '../components/Reasturant/Settings/Settings';
 import SubscriptionBlocker from './SubscriptionBlocker';
@@ -104,9 +106,13 @@ const RestaurantDashboard = () => {
         case 'kot':
           return isModuleEnabled('kot') ? <KOT /> : <ModuleDisabledMessage module="KOT" />;
         case 'inventory':
-          return isModuleEnabled('inventory') ? <Inventory initialTab="list" onTabChange={(tab) => setActiveTab(tab === 'list' ? 'inventory' : 'add-inventory')} /> : <ModuleDisabledMessage module="Inventory" />;
+          return isModuleEnabled('inventory') ? <Inventory initialTab="list" /> : <ModuleDisabledMessage module="Inventory" />;
         case 'add-inventory':
-          return isModuleEnabled('inventory') ? <Inventory initialTab="add" onTabChange={(tab) => setActiveTab(tab === 'list' ? 'inventory' : 'add-inventory')} /> : <ModuleDisabledMessage module="Inventory" />;
+          return isModuleEnabled('inventory') ? <Inventory initialTab="add" /> : <ModuleDisabledMessage module="Inventory" />;
+        case 'smart-inventory':
+          return isModuleEnabled('inventory') ? <SmartInventory /> : <ModuleDisabledMessage module="Inventory" />;
+        case 'vendors':
+          return isModuleEnabled('inventory') ? <Vendor /> : <ModuleDisabledMessage module="Inventory" />;
         case 'staff':
           return <StaffList />;
         case 'attendance':
@@ -147,6 +153,8 @@ const RestaurantDashboard = () => {
       kot: 'Kitchen',
       inventory: 'Inventory',
       'add-inventory': 'Add Inventory',
+      'smart-inventory': 'Smart Inventory',
+      'vendors': 'Vendors',
       staff: 'Staff',
       attendance: 'Attendance',
       subscription: 'Subscription',
