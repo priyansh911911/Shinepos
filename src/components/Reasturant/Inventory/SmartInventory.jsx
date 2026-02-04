@@ -1,20 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { FiTrendingDown, FiDollarSign, FiAlertTriangle, FiPlus } from 'react-icons/fi';
+import React, { useState } from 'react';
+import { FiTrendingDown, FiAlertTriangle, FiPlus } from 'react-icons/fi';
 import WastageTracking from './WastageTracking';
 import StockPrediction from './StockPrediction';
-import VendorComparison from './VendorComparison';
 
 const SmartInventory = () => {
   const [activeTab, setActiveTab] = useState('wastage');
   const [smartAlerts, setSmartAlerts] = useState([]);
   const [showAddWastage, setShowAddWastage] = useState(false);
-  const [showAddVendor, setShowAddVendor] = useState(false);
-  const [showAddPrice, setShowAddPrice] = useState(false);
 
   const tabs = [
     { id: 'wastage', label: 'Wastage Tracking', icon: FiTrendingDown, component: WastageTracking },
-    { id: 'prediction', label: 'Stock Prediction', icon: FiAlertTriangle, component: StockPrediction },
-    { id: 'vendor', label: 'Vendor Comparison', icon: FiDollarSign, component: VendorComparison }
+    { id: 'prediction', label: 'Stock Prediction', icon: FiAlertTriangle, component: StockPrediction }
   ];
 
   const ActiveComponent = tabs.find(tab => tab.id === activeTab)?.component;
@@ -66,24 +62,6 @@ const SmartInventory = () => {
                   <span>Record Wastage</span>
                 </button>
               )}
-              {activeTab === 'vendor' && (
-                <>
-                  <button
-                    onClick={() => setShowAddVendor(true)}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg flex items-center space-x-2"
-                  >
-                    <FiPlus />
-                    <span>Add Vendor</span>
-                  </button>
-                  <button
-                    onClick={() => setShowAddPrice(true)}
-                    className="px-4 py-2 bg-green-600 text-white rounded-lg flex items-center space-x-2"
-                  >
-                    <FiDollarSign />
-                    <span>Add Price</span>
-                  </button>
-                </>
-              )}
             </div>
           </div>
         </div>
@@ -93,10 +71,6 @@ const SmartInventory = () => {
             onAlert={setSmartAlerts} 
             showAddWastage={showAddWastage}
             setShowAddWastage={setShowAddWastage}
-            showAddVendor={showAddVendor}
-            setShowAddVendor={setShowAddVendor}
-            showAddPrice={showAddPrice}
-            setShowAddPrice={setShowAddPrice}
           />}
         </div>
       </div>

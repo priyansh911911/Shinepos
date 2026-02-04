@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { FiUsers, FiShoppingCart } from 'react-icons/fi';
+import { FiUsers, FiShoppingCart, FiDollarSign } from 'react-icons/fi';
 import VendorCreate from './VendorCreate';
 import VendorOrder from './VendorOrder';
+import VendorComparison from './VendorComparison';
 
 const Vendor = () => {
   const [activeTab, setActiveTab] = useState('vendors');
 
   const tabs = [
     { id: 'vendors', label: 'Manage Vendors', icon: FiUsers, component: VendorCreate },
-    { id: 'orders', label: 'Purchase Orders', icon: FiShoppingCart, component: VendorOrder }
+    { id: 'orders', label: 'Purchase Orders', icon: FiShoppingCart, component: VendorOrder },
+    { id: 'comparison', label: 'Price Comparison', icon: FiDollarSign, component: VendorComparison }
   ];
 
   const ActiveComponent = tabs.find(tab => tab.id === activeTab)?.component;

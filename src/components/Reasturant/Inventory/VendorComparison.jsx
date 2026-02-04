@@ -176,33 +176,33 @@ const VendorComparison = ({ onAlert, showAddVendor, setShowAddVendor, showAddPri
 
       {/* Savings Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+        <div className="bg-red-50/20 p-4 rounded-lg border border-red-200/30">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-green-600 text-sm font-medium">Potential Savings</p>
-              <p className="text-2xl font-bold text-green-700">₹{totalSavings.toFixed(2)}</p>
+              <p className="text-red-300 text-sm font-medium">Potential Savings</p>
+              <p className="text-2xl font-bold text-red-200">₹{totalSavings.toFixed(2)}</p>
             </div>
-            <FiTrendingDown className="text-green-500 text-2xl" />
+            <FiTrendingDown className="text-red-400 text-2xl" />
           </div>
         </div>
 
-        <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+        <div className="bg-blue-50/20 p-4 rounded-lg border border-blue-200/30">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-blue-600 text-sm font-medium">Active Vendors</p>
-              <p className="text-2xl font-bold text-blue-700">{vendors.length}</p>
+              <p className="text-blue-300 text-sm font-medium">Active Vendors</p>
+              <p className="text-2xl font-bold text-blue-200">{vendors.length}</p>
             </div>
-            <FiStar className="text-blue-500 text-2xl" />
+            <FiStar className="text-blue-400 text-2xl" />
           </div>
         </div>
 
-        <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+        <div className="bg-purple-50/20 p-4 rounded-lg border border-purple-200/30">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-purple-600 text-sm font-medium">Price Comparisons</p>
-              <p className="text-2xl font-bold text-purple-700">{recommendations.length}</p>
+              <p className="text-purple-300 text-sm font-medium">Price Comparisons</p>
+              <p className="text-2xl font-bold text-purple-200">{recommendations.length}</p>
             </div>
-            <FiDollarSign className="text-purple-500 text-2xl" />
+            <FiDollarSign className="text-purple-400 text-2xl" />
           </div>
         </div>
       </div>
@@ -361,37 +361,37 @@ const VendorComparison = ({ onAlert, showAddVendor, setShowAddVendor, showAddPri
       )}
 
       {/* Purchase Recommendations */}
-      <div className="bg-white rounded-lg border">
-        <div className="p-4 border-b">
-          <h3 className="font-medium">Purchase Recommendations (Best Deals)</h3>
+      <div className="bg-white/20 backdrop-blur-2xl rounded-2xl animate-fadeIn">
+        <div className="p-4 border-b border-white/30">
+          <h3 className="font-medium text-white">Purchase Recommendations (Best Deals)</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-white/10">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Item</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Current Price</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Best Price</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Vendor</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Savings</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Min Order</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Item</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Current Price</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Best Price</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Vendor</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Savings</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Min Order</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-white/20">
               {recommendations.slice(0, 10).map(rec => (
-                <tr key={rec.item._id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 text-sm font-medium">{rec.item.name}</td>
-                  <td className="px-4 py-3 text-sm">₹{rec.currentCost.toFixed(2)}</td>
+                <tr key={rec.item._id} className="hover:bg-white/10">
+                  <td className="px-4 py-3 text-sm font-medium text-white">{rec.item.name}</td>
+                  <td className="px-4 py-3 text-sm text-gray-300">₹{rec.currentCost.toFixed(2)}</td>
                   <td className="px-4 py-3 text-sm text-green-600 font-medium">
                     ₹{rec.bestPrice.price.toFixed(2)}
                   </td>
-                  <td className="px-4 py-3 text-sm">{rec.bestPrice.vendor?.name}</td>
+                  <td className="px-4 py-3 text-sm text-gray-300">{rec.bestPrice.vendor?.name}</td>
                   <td className="px-4 py-3 text-sm">
                     <span className="text-green-600 font-medium">
                       ₹{rec.savings.toFixed(2)} ({rec.savingsPercent.toFixed(1)}%)
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-sm">{rec.bestPrice.minOrderQty}</td>
+                  <td className="px-4 py-3 text-sm text-gray-300">{rec.bestPrice.minOrderQty}</td>
                 </tr>
               ))}
             </tbody>
@@ -400,19 +400,19 @@ const VendorComparison = ({ onAlert, showAddVendor, setShowAddVendor, showAddPri
       </div>
 
       {/* Vendor List */}
-      <div className="bg-white rounded-lg border">
-        <div className="p-4 border-b">
-          <h3 className="font-medium">Registered Vendors</h3>
+      <div className="bg-white/20 backdrop-blur-2xl rounded-2xl animate-fadeIn">
+        <div className="p-4 border-b border-white/30">
+          <h3 className="font-medium text-white">Registered Vendors</h3>
         </div>
         <div className="divide-y">
           {vendors.map(vendor => (
             <div key={vendor._id} className="p-4">
               <div className="flex justify-between items-start">
                 <div>
-                  <h4 className="font-medium">{vendor.name}</h4>
-                  <p className="text-sm text-gray-600">{vendor.contact} • {vendor.email}</p>
-                  <p className="text-sm text-gray-500">{vendor.address}</p>
-                  <div className="flex items-center space-x-4 mt-2 text-sm">
+                  <h4 className="font-medium text-white">{vendor.name}</h4>
+                  <p className="text-sm text-gray-300">{vendor.contact} • {vendor.email}</p>
+                  <p className="text-sm text-gray-400">{vendor.address}</p>
+                  <div className="flex items-center space-x-4 mt-2 text-sm text-gray-300">
                     <span className="flex items-center">
                       <FiStar className="text-yellow-500 mr-1" />
                       {vendor.rating}/5
@@ -422,10 +422,10 @@ const VendorComparison = ({ onAlert, showAddVendor, setShowAddVendor, showAddPri
                   </div>
                 </div>
                 <div className="flex space-x-2">
-                  <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg">
+                  <button className="p-2 text-blue-400 hover:bg-white/10 rounded-lg">
                     <FiEdit />
                   </button>
-                  <button className="p-2 text-red-600 hover:bg-red-50 rounded-lg">
+                  <button className="p-2 text-red-400 hover:bg-white/10 rounded-lg">
                     <FiTrash2 />
                   </button>
                 </div>
@@ -435,9 +435,9 @@ const VendorComparison = ({ onAlert, showAddVendor, setShowAddVendor, showAddPri
         </div>
       </div>
 
-      <div className="bg-blue-50 p-4 rounded-lg">
-        <h3 className="font-medium text-blue-800 mb-2">Vendor Management Tips:</h3>
-        <ul className="text-sm text-blue-700 space-y-1">
+      <div className="bg-blue-50/20 p-4 rounded-lg border border-blue-200/30">
+        <h3 className="font-medium text-blue-300 mb-2">Vendor Management Tips:</h3>
+        <ul className="text-sm text-blue-200 space-y-1">
           <li>• Maintain relationships with multiple vendors for each item</li>
           <li>• Regularly update and compare prices</li>
           <li>• Consider delivery time and payment terms, not just price</li>

@@ -85,37 +85,37 @@ const VendorOrder = () => {
         </button>
       </div>
 
-      <div className="bg-white rounded-lg border">
-        <div className="p-4 border-b">
-          <h3 className="font-medium">Order History</h3>
+      <div className="bg-white/20 backdrop-blur-2xl rounded-2xl animate-fadeIn">
+        <div className="p-4 border-b border-white/30">
+          <h3 className="font-medium text-white">Order History</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-white/10">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order ID</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Vendor</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Items</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Order ID</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Vendor</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Items</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Total</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Status</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Date</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-white/20">
               {orders.map(order => (
-                <tr key={order._id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 text-sm font-medium">#{order.orderNumber || order._id.slice(-6)}</td>
-                  <td className="px-4 py-3 text-sm">{order.vendorName}</td>
-                  <td className="px-4 py-3 text-sm">{order.items?.length || 0} items</td>
-                  <td className="px-4 py-3 text-sm font-medium">₹{order.totalAmount?.toFixed(2) || '0.00'}</td>
+                <tr key={order._id} className="hover:bg-white/10">
+                  <td className="px-4 py-3 text-sm font-medium text-white">#{order.orderNumber || order._id.slice(-6)}</td>
+                  <td className="px-4 py-3 text-sm text-gray-300">{order.vendorName}</td>
+                  <td className="px-4 py-3 text-sm text-gray-300">{order.items?.length || 0} items</td>
+                  <td className="px-4 py-3 text-sm font-medium text-white">₹{order.totalAmount?.toFixed(2) || '0.00'}</td>
                   <td className="px-4 py-3 text-sm">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1 w-fit ${getStatusColor(order.status)}`}>
                       {getStatusIcon(order.status)}
                       <span className="capitalize">{order.status}</span>
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-sm">{new Date(order.createdAt).toLocaleDateString()}</td>
+                  <td className="px-4 py-3 text-sm text-gray-300">{new Date(order.createdAt).toLocaleDateString()}</td>
                   <td className="px-4 py-3 text-sm">
                     <div className="flex space-x-2">
                       {order.status === 'pending' && (
@@ -150,7 +150,7 @@ const VendorOrder = () => {
           </table>
         </div>
         {orders.length === 0 && (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-gray-300">
             No purchase orders found. Create your first order!
           </div>
         )}

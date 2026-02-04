@@ -31,11 +31,9 @@ const StockPrediction = ({ onAlert }) => {
       setInventory(inventoryRes.data.inventory || []);
       setSalesData(salesRes.data.sales || []);
       
-      // Generate predictions
       const predictedData = generatePredictions(inventoryRes.data.inventory || [], salesRes.data.sales || []);
       setPredictions(predictedData);
       
-      // Generate alerts for critical items
       const criticalItems = predictedData.filter(item => item.daysUntilStockout <= 3);
       if (criticalItems.length > 0) {
         onAlert([`${criticalItems.length} items predicted to run out within 3 days`]);
@@ -50,12 +48,10 @@ const StockPrediction = ({ onAlert }) => {
 
   const generatePredictions = (inventory, sales) => {
     return inventory.map(item => {
-      // Calculate average daily consumption based on sales data
       const itemSales = sales.filter(sale => 
         sale.items && sale.items.some(saleItem => saleItem.inventoryItemId === item._id)
       );
       
-      // Get consumption data for last 30 days
       const last30Days = itemSales.slice(-30);
       const totalConsumption = last30Days.reduce((sum, sale) => {
         const saleItem = sale.items.find(si => si.inventoryItemId === item._id);
@@ -64,12 +60,10 @@ const StockPrediction = ({ onAlert }) => {
       
       const avgDailyConsumption = totalConsumption / 30;
       
-      // Predict stockout date
       const daysUntilStockout = avgDailyConsumption > 0 
         ? Math.floor(item.currentStock / avgDailyConsumption)
-        : 999; // If no consumption, assume it won't run out soon
+        : 999;
       
-      // Calculate trend (increasing/decreasing consumption)
       const recent7Days = last30Days.slice(-7);
       const previous7Days = last30Days.slice(-14, -7);
       
@@ -86,7 +80,6 @@ const StockPrediction = ({ onAlert }) => {
       const trend = recentConsumption > previousConsumption ? 'increasing' : 
                    recentConsumption < previousConsumption ? 'decreasing' : 'stable';
       
-      // Suggest reorder quantity (2 weeks worth + safety stock)
       const suggestedReorderQty = Math.ceil((avgDailyConsumption * 14) + (avgDailyConsumption * 3));
       
       return {
@@ -105,10 +98,10 @@ const StockPrediction = ({ onAlert }) => {
 
   const getPriorityColor = (priority) => {
     switch (priority) {
-      case 'critical': return 'text-red-600 bg-red-50 border-red-200';
-      case 'high': return 'text-orange-600 bg-orange-50 border-orange-200';
-      case 'medium': return 'text-yellow-600 bg-yellow-50 border-yellow-200';
-      default: return 'text-green-600 bg-green-50 border-green-200';
+      case 'critical': return 'text-red-400 bg-red-500/20 border-red-400/30';
+      case 'high': return 'text-orange-400 bg-orange-500/20 border-orange-400/30';
+      case 'medium': return 'text-yellow-400 bg-yellow-500/20 border-yellow-400/30';
+      default: return 'text-green-400 bg-green-500/20 border-green-400/30';
     }
   };
 
@@ -118,10 +111,6 @@ const StockPrediction = ({ onAlert }) => {
       case 'decreasing': return '📉';
       default: return '➡️';
     }
-  };
-
-  const generatePurchaseOrder = async (items) => {
-    // Removed - no longer needed
   };
 
   if (loading) {
@@ -138,95 +127,94 @@ const StockPrediction = ({ onAlert }) => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <div>
-        </div>
+        <div></div>
       </div>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-red-50 p-4 rounded-lg border border-red-200">
+        <div className="bg-red-50/20 p-4 rounded-lg border border-red-200/30">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-red-600 text-sm font-medium">Critical Items</p>
-              <p className="text-2xl font-bold text-red-700">{criticalItems.length}</p>
-              <p className="text-xs text-red-500">≤ 3 days left</p>
+              <p className="text-red-300 text-sm font-medium">Critical Items</p>
+              <p className="text-2xl font-bold text-red-200">{criticalItems.length}</p>
+              <p className="text-xs text-red-400">≤ 3 days left</p>
             </div>
-            <FiAlertTriangle className="text-red-500 text-2xl" />
+            <FiAlertTriangle className="text-red-400 text-2xl" />
           </div>
         </div>
 
-        <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
+        <div className="bg-orange-50/20 p-4 rounded-lg border border-orange-200/30">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-orange-600 text-sm font-medium">High Priority</p>
-              <p className="text-2xl font-bold text-orange-700">{highPriorityItems.length}</p>
-              <p className="text-xs text-orange-500">≤ 7 days left</p>
+              <p className="text-orange-300 text-sm font-medium">High Priority</p>
+              <p className="text-2xl font-bold text-orange-200">{highPriorityItems.length}</p>
+              <p className="text-xs text-orange-400">≤ 7 days left</p>
             </div>
-            <FiTrendingUp className="text-orange-500 text-2xl" />
+            <FiTrendingUp className="text-orange-400 text-2xl" />
           </div>
         </div>
 
-        <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+        <div className="bg-blue-50/20 p-4 rounded-lg border border-blue-200/30">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-blue-600 text-sm font-medium">Avg Daily Usage</p>
-              <p className="text-2xl font-bold text-blue-700">
+              <p className="text-blue-300 text-sm font-medium">Avg Daily Usage</p>
+              <p className="text-2xl font-bold text-blue-200">
                 {(predictions.reduce((sum, item) => sum + parseFloat(item.avgDailyConsumption), 0) / predictions.length).toFixed(1)}
               </p>
-              <p className="text-xs text-blue-500">units/day</p>
+              <p className="text-xs text-blue-400">units/day</p>
             </div>
-            <FiCalendar className="text-blue-500 text-2xl" />
+            <FiCalendar className="text-blue-400 text-2xl" />
           </div>
         </div>
 
-        <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+        <div className="bg-green-50/20 p-4 rounded-lg border border-green-200/30">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-green-600 text-sm font-medium">Well Stocked</p>
-              <p className="text-2xl font-bold text-green-700">
+              <p className="text-green-300 text-sm font-medium">Well Stocked</p>
+              <p className="text-2xl font-bold text-green-200">
                 {predictions.filter(item => item.priority === 'low').length}
               </p>
-              <p className="text-xs text-green-500">> 14 days left</p>
+              <p className="text-xs text-green-400">> 14 days left</p>
             </div>
-            <FiCalendar className="text-green-500 text-2xl" />
+            <FiCalendar className="text-green-400 text-2xl" />
           </div>
         </div>
       </div>
 
       {/* Predictions Table */}
-      <div className="bg-white rounded-lg border">
-        <div className="p-4 border-b">
-          <h3 className="font-medium">Stock Predictions</h3>
+      <div className="bg-white/20 backdrop-blur-2xl rounded-2xl animate-fadeIn">
+        <div className="p-4 border-b border-white/30">
+          <h3 className="font-medium text-white">Stock Predictions</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-white/10">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Item</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Current Stock</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Daily Usage</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Days Left</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Trend</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Suggested Order</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Priority</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Item</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Current Stock</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Daily Usage</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Days Left</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Trend</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Suggested Order</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Priority</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-white/20">
               {predictions.map(item => (
-                <tr key={item._id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 text-sm font-medium">{item.name}</td>
-                  <td className="px-4 py-3 text-sm">{item.currentStock} {item.unit}</td>
-                  <td className="px-4 py-3 text-sm">{item.avgDailyConsumption} {item.unit}</td>
-                  <td className="px-4 py-3 text-sm">
+                <tr key={item._id} className="hover:bg-white/10">
+                  <td className="px-4 py-3 text-sm font-medium text-white">{item.name}</td>
+                  <td className="px-4 py-3 text-sm text-gray-300">{item.currentStock} {item.unit}</td>
+                  <td className="px-4 py-3 text-sm text-gray-300">{item.avgDailyConsumption} {item.unit}</td>
+                  <td className="px-4 py-3 text-sm text-gray-300">
                     {item.daysUntilStockout === 999 ? '∞' : `${item.daysUntilStockout} days`}
                   </td>
-                  <td className="px-4 py-3 text-sm">
+                  <td className="px-4 py-3 text-sm text-gray-300">
                     <span className="flex items-center space-x-1">
                       <span>{getTrendIcon(item.trend)}</span>
                       <span className="capitalize">{item.trend}</span>
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-sm">{item.suggestedReorderQty} {item.unit}</td>
+                  <td className="px-4 py-3 text-sm text-gray-300">{item.suggestedReorderQty} {item.unit}</td>
                   <td className="px-4 py-3 text-sm">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getPriorityColor(item.priority)}`}>
                       {item.priority.toUpperCase()}
@@ -239,9 +227,9 @@ const StockPrediction = ({ onAlert }) => {
         </div>
       </div>
 
-      <div className="bg-blue-50 p-4 rounded-lg">
-        <h3 className="font-medium text-blue-800 mb-2">Prediction Algorithm:</h3>
-        <ul className="text-sm text-blue-700 space-y-1">
+      <div className="bg-blue-50/20 p-4 rounded-lg border border-blue-200/30">
+        <h3 className="font-medium text-blue-300 mb-2">Prediction Algorithm:</h3>
+        <ul className="text-sm text-blue-200 space-y-1">
           <li>• Analyzes last 30 days of sales data to calculate average daily consumption</li>
           <li>• Considers consumption trends (increasing/decreasing/stable)</li>
           <li>• Factors in seasonal variations and special events</li>

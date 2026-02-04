@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FiPlus, FiPackage, FiAlertTriangle, FiCpu, FiUsers } from 'react-icons/fi';
+import { FiPlus, FiPackage, FiAlertTriangle, FiCpu } from 'react-icons/fi';
 import InventoryList from './InventoryList';
 import AddInventory from './AddInventory';
 import EditInventory from './EditInventory';
 import SmartInventory from './SmartInventory';
-import Vendor from './Vendor';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -131,50 +130,39 @@ const Inventory = ({ initialTab, onTabChange }) => {
         </div>
         
         <div className="flex space-x-2">
-          <button
-            onClick={() => {
-              setActiveTab('list');
-              onTabChange && onTabChange('list');
-            }}
-            className={`px-4 py-2 rounded-lg flex items-center space-x-2 ${
-              activeTab === 'list' 
-                ? 'bg-blue-600 text-white' 
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }`}
-          >
-            <FiPackage />
-            <span>Inventory</span>
-          </button>
-          
-          <button
-            onClick={() => {
-              setActiveTab('smart');
-              onTabChange && onTabChange('smart');
-            }}
-            className={`px-4 py-2 rounded-lg flex items-center space-x-2 ${
-              activeTab === 'smart' 
-                ? 'bg-purple-600 text-white' 
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }`}
-          >
-            <FiCpu />
-            <span>Smart Inventory</span>
-          </button>
-          
-          <button
-            onClick={() => {
-              setActiveTab('vendor');
-              onTabChange && onTabChange('vendor');
-            }}
-            className={`px-4 py-2 rounded-lg flex items-center space-x-2 ${
-              activeTab === 'vendor' 
-                ? 'bg-orange-600 text-white' 
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }`}
-          >
-            <FiUsers />
-            <span>Vendors</span>
-          </button>
+          {activeTab !== 'add' && (
+            <>
+              <button
+                onClick={() => {
+                  setActiveTab('list');
+                  onTabChange && onTabChange('list');
+                }}
+                className={`px-4 py-2 rounded-lg flex items-center space-x-2 ${
+                  activeTab === 'list' 
+                    ? 'bg-blue-600 text-white' 
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                <FiPackage />
+                <span>Inventory</span>
+              </button>
+              
+              <button
+                onClick={() => {
+                  setActiveTab('smart');
+                  onTabChange && onTabChange('smart');
+                }}
+                className={`px-4 py-2 rounded-lg flex items-center space-x-2 ${
+                  activeTab === 'smart' 
+                    ? 'bg-purple-600 text-white' 
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                <FiCpu />
+                <span>Smart Inventory</span>
+              </button>
+            </>
+          )}
           
           <button
             onClick={() => {
@@ -215,10 +203,6 @@ const Inventory = ({ initialTab, onTabChange }) => {
 
       {activeTab === 'smart' && (
         <SmartInventory />
-      )}
-
-      {activeTab === 'vendor' && (
-        <Vendor />
       )}
 
       {activeTab === 'add' && (
