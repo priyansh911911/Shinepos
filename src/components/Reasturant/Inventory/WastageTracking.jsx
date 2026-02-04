@@ -74,7 +74,6 @@ const WastageTracking = ({ onAlert, showAddWastage, setShowAddWastage }) => {
 
     setAnalytics({ totalWastage, totalCost, topWastedItems });
 
-    // Generate alerts for high wastage
     if (totalCost > 1000) {
       onAlert([`High wastage cost detected: ₹${totalCost.toFixed(2)} this month`]);
     }
@@ -114,8 +113,7 @@ const WastageTracking = ({ onAlert, showAddWastage, setShowAddWastage }) => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <div>
-        </div>
+        <div></div>
         <button
           onClick={() => setShowAddWastage(true)}
           className="px-4 py-2 bg-red-600 text-white rounded-lg flex items-center space-x-2"
@@ -128,50 +126,50 @@ const WastageTracking = ({ onAlert, showAddWastage, setShowAddWastage }) => {
 
       {/* Analytics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-red-50 p-4 rounded-lg border border-red-200">
+        <div className="bg-red-50/20 p-4 rounded-lg border border-red-200/30">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-red-600 text-sm font-medium">Total Wastage (This Month)</p>
-              <p className="text-2xl font-bold text-red-700">{analytics.totalWastage.toFixed(1)} units</p>
+              <p className="text-red-300 text-sm font-medium">Total Wastage (This Month)</p>
+              <p className="text-2xl font-bold text-red-200">{analytics.totalWastage.toFixed(1)} units</p>
             </div>
-            <FiTrendingDown className="text-red-500 text-2xl" />
+            <FiTrendingDown className="text-red-400 text-2xl" />
           </div>
         </div>
 
-        <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
+        <div className="bg-orange-50/20 p-4 rounded-lg border border-orange-200/30">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-orange-600 text-sm font-medium">Wastage Cost</p>
-              <p className="text-2xl font-bold text-orange-700">₹{analytics.totalCost.toFixed(2)}</p>
+              <p className="text-orange-300 text-sm font-medium">Wastage Cost</p>
+              <p className="text-2xl font-bold text-orange-200">₹{analytics.totalCost.toFixed(2)}</p>
             </div>
-            <FiDollarSign className="text-orange-500 text-2xl" />
+            <FiDollarSign className="text-orange-400 text-2xl" />
           </div>
         </div>
 
-        <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+        <div className="bg-yellow-50/20 p-4 rounded-lg border border-yellow-200/30">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-yellow-600 text-sm font-medium">Weekly Average</p>
-              <p className="text-2xl font-bold text-yellow-700">
+              <p className="text-yellow-300 text-sm font-medium">Weekly Average</p>
+              <p className="text-2xl font-bold text-yellow-200">
                 {(getWastageByPeriod(7).length / 7).toFixed(1)} items/day
               </p>
             </div>
-            <FiCalendar className="text-yellow-500 text-2xl" />
+            <FiCalendar className="text-yellow-400 text-2xl" />
           </div>
         </div>
       </div>
 
       {showAddWastage && (
-        <div className="bg-gray-50 p-6 rounded-lg">
-          <h3 className="text-lg font-medium mb-4">Record Wastage</h3>
+        <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6">
+          <h3 className="text-lg font-medium mb-4 text-white">Record Wastage</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium mb-2">Inventory Item</label>
+              <label className="block text-sm font-medium mb-2 text-gray-300">Inventory Item</label>
               <select
                 value={newWastage.inventoryItemId}
                 onChange={(e) => setNewWastage(prev => ({ ...prev, inventoryItemId: e.target.value }))}
-                className="w-full p-2 border rounded-lg"
+                className="w-full p-2 border border-white/30 rounded-lg bg-white/10 text-white"
               >
                 <option value="">Select Item</option>
                 {inventory.map(item => (
@@ -181,23 +179,23 @@ const WastageTracking = ({ onAlert, showAddWastage, setShowAddWastage }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Quantity Wasted</label>
+              <label className="block text-sm font-medium mb-2 text-gray-300">Quantity Wasted</label>
               <input
                 type="number"
                 value={newWastage.quantity}
                 onChange={(e) => setNewWastage(prev => ({ ...prev, quantity: parseFloat(e.target.value) }))}
-                className="w-full p-2 border rounded-lg"
+                className="w-full p-2 border border-white/30 rounded-lg bg-white/10 text-white"
                 min="0"
                 step="0.1"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Reason</label>
+              <label className="block text-sm font-medium mb-2 text-gray-300">Reason</label>
               <select
                 value={newWastage.reason}
                 onChange={(e) => setNewWastage(prev => ({ ...prev, reason: e.target.value }))}
-                className="w-full p-2 border rounded-lg"
+                className="w-full p-2 border border-white/30 rounded-lg bg-white/10 text-white"
               >
                 <option value="">Select Reason</option>
                 {wastageReasons.map(reason => (
@@ -207,12 +205,12 @@ const WastageTracking = ({ onAlert, showAddWastage, setShowAddWastage }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Date</label>
+              <label className="block text-sm font-medium mb-2 text-gray-300">Date</label>
               <input
                 type="date"
                 value={newWastage.date}
                 onChange={(e) => setNewWastage(prev => ({ ...prev, date: e.target.value }))}
-                className="w-full p-2 border rounded-lg"
+                className="w-full p-2 border border-white/30 rounded-lg bg-white/10 text-white"
               />
             </div>
           </div>
@@ -226,7 +224,7 @@ const WastageTracking = ({ onAlert, showAddWastage, setShowAddWastage }) => {
             </button>
             <button
               onClick={() => setShowAddWastage(false)}
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg"
+              className="px-4 py-2 bg-white/20 text-white rounded-lg"
             >
               Cancel
             </button>
@@ -235,50 +233,50 @@ const WastageTracking = ({ onAlert, showAddWastage, setShowAddWastage }) => {
       )}
 
       {/* Top Wasted Items */}
-      <div className="bg-white rounded-lg border">
-        <div className="p-4 border-b">
-          <h3 className="font-medium">Top Wasted Items (By Cost)</h3>
+      <div className="bg-white/20 backdrop-blur-2xl rounded-2xl animate-fadeIn">
+        <div className="p-4 border-b border-white/30">
+          <h3 className="font-medium text-white">Top Wasted Items (By Cost)</h3>
         </div>
-        <div className="divide-y">
+        <div className="divide-y divide-white/20">
           {analytics.topWastedItems.map(([itemName, data], index) => (
             <div key={itemName} className="p-4 flex justify-between items-center">
               <div>
-                <span className="font-medium">{itemName}</span>
-                <span className="text-sm text-gray-500 ml-2">{data.quantity} units</span>
+                <span className="font-medium text-white">{itemName}</span>
+                <span className="text-sm text-gray-300 ml-2">{data.quantity} units</span>
               </div>
-              <span className="text-red-600 font-medium">₹{data.cost.toFixed(2)}</span>
+              <span className="text-red-400 font-medium">₹{data.cost.toFixed(2)}</span>
             </div>
           ))}
         </div>
       </div>
 
       {/* Recent Wastage Records */}
-      <div className="bg-white rounded-lg border">
-        <div className="p-4 border-b">
-          <h3 className="font-medium">Recent Wastage Records</h3>
+      <div className="bg-white/20 backdrop-blur-2xl rounded-2xl animate-fadeIn">
+        <div className="p-4 border-b border-white/30">
+          <h3 className="font-medium text-white">Recent Wastage Records</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-white/10">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Item</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantity</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Reason</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cost</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Item</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Quantity</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Reason</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Cost</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Date</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-white/20">
               {wastageRecords.slice(0, 10).map(record => {
                 const item = inventory.find(inv => inv._id === record.inventoryItemId);
                 const cost = record.quantity * (item?.costPerUnit || 0);
                 return (
-                  <tr key={record._id}>
-                    <td className="px-4 py-3 text-sm">{item?.name || 'Unknown'}</td>
-                    <td className="px-4 py-3 text-sm">{record.quantity} {item?.unit}</td>
-                    <td className="px-4 py-3 text-sm">{record.reason}</td>
-                    <td className="px-4 py-3 text-sm text-red-600">₹{cost.toFixed(2)}</td>
-                    <td className="px-4 py-3 text-sm">{new Date(record.date).toLocaleDateString()}</td>
+                  <tr key={record._id} className="hover:bg-white/10">
+                    <td className="px-4 py-3 text-sm text-white">{item?.name || 'Unknown'}</td>
+                    <td className="px-4 py-3 text-sm text-gray-300">{record.quantity} {item?.unit}</td>
+                    <td className="px-4 py-3 text-sm text-gray-300">{record.reason}</td>
+                    <td className="px-4 py-3 text-sm text-red-400">₹{cost.toFixed(2)}</td>
+                    <td className="px-4 py-3 text-sm text-gray-300">{new Date(record.date).toLocaleDateString()}</td>
                   </tr>
                 );
               })}
@@ -287,9 +285,9 @@ const WastageTracking = ({ onAlert, showAddWastage, setShowAddWastage }) => {
         </div>
       </div>
 
-      <div className="bg-blue-50 p-4 rounded-lg">
-        <h3 className="font-medium text-blue-800 mb-2">Wastage Reduction Tips:</h3>
-        <ul className="text-sm text-blue-700 space-y-1">
+      <div className="bg-blue-50/20 p-4 rounded-lg border border-blue-200/30">
+        <h3 className="font-medium text-blue-300 mb-2">Wastage Reduction Tips:</h3>
+        <ul className="text-sm text-blue-200 space-y-1">
           <li>• Monitor expiry dates and implement FIFO (First In, First Out)</li>
           <li>• Train staff on proper storage and handling procedures</li>
           <li>• Adjust portion sizes based on customer feedback</li>
