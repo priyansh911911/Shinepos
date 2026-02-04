@@ -50,7 +50,7 @@ const Invoice = ({ order, onClose, restaurantInfo }) => {
         }
       `}</style>
       
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 print:p-0">
+      <div className="fixed top-0 left-0 w-screen h-screen bg-black/50 backdrop-blur-sm z-[9999] flex items-center pl-[300px] print:p-0 overflow-y-auto">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}

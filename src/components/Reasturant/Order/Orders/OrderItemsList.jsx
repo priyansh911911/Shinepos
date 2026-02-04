@@ -1,70 +1,83 @@
 import React from 'react';
 import { FiPlus, FiMinus, FiX } from 'react-icons/fi';
 
-const OrderItemsList = ({ orderItems, updateItemQuantity, removeItem, calculateTotal }) => {
+const OrderItemsList = ({ menuItems, loadingMenu, searchQuery, setSearchQuery, fetchMenuItems, openItemModal }) => {
   return (
-    <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-4 lg:p-6 border border-white/20 h-[380px] flex flex-col">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 lg:mb-4 gap-2 flex-shrink-0">
-        <h3 className="text-base lg:text-lg font-bold text-white">🍕 Order Items</h3>
-        <div className="text-lg lg:text-xl font-bold text-green-300">
-          Total: ₹{calculateTotal().toFixed(2)}
-        </div>
+    <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-4 lg:p-6 border border-white/20">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-bold text-white">🍽️ Select Menu Items</h3>
+        <button
+          type="button"
+          onClick={() => {
+            setSearchQuery('');
+            fetchMenuItems();
+          }}
+          className="text-xs bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-lg transition-colors"
+        >
+          🔄 Refresh
+        </button>
+      </div>
+
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="🔍 Search menu items..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full bg-white/20 backdrop-blur-md border border-white/30 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 text-white placeholder-gray-300"
+        />
       </div>
       
-      {orderItems.length > 0 ? (
-        <div className="space-y-2 flex-1 overflow-y-auto">
-          {orderItems.map((item) => (
-            <div key={item.key} className="flex items-center justify-between bg-white/20 backdrop-blur-md p-2 lg:p-3 rounded-xl border border-white/20 gap-2 h-16 flex-shrink-0">
-              <div className="flex-1 min-w-0">
-                <div className="font-medium text-white text-sm lg:text-base truncate">{item.name}</div>
-                <div className="text-xs lg:text-sm text-gray-300 truncate">
-                  {item.variation.name} - ₹{item.price}
-                  {item.addons.length > 0 && (
-                    <span className="text-xs text-gray-400 ml-1">
-                      + {item.addons.map(a => a.name).join(', ')}
-                    </span>
-                  )}
-                </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 max-h-[calc(100vh-300px)] overflow-y-auto">
+        {loadingMenu ? (
+          <div className="col-span-full flex justify-center items-center py-10">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent mx-auto mb-3"></div>
+              <p className="text-white text-sm">Loading menu...</p>
+            </div>
+          </div>
+        ) : (
+          menuItems.filter(item => 
+            item.itemName.toLowerCase().includes(searchQuery.toLowerCase())
+          ).map((item) => (
+            <div key={item._id} className="bg-white/20 backdrop-blur-md rounded-xl p-3 border border-white/20 hover:bg-white/25 transition-all flex flex-col">
+              {item.imageUrl && (
+                <img 
+                  src={item.imageUrl} 
+                  alt={item.itemName} 
+                  className="w-full h-32 object-cover rounded-lg mb-2"
+                  onError={(e) => e.target.style.display = 'none'}
+                />
+              )}
+              <div className="flex-1 mb-2">
+                <h4 className="font-semibold text-white text-sm mb-1 break-words leading-tight">{item.itemName}</h4>
+                <span className="text-xs font-bold text-green-300">
+                  ₹{item.variation && item.variation.length > 0 
+                    ? Math.min(...item.variation.map(v => v.price || 0))
+                    : 0}
+                </span>
               </div>
               
-              <div className="flex items-center space-x-1 lg:space-x-2 flex-shrink-0">
-                <button
-                  type="button"
-                  onClick={() => updateItemQuantity(item.key, item.quantity - 1)}
-                  className="w-7 h-7 lg:w-8 lg:h-8 flex items-center justify-center bg-red-500 text-white rounded-full hover:bg-red-600 transition-all shadow-lg"
-                >
-                  <FiMinus size={12} />
-                </button>
-                
-                <span className="w-6 lg:w-8 text-center font-medium text-white text-sm">{item.quantity}</span>
-                
-                <button
-                  type="button"
-                  onClick={() => updateItemQuantity(item.key, item.quantity + 1)}
-                  className="w-7 h-7 lg:w-8 lg:h-8 flex items-center justify-center bg-green-500 text-white rounded-full hover:bg-green-600 transition-all shadow-lg"
-                >
-                  <FiPlus size={12} />
-                </button>
-                
-                <button
-                  type="button"
-                  onClick={() => removeItem(item.key)}
-                  className="w-7 h-7 lg:w-8 lg:h-8 flex items-center justify-center bg-gray-600 text-white rounded-full hover:bg-gray-700 transition-all shadow-lg"
-                >
-                  <FiX size={12} />
-                </button>
-              </div>
+              {item.description && (
+                <p className="text-[10px] text-gray-300 mb-2 line-clamp-2 leading-tight">{item.description}</p>
+              )}
+              
+              <button
+                type="button"
+                onClick={() => openItemModal(item)}
+                disabled={item.status !== 'active'}
+                className={`w-full py-2 px-2 rounded-lg text-xs font-semibold transition-all ${
+                  item.status === 'active'
+                    ? 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg'
+                    : 'bg-gray-600/50 text-gray-400 cursor-not-allowed'
+                }`}
+              >
+                {item.status === 'active' ? '➕ Add' : 'Not Available'}
+              </button>
             </div>
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-8 lg:py-10 text-gray-300 flex-1 flex items-center justify-center">
-          <div>
-            <div className="text-3xl lg:text-4xl mb-2">🍽️</div>
-            <p className="text-sm">No items added yet</p>
-          </div>
-        </div>
-      )}
+          ))
+        )}
+      </div>
     </div>
   );
 };
