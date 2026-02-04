@@ -53,7 +53,7 @@ const KOTHistory = () => {
               <div className="flex items-center gap-4">
                 <div className={`px-4 py-2 rounded-xl font-bold text-white ${
                   kot.status === 'DELIVERED' ? 'bg-green-500' :
-                  kot.status === 'PAID' ? 'bg-gray-500' : 
+                  kot.status === 'PAID' ? 'bg-gray-500' :
                   'bg-red-500'
                 }`}>
                   {kot.status === 'DELIVERED' ? '✅' :

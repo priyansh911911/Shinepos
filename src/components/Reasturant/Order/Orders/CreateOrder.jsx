@@ -37,7 +37,8 @@ const CreateOrder = ({ onCreateOrder, onCancel }) => {
     updateItemQuantity,
     removeItem,
     calculateTotal,
-    handleSubmit
+    handleSubmit,
+    fetchMenuItems
   } = useCreateOrder(onCreateOrder);
 
   return (
@@ -50,7 +51,19 @@ const CreateOrder = ({ onCreateOrder, onCancel }) => {
 
       {/* Left Side - Menu Items */}
       <div className="lg:col-span-1 bg-white/10 backdrop-blur-xl rounded-2xl p-4 lg:p-6 border border-white/20">
-        <h3 className="text-base lg:text-lg font-bold text-white mb-3 lg:mb-4">🍽️ Menu Items</h3>
+        <div className="flex items-center justify-between mb-3 lg:mb-4">
+          <h3 className="text-base lg:text-lg font-bold text-white">🍽️ Menu Items</h3>
+          <button
+            type="button"
+            onClick={() => {
+              setSearchQuery('');
+              fetchMenuItems();
+            }}
+            className="text-xs bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-lg transition-colors"
+          >
+            🔄 Refresh
+          </button>
+        </div>
         
         {/* Search Bar */}
         <div className="mb-3 lg:mb-4">
@@ -75,10 +88,10 @@ const CreateOrder = ({ onCreateOrder, onCancel }) => {
             menuItems.filter(item => 
               item.itemName.toLowerCase().includes(searchQuery.toLowerCase())
             ).map((item) => (
-              <div key={item._id} className="bg-white/20 backdrop-blur-md rounded-xl p-3 lg:p-4 border border-white/20 hover:bg-white/25 transition-all h-32 flex flex-col">
-                <div className="flex justify-between items-start mb-2">
-                  <h4 className="font-medium text-white text-sm lg:text-base line-clamp-1">{item.itemName}</h4>
-                  <span className="text-xs lg:text-sm font-semibold text-green-300 flex-shrink-0 ml-2">
+              <div key={item._id} className="bg-white/20 backdrop-blur-md rounded-xl p-3 border border-white/20 hover:bg-white/25 transition-all flex flex-col">
+                <div className="flex-1 mb-2">
+                  <h4 className="font-semibold text-white text-sm mb-1 break-words leading-tight">{item.itemName}</h4>
+                  <span className="text-xs font-bold text-green-300">
                     ₹{item.variation && item.variation.length > 0 
                       ? Math.min(...item.variation.map(v => v.price || 0))
                       : 0}
@@ -86,14 +99,14 @@ const CreateOrder = ({ onCreateOrder, onCancel }) => {
                 </div>
                 
                 {item.description && (
-                  <p className="text-xs text-gray-300 mb-2 line-clamp-2">{item.description}</p>
+                  <p className="text-[10px] text-gray-300 mb-2 line-clamp-2 leading-tight">{item.description}</p>
                 )}
                 
                 <button
                   type="button"
                   onClick={() => openItemModal(item)}
                   disabled={item.status !== 'active'}
-                  className={`w-full py-1.5 px-2 rounded-lg text-xs font-medium transition-all mt-auto ${
+                  className={`w-full py-2 px-2 rounded-lg text-xs font-semibold transition-all ${
                     item.status === 'active'
                       ? 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg'
                       : 'bg-gray-600/50 text-gray-400 cursor-not-allowed'
