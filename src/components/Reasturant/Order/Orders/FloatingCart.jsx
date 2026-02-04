@@ -70,14 +70,12 @@ const FloatingCart = ({ orderItems, updateItemQuantity, removeItem, calculateTot
                 top: 0, 
                 right: 0, 
                 bottom: 0, 
-                width: '100%',
-                maxWidth: '100%',
                 height: '100vh',
                 zIndex: 999999,
                 backgroundColor: 'white',
                 overflowY: 'auto'
               }}
-              className="sm:max-w-md md:max-w-lg lg:max-w-2xl shadow-2xl"
+              className="w-full sm:w-96 md:w-[28rem] lg:w-[32rem] shadow-2xl"
             >
               <div className="p-4 sm:p-6 pt-12 sm:pt-6">
                 <div className="flex justify-between items-center mb-4 sm:mb-6">

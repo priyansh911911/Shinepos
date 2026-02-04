@@ -1,8 +1,10 @@
 import React from 'react';
 import { useCreateOrder } from './hooks/useCreateOrder';
 import FloatingCart from './FloatingCart';
+import OrderItemsList from './OrderItemsList';
 
 const CreateOrder = ({ onCreateOrder, onCancel }) => {
+  const [step, setStep] = React.useState(1);
   const [searchQuery, setSearchQuery] = React.useState('');
   const {
     menuItems,
@@ -41,140 +43,76 @@ const CreateOrder = ({ onCreateOrder, onCancel }) => {
     fetchMenuItems
   } = useCreateOrder(onCreateOrder);
 
+  const handleNext = () => {
+    if (!customerName || !guestCount) {
+      alert('Please fill in customer name and guest count');
+      return;
+    }
+    setStep(2);
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
+    <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <div className="lg:col-span-3 bg-red-500/80 backdrop-blur-md border border-red-600/50 text-white px-4 py-3 rounded-xl text-sm">
+        <div className="bg-red-500/80 backdrop-blur-md border border-red-600/50 text-white px-4 py-3 rounded-xl text-sm">
           {error}
         </div>
       )}
 
-      {/* Left Side - Menu Items */}
-      <div className="lg:col-span-1 bg-white/10 backdrop-blur-xl rounded-2xl p-4 lg:p-6 border border-white/20">
-        <div className="flex items-center justify-between mb-3 lg:mb-4">
-          <h3 className="text-base lg:text-lg font-bold text-white">🍽️ Menu Items</h3>
-          <button
-            type="button"
-            onClick={() => {
-              setSearchQuery('');
-              fetchMenuItems();
-            }}
-            className="text-xs bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-lg transition-colors"
-          >
-            🔄 Refresh
-          </button>
-        </div>
-        
-        {/* Search Bar */}
-        <div className="mb-3 lg:mb-4">
-          <input
-            type="text"
-            placeholder="🔍 Search menu items..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-white/20 backdrop-blur-md border border-white/30 rounded-xl px-3 lg:px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 text-white placeholder-gray-300"
-          />
-        </div>
-        
-        <div className="grid grid-cols-2 gap-2 lg:gap-3 max-h-[300px] lg:max-h-[calc(100vh-350px)] overflow-y-auto">
-          {loadingMenu ? (
-            <div className="col-span-2 flex justify-center items-center py-10">
-              <div className="text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent mx-auto mb-3"></div>
-                <p className="text-white text-sm">Loading menu...</p>
-              </div>
-            </div>
-          ) : (
-            menuItems.filter(item => 
-              item.itemName.toLowerCase().includes(searchQuery.toLowerCase())
-            ).map((item) => (
-              <div key={item._id} className="bg-white/20 backdrop-blur-md rounded-xl p-3 border border-white/20 hover:bg-white/25 transition-all flex flex-col">
-                <div className="flex-1 mb-2">
-                  <h4 className="font-semibold text-white text-sm mb-1 break-words leading-tight">{item.itemName}</h4>
-                  <span className="text-xs font-bold text-green-300">
-                    ₹{item.variation && item.variation.length > 0 
-                      ? Math.min(...item.variation.map(v => v.price || 0))
-                      : 0}
-                  </span>
-                </div>
-                
-                {item.description && (
-                  <p className="text-[10px] text-gray-300 mb-2 line-clamp-2 leading-tight">{item.description}</p>
-                )}
-                
-                <button
-                  type="button"
-                  onClick={() => openItemModal(item)}
-                  disabled={item.status !== 'active'}
-                  className={`w-full py-2 px-2 rounded-lg text-xs font-semibold transition-all ${
-                    item.status === 'active'
-                      ? 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg'
-                      : 'bg-gray-600/50 text-gray-400 cursor-not-allowed'
-                  }`}
-                >
-                  {item.status === 'active' ? '➕ Add' : 'Not Available'}
-                </button>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
-
-      {/* Right Side - Customer Info */}
-      <div className="lg:col-span-2">
-        {/* Customer Information */}
-        <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-4 lg:p-6 border border-white/20">
-          <h3 className="text-base lg:text-lg font-bold text-white mb-3 lg:mb-4">👤 Customer Information</h3>
+      {/* Step 1: Customer Details */}
+      {step === 1 && (
+        <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-4 lg:p-6 border border-white/20 mx-auto">
+          <h3 className="text-xl font-bold text-white mb-6">👤 Customer Information</h3>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs lg:text-sm font-medium text-white mb-1">
+              <label className="block text-sm font-medium text-white mb-2">
                 Customer Name *
               </label>
               <input
                 type="text"
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
-                className="w-full bg-white/20 backdrop-blur-md border border-white/30 rounded-xl px-3 lg:px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 text-white placeholder-gray-300"
+                className="w-full bg-white/20 backdrop-blur-md border border-white/30 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 text-white placeholder-gray-300"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-xs lg:text-sm font-medium text-white mb-1">
+              <label className="block text-sm font-medium text-white mb-2">
                 Phone Number
               </label>
               <input
                 type="tel"
                 value={customerPhone}
                 onChange={(e) => setCustomerPhone(e.target.value)}
-                className="w-full bg-white/20 backdrop-blur-md border border-white/30 rounded-xl px-3 lg:px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 text-white placeholder-gray-300"
+                className="w-full bg-white/20 backdrop-blur-md border border-white/30 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 text-white placeholder-gray-300"
               />
             </div>
 
             <div>
-              <label className="block text-xs lg:text-sm font-medium text-white mb-1">
+              <label className="block text-sm font-medium text-white mb-2">
                 Number of Guests *
               </label>
               <input
                 type="number"
                 value={guestCount}
                 onChange={(e) => setGuestCount(e.target.value)}
-                className="w-full bg-white/20 backdrop-blur-md border border-white/30 rounded-xl px-3 lg:px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 text-white placeholder-gray-300"
+                className="w-full bg-white/20 backdrop-blur-md border border-white/30 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 text-white placeholder-gray-300"
                 min="1"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-xs lg:text-sm font-medium text-white mb-1">
+              <label className="block text-sm font-medium text-white mb-2">
                 Discount (%)
               </label>
               <input
                 type="number"
                 value={discount}
                 onChange={(e) => setDiscount(Math.min(100, Math.max(0, Number(e.target.value))))}
-                className="w-full bg-white/20 backdrop-blur-md border border-white/30 rounded-xl px-3 lg:px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 text-white placeholder-gray-300"
+                className="w-full bg-white/20 backdrop-blur-md border border-white/30 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 text-white placeholder-gray-300"
                 min="0"
                 max="100"
                 placeholder="0"
@@ -182,8 +120,8 @@ const CreateOrder = ({ onCreateOrder, onCancel }) => {
             </div>
 
             {showMergeOption ? (
-              <div>
-                <label className="block text-sm font-medium text-white mb-1">
+              <div className="sm:col-span-2">
+                <label className="block text-sm font-medium text-white mb-2">
                   Select Tables to Merge *
                 </label>
                 <div className="space-y-2 max-h-32 overflow-y-auto bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/20">
@@ -211,14 +149,14 @@ const CreateOrder = ({ onCreateOrder, onCancel }) => {
                 </p>
               </div>
             ) : (
-              <div>
-                <label className="block text-sm font-medium text-white mb-1">
+              <div className="sm:col-span-2">
+                <label className="block text-sm font-medium text-white mb-2">
                   Table (Optional)
                 </label>
                 <select
                   value={selectedTable}
                   onChange={(e) => setSelectedTable(e.target.value)}
-                  className="w-full bg-white/20 backdrop-blur-md border border-white/30 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400 text-white"
+                  className="w-full bg-white/20 backdrop-blur-md border border-white/30 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-400 text-white"
                 >
                   <option value="">No Table</option>
                   {tables.filter(t => t.status === 'AVAILABLE' && (!guestCount || t.capacity >= parseInt(guestCount))).map(table => (
@@ -230,18 +168,48 @@ const CreateOrder = ({ onCreateOrder, onCancel }) => {
               </div>
             )}
           </div>
-        </div>
-      </div>
 
-      {/* Floating Cart */}
-      <FloatingCart
-        orderItems={orderItems}
-        updateItemQuantity={updateItemQuantity}
-        removeItem={removeItem}
-        calculateTotal={calculateTotal}
-        onCheckout={() => handleSubmit()}
-        loading={loading}
-      />
+          <div className="flex justify-end gap-3 mt-6">
+            <button
+              type="button"
+              onClick={onCancel}
+              className="px-6 py-2.5 bg-white/20 hover:bg-white/30 text-white rounded-xl transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleNext}
+              className="px-6 py-2.5 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl font-medium shadow-lg"
+            >
+              Next: Select Items →
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Step 2: Menu Selection */}
+      {step === 2 && (
+        <>
+          <OrderItemsList
+            menuItems={menuItems}
+            loadingMenu={loadingMenu}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            fetchMenuItems={fetchMenuItems}
+            openItemModal={openItemModal}
+          />
+
+          <FloatingCart
+            orderItems={orderItems}
+            updateItemQuantity={updateItemQuantity}
+            removeItem={removeItem}
+            calculateTotal={calculateTotal}
+            onCheckout={() => handleSubmit()}
+            loading={loading}
+          />
+        </>
+      )}
 
       {/* Item Selection Modal */}
       {selectedItem && (
@@ -249,7 +217,6 @@ const CreateOrder = ({ onCreateOrder, onCancel }) => {
           <div className="bg-white/90 backdrop-blur-xl rounded-2xl p-6 max-w-md w-full mx-4">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">{selectedItem.itemName}</h3>
             
-            {/* Variations */}
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-900 mb-2">Select Variation</label>
               {selectedItem.variation?.map(variation => (
@@ -266,7 +233,6 @@ const CreateOrder = ({ onCreateOrder, onCancel }) => {
               ))}
             </div>
             
-            {/* Addons */}
             {selectedItem.addon?.length > 0 && (
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-900 mb-2">Select Addons</label>
