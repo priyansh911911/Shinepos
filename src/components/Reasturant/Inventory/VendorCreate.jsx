@@ -150,19 +150,19 @@ const VendorCreate = () => {
         </div>
       )}
 
-      <div className="bg-white rounded-lg border">
-        <div className="p-4 border-b">
-          <h3 className="font-medium">Registered Vendors</h3>
+      <div className="bg-white/20 backdrop-blur-2xl rounded-2xl animate-fadeIn">
+        <div className="p-4 border-b border-white/30">
+          <h3 className="font-medium text-white">Registered Vendors</h3>
         </div>
         <div className="divide-y">
           {vendors.map(vendor => (
             <div key={vendor._id} className="p-4">
               <div className="flex justify-between items-start">
                 <div>
-                  <h4 className="font-medium">{vendor.name}</h4>
-                  <p className="text-sm text-gray-600">{vendor.contact} • {vendor.email}</p>
-                  <p className="text-sm text-gray-500">{vendor.address}</p>
-                  <div className="flex items-center space-x-4 mt-2 text-sm">
+                  <h4 className="font-medium text-white">{vendor.name}</h4>
+                  <p className="text-sm text-gray-300">{vendor.contact} • {vendor.email}</p>
+                  <p className="text-sm text-gray-400">{vendor.address}</p>
+                  <div className="flex items-center space-x-4 mt-2 text-sm text-gray-300">
                     <span className="flex items-center">
                       <FiStar className="text-yellow-500 mr-1" />
                       {vendor.rating}/5
@@ -172,10 +172,10 @@ const VendorCreate = () => {
                   </div>
                 </div>
                 <div className="flex space-x-2">
-                  <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg">
+                  <button className="p-2 text-blue-400 hover:bg-white/10 rounded-lg">
                     <FiEdit />
                   </button>
-                  <button className="p-2 text-red-600 hover:bg-red-50 rounded-lg">
+                  <button className="p-2 text-red-400 hover:bg-white/10 rounded-lg">
                     <FiTrash2 />
                   </button>
                 </div>

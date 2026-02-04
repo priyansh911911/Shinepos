@@ -27,7 +27,6 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout, sidebarOpen, set
   const inventorySubItems = [
     { id: 'inventory', label: 'Inventory List', icon: <FiList />, module: 'inventory' },
     { id: 'add-inventory', label: 'Add Item', icon: <FiPlus />, module: 'inventory' },
-    { id: 'smart-inventory', label: 'Smart Inventory', icon: <FiCpu />, module: 'inventory' },
     { id: 'vendors', label: 'Vendors', icon: <FiTruck />, module: 'inventory' }
   ];
 
