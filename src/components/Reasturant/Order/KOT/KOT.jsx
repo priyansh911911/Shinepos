@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import KOTHistory from './KOTHistory';
+import PendingKOT from './PendingKOT';
 
 const KOT = () => {
   const [kots, setKots] = useState([]);
@@ -35,11 +36,14 @@ const KOT = () => {
     return () => clearInterval(timerRef.current);
   }, []);
 
-  const calculateElapsedTime = (createdAt, status) => {
+  const calculateElapsedTime = (startedAt, status) => {
     if (status === 'READY' || status === 'DELIVERED' || status === 'CANCELLED' || status === 'PAID') {
       return null;
     }
-    const elapsed = Math.floor((currentTime - new Date(createdAt).getTime()) / 1000);
+    if (!startedAt) {
+      return null;
+    }
+    const elapsed = Math.floor((currentTime - new Date(startedAt).getTime()) / 1000);
     const minutes = Math.floor(elapsed / 60);
     const seconds = elapsed % 60;
     return { minutes, seconds, totalSeconds: elapsed };
@@ -71,7 +75,10 @@ const KOT = () => {
       if (response.ok) {
         const data = await response.json();
         const activeKots = (data.kots || []).filter(kot => 
-          kot.status !== 'DELIVERED' && kot.status !== 'CANCELLED' && kot.status !== 'PAID'
+          kot.status !== 'DELIVERED' && 
+          kot.status !== 'CANCELLED' && 
+          kot.status !== 'PAID' &&
+          kot.items?.some(item => item.status !== 'PENDING')
         );
         setKots(activeKots);
       }
@@ -83,17 +90,8 @@ const KOT = () => {
 
   const updateItemStatus = async (kotId, itemIndex, newStatus) => {
     try {
-      setKots(prev => prev.map(kot => {
-        if (kot._id === kotId) {
-          const updatedItems = [...kot.items];
-          updatedItems[itemIndex] = { ...updatedItems[itemIndex], status: newStatus };
-          return { ...kot, items: updatedItems };
-        }
-        return kot;
-      }));
-
       const token = localStorage.getItem('token');
-      await fetch(`${import.meta.env.VITE_API_URL}/api/kot/${kotId}/item/${itemIndex}/status`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/kot/${kotId}/item/${itemIndex}/status`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -101,6 +99,11 @@ const KOT = () => {
         },
         body: JSON.stringify({ status: newStatus })
       });
+
+      if (response.ok) {
+        const data = await response.json();
+        setKots(prev => prev.map(kot => kot._id === kotId ? data.kot : kot));
+      }
     } catch (error) {
       console.error('Error updating item status:', error);
       fetchKitchenOrders();
@@ -168,6 +171,16 @@ const KOT = () => {
       <div className="flex justify-between items-center mb-6">
         <div className="flex space-x-3">
           <button
+            onClick={() => setActiveTab('pending')}
+            className={`px-6 py-3 rounded-xl font-medium transition-colors ${
+              activeTab === 'pending' 
+                ? 'bg-white/40 backdrop-blur-lg text-gray-900' 
+                : 'bg-white/20 backdrop-blur-md text-gray-800'
+            }`}
+          >
+            ⏳ Pending
+          </button>
+          <button
             onClick={() => setActiveTab('active')}
             className={`px-6 py-3 rounded-xl font-medium transition-colors ${
               activeTab === 'active' 
@@ -175,7 +188,7 @@ const KOT = () => {
                 : 'bg-white/20 backdrop-blur-md text-gray-800'
             }`}
           >
-            🔥 Active KOTs
+            🔥 Active
           </button>
           <button
             onClick={() => setActiveTab('history')}
@@ -195,6 +208,8 @@ const KOT = () => {
           </button>
         </div>
       </div>
+
+      {activeTab === 'pending' && <PendingKOT onItemStarted={() => setActiveTab('active')} />}
 
       {activeTab === 'active' && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -237,7 +252,7 @@ const KOT = () => {
               {/* Items Section */}
               <div className="p-3 space-y-2 max-h-64 overflow-y-auto">
                 {kot.items?.map((item, idx) => {
-                  const elapsed = calculateElapsedTime(kot.createdAt, item.status);
+                  const elapsed = calculateElapsedTime(item.startedAt, item.status);
                   const prepTime = item.timeToPrepare || 15;
                   const progress = elapsed ? Math.min((elapsed.totalSeconds / (prepTime * 60)) * 100, 100) : 100;
                   
@@ -250,14 +265,14 @@ const KOT = () => {
                           </span>
                           <span className="font-semibold text-gray-900 text-xs leading-tight">{item.name}</span>
                         </div>
-                        {elapsed && (
+                        {item.status === 'PREPARING' && elapsed && (
                           <div className={`text-xs font-mono font-bold flex-shrink-0 px-1.5 py-0.5 rounded ${getTimerColor(elapsed.totalSeconds, prepTime)} bg-white/50`}>
                             ⏱ {elapsed.minutes}:{elapsed.seconds.toString().padStart(2, '0')}
                           </div>
                         )}
                       </div>
                       
-                      {elapsed && (
+                      {item.status === 'PREPARING' && elapsed && (
                         <div className="w-full bg-gray-300/50 rounded-full h-1.5 mb-1 overflow-hidden shadow-inner">
                           <div 
                             className={`h-1.5 rounded-full transition-all duration-500 ${getProgressColor(elapsed.totalSeconds, prepTime)} shadow-sm`}
@@ -267,7 +282,7 @@ const KOT = () => {
                       )}
                       
                       <div className="space-y-0.5 mb-2">
-                        {elapsed && (
+                        {item.status === 'PREPARING' && elapsed && (
                           <div className="text-[9px] text-gray-700 font-medium">
                             Target: {prepTime}min {progress >= 100 && <span className="text-red-600 font-bold">⚠️ DELAYED</span>}
                           </div>
