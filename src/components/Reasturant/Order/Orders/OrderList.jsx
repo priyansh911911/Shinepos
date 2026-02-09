@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { FiRefreshCw, FiUser, FiPhone, FiGrid, FiShoppingBag, FiFileText, FiPlus, FiRotateCcw, FiCreditCard, FiChevronDown, FiCheckCircle } from 'react-icons/fi';
+import { FiRefreshCw, FiUser, FiPhone, FiGrid, FiShoppingBag, FiFileText, FiPlus, FiRotateCcw, FiCreditCard, FiChevronDown, FiCheckCircle, FiEye } from 'react-icons/fi';
 
-const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRefresh, onUpdatePriority, onTransfer, onAddItems, activeTab, setActiveTab }) => {
+const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRefresh, onUpdatePriority, onTransfer, onAddItems, onViewSplitBill, activeTab, setActiveTab }) => {
   const [filterStatus, setFilterStatus] = useState('ALL');
   const [expandedOrderItems, setExpandedOrderItems] = useState(null);
   const [refreshingList, setRefreshingList] = useState(false);
@@ -181,14 +181,52 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
                     <h4 className="font-bold text-gray-900 mb-3"><FiShoppingBag className="inline mr-2" />Order Items</h4>
                     <div className="space-y-2 max-h-60 overflow-y-auto">
                       {selectedOrder.items.map((item, index) => (
-                        <div key={index} className="flex justify-between items-start text-sm p-2 rounded-lg">
-                          <div>
-                            <p className="font-medium text-gray-900">{item.quantity}x {item.name}</p>
+                        <div key={index} className="flex justify-between items-start text-sm p-2 rounded-lg bg-white/20">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <p className="font-medium text-gray-900">{item.quantity}x {item.name}</p>
+                              <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                                item.status === 'PENDING' ? 'bg-yellow-500 text-white' :
+                                item.status === 'PREPARING' ? 'bg-orange-500 text-white' :
+                                item.status === 'READY' ? 'bg-green-500 text-white' :
+                                item.status === 'SERVED' ? 'bg-purple-500 text-white' :
+                                'bg-gray-500 text-white'
+                              }`}>
+                                {item.status || 'PENDING'}
+                              </span>
+                            </div>
                             {item.variation && <p className="text-xs text-gray-700">Variation: {item.variation.name}</p>}
                           </div>
                           <span className="font-bold text-gray-900">{formatCurrency(item.itemTotal || (item.variation?.price * item.quantity) || (item.basePrice * item.quantity) || 0)}</span>
                         </div>
                       ))}
+                      {selectedOrder.extraItems && selectedOrder.extraItems.length > 0 && (
+                        <>
+                          <div className="border-t border-red-400 pt-2 mt-2">
+                            <p className="text-[10px] font-bold text-red-600 mb-1">EXTRA ITEMS</p>
+                          </div>
+                          {selectedOrder.extraItems.map((item, index) => (
+                            <div key={`extra-${index}`} className="flex justify-between items-start text-sm p-2 rounded-lg bg-red-50/30 border border-red-300">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2">
+                                  <p className="font-medium text-gray-900">{item.quantity}x {item.name}</p>
+                                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                                    item.status === 'PENDING' ? 'bg-yellow-500 text-white' :
+                                    item.status === 'PREPARING' ? 'bg-orange-500 text-white' :
+                                    item.status === 'READY' ? 'bg-green-500 text-white' :
+                                    item.status === 'SERVED' ? 'bg-purple-500 text-white' :
+                                    'bg-gray-500 text-white'
+                                  }`}>
+                                    {item.status || 'PENDING'}
+                                  </span>
+                                </div>
+                                {item.variation && <p className="text-xs text-gray-700">Variation: {item.variation.name}</p>}
+                              </div>
+                              <span className="font-bold text-gray-900">{formatCurrency(item.itemTotal || item.total || 0)}</span>
+                            </div>
+                          ))}
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -214,12 +252,14 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
                     <span className="text-2xl font-bold text-gray-900">{formatCurrency(selectedOrder.totalAmount)}</span>
                   </div>
                   <div className="flex space-x-2">
-                    <button
-                      onClick={() => onAddItems && onAddItems(selectedOrder._id)}
-                      className="flex-1 p-3 bg-white/30 backdrop-blur-md hover:bg-white/50 text-gray-900 rounded-xl font-medium transition-colors"
-                    >
-                      <FiPlus className="inline mr-1" />Add
-                    </button>
+                    {selectedOrder.status !== 'PAID' && selectedOrder.status !== 'CANCELLED' && !selectedOrder.paymentDetails && (
+                      <button
+                        onClick={() => onAddItems && onAddItems(selectedOrder._id)}
+                        className="flex-1 p-3 bg-white/30 backdrop-blur-md hover:bg-white/50 text-gray-900 rounded-xl font-medium transition-colors"
+                      >
+                        <FiPlus className="inline mr-1" />Add
+                      </button>
+                    )}
                     {selectedOrder.tableId && selectedOrder.status !== 'PAID' && selectedOrder.status !== 'CANCELLED' && (
                       <button
                         onClick={() => onTransfer(selectedOrder)}
@@ -228,13 +268,26 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
                         <FiRotateCcw className="inline mr-1" />Transfer
                       </button>
                     )}
-                    {!selectedOrder.paymentDetails && (
+                    {selectedOrder.hasSplitBill && (
+                      <button
+                        onClick={() => onViewSplitBill && onViewSplitBill(selectedOrder)}
+                        className="flex-1 p-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-xl font-medium transition-colors shadow-md hover:from-purple-600 hover:to-purple-700"
+                      >
+                        <FiEye className="inline mr-1" />View Split
+                      </button>
+                    )}
+                    {selectedOrder.status === 'DELIVERED' && selectedOrder.status !== 'PAID' && selectedOrder.status !== 'CANCELLED' && !selectedOrder.paymentDetails && !selectedOrder.hasSplitBill && (
                       <button
                         onClick={() => onProcessPayment(selectedOrder)}
-                        className="flex-1 p-3 bg-white/30 backdrop-blur-md hover:bg-white/50 text-gray-900 rounded-xl font-medium transition-colors"
+                        className="flex-1 p-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl font-medium transition-colors shadow-md hover:from-green-600 hover:to-emerald-600"
                       >
                         <FiCreditCard className="inline mr-1" />Pay
                       </button>
+                    )}
+                    {(selectedOrder.status === 'PAID' || selectedOrder.paymentDetails) && (
+                      <div className="flex-1 p-3 bg-green-100 text-green-800 rounded-xl font-medium text-center">
+                        <FiCheckCircle className="inline mr-1" />Paid
+                      </div>
                     )}
                   </div>
                 </div>

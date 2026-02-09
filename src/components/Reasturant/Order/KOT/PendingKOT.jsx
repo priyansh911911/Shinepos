@@ -32,7 +32,7 @@ const PendingKOT = ({ onItemStarted }) => {
     setLoading(false);
   };
 
-  const updateItemStatus = async (kotId, itemIndex, newStatus) => {
+  const updateItemStatus = async (kotId, itemIndex, newStatus, isExtraItem = false) => {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/kot/${kotId}/item/${itemIndex}/status`, {
@@ -41,7 +41,7 @@ const PendingKOT = ({ onItemStarted }) => {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ status: newStatus })
+        body: JSON.stringify({ status: newStatus, isExtraItem })
       });
 
       if (response.ok) {
@@ -163,6 +163,50 @@ const PendingKOT = ({ onItemStarted }) => {
                     </button>
                   </div>
                 ))}
+                
+                {kot.extraItems?.length > 0 && (
+                  <div className="border-t-2 border-dashed border-red-400 pt-2 mt-2">
+                    <div className="text-[10px] font-bold text-white mb-2 flex items-center gap-1">
+                      <span>⭐</span>
+                      <span>EXTRA ITEMS ADDED</span>
+                    </div>
+                    {kot.extraItems.map((item, idx) => (
+                      <div key={`extra-${idx}`} className="bg-red-50/50 backdrop-blur-sm rounded-xl p-2 border-2 border-red-400 shadow-sm mb-2">
+                        <div className="flex items-start justify-between gap-2 mb-2">
+                          <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                            <span className="bg-gradient-to-r from-red-600 to-red-500 text-white font-bold px-2 py-0.5 rounded-md text-xs shadow-sm flex-shrink-0">
+                              {item.quantity}×
+                            </span>
+                            <span className="font-semibold text-gray-900 text-xs leading-tight">{item.name}</span>
+                            <span className="text-[9px] bg-red-500 text-white px-1.5 py-0.5 rounded font-bold">NEW</span>
+                          </div>
+                        </div>
+                        
+                        <div className="space-y-0.5 mb-2">
+                          {item.variation && (
+                            <div className="text-[10px] text-gray-700 flex items-center gap-1">
+                              <span className="bg-blue-500/20 px-1.5 py-0.5 rounded">🎯 {item.variation.name}</span>
+                            </div>
+                          )}
+                          {item.addons?.length > 0 && (
+                            <div className="flex flex-wrap gap-1">
+                              {item.addons.map((addon, addonIdx) => (
+                                <span key={addonIdx} className="text-[9px] bg-purple-500/20 text-purple-900 px-1.5 py-0.5 rounded">+ {addon.name}</span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+
+                        <button
+                          onClick={() => updateItemStatus(kot._id, idx, 'PREPARING', true)}
+                          className="w-full py-1.5 px-2 rounded-lg text-[10px] font-bold text-white bg-red-600 hover:bg-red-700 transition-all shadow-sm"
+                        >
+                          👨‍🍳 Accept Extra Item
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </motion.div>
           ))}
