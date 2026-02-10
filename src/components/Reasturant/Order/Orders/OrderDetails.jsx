@@ -137,12 +137,8 @@ const OrderDetails = ({ order, onUpdateStatus, onProcessPayment, onBack }) => {
                   onChange={(e) => onUpdateStatus(order._id, e.target.value)}
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="PENDING">Pending</option>
-                  <option value="ORDER_ACCEPTED">Order Accepted</option>
-                  <option value="PREPARING">Preparing</option>
                   <option value="READY">Ready</option>
-                  <option value="SERVED">Served</option>
-                  <option value="COMPLETE">Complete</option>
+                  <option value="DELIVERED">Delivered</option>
                   <option value="CANCELLED">Cancelled</option>
                 </select>
               </div>

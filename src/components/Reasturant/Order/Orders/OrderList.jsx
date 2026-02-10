@@ -241,12 +241,9 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
                         onChange={(e) => onUpdateStatus(selectedOrder._id, e.target.value)}
                         className="px-3 py-2 bg-white/50 backdrop-blur-md border border-white/30 rounded-lg text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-purple-500"
                       >
-                        <option value="PENDING">Pending</option>
-                        <option value="PREPARING">Preparing</option>
                         <option value="READY">Ready</option>
                         <option value="DELIVERED">Delivered</option>
                         <option value="CANCELLED">Cancelled</option>
-                        <option value="PAID">Paid</option>
                       </select>
                     </div>
                     <span className="text-2xl font-bold text-gray-900">{formatCurrency(selectedOrder.totalAmount)}</span>
@@ -268,7 +265,7 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
                         <FiRotateCcw className="inline mr-1" />Transfer
                       </button>
                     )}
-                    {selectedOrder.hasSplitBill && (
+                    {selectedOrder.hasSplitBill && !selectedOrder.paymentDetails && (
                       <button
                         onClick={() => onViewSplitBill && onViewSplitBill(selectedOrder)}
                         className="flex-1 p-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-xl font-medium transition-colors shadow-md hover:from-purple-600 hover:to-purple-700"

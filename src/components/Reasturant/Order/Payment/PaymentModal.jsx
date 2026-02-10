@@ -177,8 +177,8 @@ const PaymentModal = ({ order, onProcessPayment, onClose }) => {
               </div>
             )}
 
-            {/* Split Bill Option */}
-            {!existingSplitBill && (order.items.length > 1 || (order.extraItems && order.extraItems.length > 0)) && (
+            {/* Split Bill Option - Only show if no payment made */}
+            {!order.paymentDetails && !order.status === 'PAID' && !existingSplitBill && (order.items.length > 1 || (order.extraItems && order.extraItems.length > 0)) && (
               <div className="mb-6 p-4 bg-blue-50/50 backdrop-blur-md rounded-xl border border-blue-200/30">
                 <p className="text-sm text-gray-700 mb-3 font-medium">💳 Payment Options</p>
                 <div className="flex gap-2">
@@ -194,7 +194,7 @@ const PaymentModal = ({ order, onProcessPayment, onClose }) => {
               </div>
             )}
 
-            {existingSplitBill && existingSplitBill.status === 'ACTIVE' && (
+            {!order.paymentDetails && order.status !== 'PAID' && existingSplitBill && existingSplitBill.status === 'ACTIVE' && (
               <div className="mb-6 p-4 bg-purple-50/50 backdrop-blur-md rounded-xl border border-purple-200/30">
                 <p className="text-sm text-gray-700 mb-3 font-medium">💳 Split Payment Active</p>
                 <button
@@ -211,7 +211,7 @@ const PaymentModal = ({ order, onProcessPayment, onClose }) => {
               </div>
             )}
 
-            {existingSplitBill && existingSplitBill.status === 'COMPLETED' && (
+            {!order.paymentDetails && order.status !== 'PAID' && existingSplitBill && existingSplitBill.status === 'COMPLETED' && (
               <div className="mb-6 p-4 bg-green-50/50 backdrop-blur-md rounded-xl border border-green-200/30">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="text-2xl">✅</span>
@@ -228,16 +228,6 @@ const PaymentModal = ({ order, onProcessPayment, onClose }) => {
                     </div>
                   ))}
                 </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSplitBillData(existingSplitBill);
-                    setShowSplitPayment(true);
-                  }}
-                  className="w-full mt-3 px-4 py-2 bg-white/40 backdrop-blur-md border border-green-300 text-green-800 rounded-lg hover:bg-white/60 transition-all text-sm font-medium"
-                >
-                  View Payment Details
-                </button>
               </div>
             )}
 
@@ -264,7 +254,7 @@ const PaymentModal = ({ order, onProcessPayment, onClose }) => {
       </div>
 
       {/* Split Bill Modals */}
-      {showSplitBill && (
+      {!order.paymentDetails && order.status !== 'PAID' && showSplitBill && (
         <SplitBill 
           orderId={order._id} 
           onClose={() => setShowSplitBill(false)}
@@ -276,7 +266,7 @@ const PaymentModal = ({ order, onProcessPayment, onClose }) => {
         />
       )}
       
-      {showSplitPayment && (
+      {!order.paymentDetails && order.status !== 'PAID' && showSplitPayment && (
         <SplitBillPayment 
           orderId={order._id}
           splitBillData={splitBillData}

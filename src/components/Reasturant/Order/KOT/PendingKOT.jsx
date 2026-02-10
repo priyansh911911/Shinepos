@@ -22,7 +22,7 @@ const PendingKOT = ({ onItemStarted }) => {
           kot.status !== 'DELIVERED' && 
           kot.status !== 'CANCELLED' && 
           kot.status !== 'PAID' &&
-          kot.items?.every(item => item.status === 'PENDING')
+          kot.items?.some(item => item.status === 'PENDING')
         );
         setKots(pendingKots);
       }
@@ -129,8 +129,10 @@ const PendingKOT = ({ onItemStarted }) => {
               </div>
 
               <div className="p-3 space-y-2 max-h-64 overflow-y-auto">
-                {kot.items?.map((item, idx) => (
-                  <div key={idx} className="bg-white/30 backdrop-blur-sm rounded-xl p-2 border border-white/40 shadow-sm">
+                {kot.items?.filter(item => item.status === 'PENDING').map((item, idx) => {
+                  const originalIdx = kot.items.findIndex(i => i === item);
+                  return (
+                  <div key={originalIdx} className="bg-white/30 backdrop-blur-sm rounded-xl p-2 border border-white/40 shadow-sm">
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <div className="flex items-center gap-1.5 flex-1 min-w-0">
                         <span className="bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold px-2 py-0.5 rounded-md text-xs shadow-sm flex-shrink-0">
@@ -156,13 +158,14 @@ const PendingKOT = ({ onItemStarted }) => {
                     </div>
 
                     <button
-                      onClick={() => updateItemStatus(kot._id, idx, 'PREPARING')}
+                      onClick={() => updateItemStatus(kot._id, originalIdx, 'PREPARING')}
                       className="w-full py-1.5 px-2 rounded-lg text-[10px] font-bold text-white bg-orange-500 hover:bg-orange-600 transition-all shadow-sm"
                     >
                       👨‍🍳 Accept & Start
                     </button>
                   </div>
-                ))}
+                  );
+                })}
                 
                 {kot.extraItems?.length > 0 && (
                   <div className="border-t-2 border-dashed border-red-400 pt-2 mt-2">
