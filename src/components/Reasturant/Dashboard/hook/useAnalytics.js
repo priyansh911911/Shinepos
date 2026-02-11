@@ -95,7 +95,7 @@ export const useAnalytics = () => {
   };
 
   const exportData = () => {
-    console.log('Exporting analytics data...');
+    
   };
 
   return {

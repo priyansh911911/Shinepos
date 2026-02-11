@@ -28,7 +28,7 @@ const TodayAttendance = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
       
-      console.log('Today attendance response:', response.data);
+      
       setAttendance(response.data.present || []);
     } catch (error) {
       console.error('Error fetching today attendance:', error);

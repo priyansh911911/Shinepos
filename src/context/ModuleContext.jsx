@@ -22,7 +22,10 @@ export const ModuleProvider = ({ children }) => {
   const fetchModuleConfig = async () => {
     try {
       const token = localStorage.getItem('token');
-      if (!token) return;
+      if (!token) {
+        setLoading(false);
+        return;
+      }
 
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/modules/config`,
@@ -33,7 +36,13 @@ export const ModuleProvider = ({ children }) => {
         setModules(response.data.modules);
       }
     } catch (error) {
-      console.error('Failed to fetch module config:', error);
+      // Clear invalid token and redirect to login
+      if (error.response?.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      } else {
+        console.error('Failed to fetch module config:', error);
+      }
     } finally {
       setLoading(false);
     }

@@ -39,7 +39,7 @@ const Order = () => {
   } = useOrders();
 
   const handleAddItems = (orderId) => {
-    console.log('handleAddItems called with orderId:', orderId);
+    
     setShowAddItems(orderId);
   };
 

@@ -126,10 +126,6 @@ export const useAddNewOrder = (orderId) => {
         })
       };
       
-      console.log('Sending payload:', JSON.stringify(payload, null, 2));
-      console.log('Order ID:', orderId);
-      console.log('API URL:', `${API_BASE_URL}/api/orders/add-extra-items/${orderId}`);
-      
       const response = await axios.post(`${API_BASE_URL}/api/orders/add-items/${orderId}`, {
         items: orderItems.map(item => ({
           menuId: item.menuId,
@@ -148,8 +144,6 @@ export const useAddNewOrder = (orderId) => {
         }
       });
 
-      console.log('Response:', response.data);
-
       if (response.data) {
         setOrderItems([]);
         setError('');
@@ -157,7 +151,7 @@ export const useAddNewOrder = (orderId) => {
       }
     } catch (err) {
       console.error('Add items to order error:', err);
-      console.log('Response data:', err.response?.data);
+      
       setError(err.response?.data?.error || 'Failed to add items to order');
       return { success: false, error: err.response?.data?.error || 'Failed to add items to order' };
     } finally {

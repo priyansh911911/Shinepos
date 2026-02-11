@@ -39,7 +39,7 @@ const RecentOrders = ({ orders, delay = 0, onOrderClick }) => {
             onClick={(e) => {
               const rect = e.currentTarget.getBoundingClientRect();
               setClickPosition({ x: rect.right, y: rect.top + rect.height / 2 });
-              console.log('Clicked order:', order);
+              
               setSelectedOrder(order);
             }}
             className="flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
