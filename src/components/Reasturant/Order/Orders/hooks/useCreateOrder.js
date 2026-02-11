@@ -39,7 +39,10 @@ export const useCreateOrder = (onCreateOrder) => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.get(`${API_BASE_URL}/api/menus/get/all-menu-items`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Cache-Control': 'no-cache'
+        }
       });
       setMenuItems(response.data.menuItems || []);
     } catch (err) {
@@ -63,7 +66,9 @@ export const useCreateOrder = (onCreateOrder) => {
   };
 
   const openItemModal = (menuItem) => {
-    setSelectedItem(menuItem);
+    // Fetch latest menu item data to ensure timeToPrepare is current
+    const latestMenuItem = menuItems.find(item => item._id === menuItem._id);
+    setSelectedItem(latestMenuItem || menuItem);
     setSelectedVariation(menuItem.variation?.[0] || null);
     setSelectedAddons([]);
   };
@@ -96,7 +101,8 @@ export const useCreateOrder = (onCreateOrder) => {
         variation: selectedVariation,
         addons: selectedAddons,
         price: itemPrice,
-        quantity: 1
+        quantity: 1,
+        timeToPrepare: selectedItem.timeToPrepare || 15
       }]);
     }
     
@@ -165,7 +171,8 @@ export const useCreateOrder = (onCreateOrder) => {
           },
           addons: item.addons.map(addon => ({
             addonId: addon._id
-          }))
+          })),
+          timeToPrepare: item.timeToPrepare
         })),
         customerName: customerName.trim(),
         customerPhone: customerPhone.trim(),
@@ -225,6 +232,7 @@ export const useCreateOrder = (onCreateOrder) => {
     updateItemQuantity,
     removeItem,
     calculateTotal,
-    handleSubmit
+    handleSubmit,
+    fetchMenuItems
   };
 };
