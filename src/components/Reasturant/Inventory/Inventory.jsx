@@ -117,10 +117,10 @@ const Inventory = ({ initialTab, onTabChange }) => {
   }
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
+    <div className="p-3 sm:p-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 space-y-4 sm:space-y-0">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Inventory Management</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Inventory Management</h1>
           {lowStockCount > 0 && (
             <div className="flex items-center mt-2 text-orange-600">
               <FiAlertTriangle className="mr-2" />
@@ -129,7 +129,7 @@ const Inventory = ({ initialTab, onTabChange }) => {
           )}
         </div>
         
-        <div className="flex space-x-2">
+        <div className="flex flex-wrap gap-2">
           {activeTab !== 'add' && (
             <>
               <button
@@ -137,14 +137,14 @@ const Inventory = ({ initialTab, onTabChange }) => {
                   setActiveTab('list');
                   onTabChange && onTabChange('list');
                 }}
-                className={`px-4 py-2 rounded-lg flex items-center space-x-2 ${
+                className={`px-3 sm:px-4 py-2 rounded-lg flex items-center space-x-1 sm:space-x-2 text-sm sm:text-base ${
                   activeTab === 'list' 
                     ? 'bg-blue-600 text-white' 
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 }`}
               >
                 <FiPackage />
-                <span>Inventory</span>
+                <span className="hidden sm:inline">Inventory</span>
               </button>
               
               <button
@@ -152,14 +152,14 @@ const Inventory = ({ initialTab, onTabChange }) => {
                   setActiveTab('smart');
                   onTabChange && onTabChange('smart');
                 }}
-                className={`px-4 py-2 rounded-lg flex items-center space-x-2 ${
+                className={`px-3 sm:px-4 py-2 rounded-lg flex items-center space-x-1 sm:space-x-2 text-sm sm:text-base ${
                   activeTab === 'smart' 
                     ? 'bg-purple-600 text-white' 
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 }`}
               >
                 <FiCpu />
-                <span>Smart Inventory</span>
+                <span className="hidden sm:inline">Smart</span>
               </button>
             </>
           )}
@@ -169,14 +169,14 @@ const Inventory = ({ initialTab, onTabChange }) => {
               setActiveTab('add');
               onTabChange && onTabChange('add');
             }}
-            className={`px-4 py-2 rounded-lg flex items-center space-x-2 ${
+            className={`px-3 sm:px-4 py-2 rounded-lg flex items-center space-x-1 sm:space-x-2 text-sm sm:text-base ${
               activeTab === 'add' 
                 ? 'bg-green-600 text-white' 
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
           >
             <FiPlus />
-            <span>Add Item</span>
+            <span>Add</span>
           </button>
         </div>
       </div>

@@ -21,6 +21,7 @@ import SubscriptionPlans from '../components/Reasturant/Subscription/Subscriptio
 import Settings from '../components/Reasturant/Settings/Settings';
 import SubscriptionBlocker from './SubscriptionBlocker';
 import Attendance from '../components/Reasturant/Attendance/Attendance';
+import CRM from '../components/Reasturant/CRM/CRM';
 import { getDefaultPage, hasAccess } from '../utils/rolePermissions';
 import { useModules } from '../context/ModuleContext';
 
@@ -58,6 +59,7 @@ const RestaurantDashboard = () => {
     variations: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=1920&q=80',
     inventory: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=1920&q=80',
     staff: 'https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=1920&q=80',
+    crm: 'https://images.unsplash.com/photo-1556742111-a301076d9d18?w=1920&q=80',
     subscription: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1920&q=80',
     settings: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=1920&q=80'
   };
@@ -115,6 +117,8 @@ const RestaurantDashboard = () => {
           return isModuleEnabled('inventory') ? <Vendor /> : <ModuleDisabledMessage module="Inventory" />;
         case 'staff':
           return <StaffList />;
+        case 'crm':
+          return <CRM />;
         case 'attendance':
           return <Attendance />;
         case 'subscription':
@@ -156,6 +160,7 @@ const RestaurantDashboard = () => {
       'smart-inventory': 'Smart Inventory',
       'vendors': 'Vendors',
       staff: 'Staff',
+      crm: 'CRM',
       attendance: 'Attendance',
       subscription: 'Subscription',
       settings: 'Settings'
