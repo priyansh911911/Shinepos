@@ -10,7 +10,8 @@ const EditItem = ({ item, onSuccess, onBack }) => {
     imageUrl: '',
     videoUrl: '',
     timeToPrepare: '',
-    foodType: 'veg'
+    foodType: 'veg',
+    marginCostPercentage: 40
   });
   const [availableAddons, setAvailableAddons] = useState([]);
   const [availableVariations, setAvailableVariations] = useState([]);
@@ -25,6 +26,9 @@ const EditItem = ({ item, onSuccess, onBack }) => {
   useEffect(() => {
     fetchAddons();
     fetchVariations();
+  }, []);
+
+  useEffect(() => {
     if (item) {
       setFormData({
         itemName: item.itemName || '',
@@ -33,12 +37,13 @@ const EditItem = ({ item, onSuccess, onBack }) => {
         imageUrl: item.imageUrl || '',
         videoUrl: item.videoUrl || '',
         timeToPrepare: item.timeToPrepare || '',
-        foodType: item.foodType || 'veg'
+        foodType: item.foodType || 'veg',
+        marginCostPercentage: item.marginCostPercentage ?? 40
       });
       setSelectedAddons(item.addon ? item.addon.map(a => (typeof a === 'object' ? a._id : a).toString()) : []);
       setSelectedVariations(item.variation ? item.variation.map(v => (typeof v === 'object' ? v._id : v).toString()) : []);
     }
-  }, [item]);
+  }, [item?._id]);
 
   const fetchAddons = async () => {
     try {
@@ -132,13 +137,15 @@ const EditItem = ({ item, onSuccess, onBack }) => {
           timeToPrepare: Number(formData.timeToPrepare),
           foodType: formData.foodType,
           addon: selectedAddons,
-          variation: selectedVariations
+          variation: selectedVariations,
+          marginCostPercentage: Number(formData.marginCostPercentage)
         })
       });
 
       if (response.ok) {
+        const data = await response.json();
         alert('Item updated successfully!');
-        if (onSuccess) onSuccess();
+        if (onSuccess) onSuccess(data.menuItem);
       } else {
         const data = await response.json();
         alert(data.error || 'Failed to update item');
@@ -290,6 +297,20 @@ const EditItem = ({ item, onSuccess, onBack }) => {
                 onChange={handleInputChange}
                 className="w-full bg-white/30 backdrop-blur-md border border-white/40 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
                 min="1"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-900 mb-1">Margin Cost % *</label>
+              <input
+                type="number"
+                name="marginCostPercentage"
+                value={formData.marginCostPercentage}
+                onChange={handleInputChange}
+                className="w-full bg-white/30 backdrop-blur-md border border-white/40 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+                min="0"
+                max="100"
                 required
               />
             </div>

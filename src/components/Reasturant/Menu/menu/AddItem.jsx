@@ -10,7 +10,8 @@ const AddItem = ({ onSuccess, onBack }) => {
     imageUrl: '',
     videoUrl: '',
     timeToPrepare: '',
-    foodType: 'veg'
+    foodType: 'veg',
+    marginCostPercentage: 40
   });
   const [availableAddons, setAvailableAddons] = useState([]);
   const [availableVariations, setAvailableVariations] = useState([]);
@@ -138,7 +139,8 @@ const AddItem = ({ onSuccess, onBack }) => {
           timeToPrepare: Number(formData.timeToPrepare),
           foodType: formData.foodType,
           addon: selectedAddons,
-          variation: selectedVariations
+          variation: selectedVariations,
+          marginCostPercentage: Number(formData.marginCostPercentage)
         })
       });
 
@@ -296,6 +298,20 @@ const AddItem = ({ onSuccess, onBack }) => {
                 onChange={handleInputChange}
                 className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
                 min="1"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-900 mb-1">Margin Cost % *</label>
+              <input
+                type="number"
+                name="marginCostPercentage"
+                value={formData.marginCostPercentage}
+                onChange={handleInputChange}
+                className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+                min="0"
+                max="100"
                 required
               />
             </div>

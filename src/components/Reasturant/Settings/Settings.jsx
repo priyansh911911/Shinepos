@@ -2,16 +2,8 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FiSettings, FiPackage } from 'react-icons/fi';
 import ModuleSettings from './Module/ModuleSettings';
-import GeneralSettings from './GeneralSettings';
 
 const Settings = () => {
-  const [activeTab, setActiveTab] = useState('general');
-
-  const tabs = [
-    { id: 'general', label: 'General', icon: <FiSettings /> },
-    { id: 'modules', label: 'Modules', icon: <FiPackage /> },
-  ];
-
   return (
     <div className="min-h-screen bg-transparent p-6">
       <motion.div
@@ -26,27 +18,7 @@ const Settings = () => {
         <p className="text-gray-200">Manage your restaurant configuration</p>
       </motion.div>
 
-      <div className="flex gap-3 mb-6">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-colors ${
-              activeTab === tab.id
-                ? 'bg-white/20 backdrop-blur-md text-white border border-white/30'
-                : 'bg-white/10 backdrop-blur-md text-gray-300 hover:bg-white/15 border border-white/20'
-            }`}
-          >
-            {tab.icon}
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      <div>
-        {activeTab === 'general' && <GeneralSettings />}
-        {activeTab === 'modules' && <ModuleSettings />}
-      </div>
+      <ModuleSettings />
     </div>
   );
 };
