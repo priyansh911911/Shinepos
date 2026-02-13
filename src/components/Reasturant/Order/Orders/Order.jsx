@@ -5,6 +5,7 @@ import CreateOrder from './CreateOrder';
 import OrderDetails from './OrderDetails';
 import OrderHistory from './OrderHistory';
 import PaymentModal from '../Payment/PaymentModal';
+import SplitBillPayment from '../Payment/SplitBillPayment';
 import TransferModal from './TransferModal';
 import AddNewOrder from '../AddNewOrder';
 import { useOrders } from './hooks/useOrders';
@@ -13,6 +14,7 @@ import axios from 'axios';
 const Order = () => {
   const [showAddItems, setShowAddItems] = useState(null);
   const [syncing, setSyncing] = useState(false);
+  const [showSplitBillView, setShowSplitBillView] = useState(null);
   const {
     orders,
     loading,
@@ -175,6 +177,7 @@ const Order = () => {
                   onAddItems={handleAddItems}
                   onTransfer={handleTransferClick}
                   onRefresh={fetchOrders}
+                  onViewSplitBill={(order) => setShowSplitBillView(order)}
                   activeTab={activeTab}
                   setActiveTab={setActiveTab}
                   showNavigation={false}
@@ -232,6 +235,17 @@ const Order = () => {
                   setSelectedOrder(null);
                 }}
                 onSuccess={handleTransferSuccess}
+              />
+            )}
+
+            {showSplitBillView && (
+              <SplitBillPayment
+                orderId={showSplitBillView._id}
+                onClose={() => setShowSplitBillView(null)}
+                onPaymentComplete={() => {
+                  setShowSplitBillView(null);
+                  fetchOrders();
+                }}
               />
             )}
           </>

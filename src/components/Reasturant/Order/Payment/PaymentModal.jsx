@@ -1,11 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FiX, FiCreditCard, FiDollarSign } from 'react-icons/fi';
+import SplitBill from './SplitBill';
+import SplitBillPayment from './SplitBillPayment';
 
 const PaymentModal = ({ order, onProcessPayment, onClose }) => {
   const [paymentMethod, setPaymentMethod] = useState('CASH');
   const [transactionId, setTransactionId] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showSplitBill, setShowSplitBill] = useState(false);
+  const [showSplitPayment, setShowSplitPayment] = useState(false);
+  const [splitBillData, setSplitBillData] = useState(null);
+  const [existingSplitBill, setExistingSplitBill] = useState(null);
+  const [checkingSplit, setCheckingSplit] = useState(true);
+
+  // Check if split bill already exists
+  useEffect(() => {
+    checkExistingSplitBill();
+  }, [order._id]);
+
+  const checkExistingSplitBill = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/split-bill/${order._id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setExistingSplitBill(data.splitBill);
+      }
+    } catch (error) {
+      // No split bill exists, which is fine
+    } finally {
+      setCheckingSplit(false);
+    }
+  };
 
   const paymentMethods = [
     { value: 'CASH', label: 'Cash', icon: FiDollarSign },
@@ -38,8 +67,9 @@ const PaymentModal = ({ order, onProcessPayment, onClose }) => {
     if (!result.success) {
       setError(result.error);
       setLoading(false);
+    } else {
+      onClose();
     }
-    // Modal will close automatically on success
   };
 
   return (
@@ -55,95 +85,202 @@ const PaymentModal = ({ order, onProcessPayment, onClose }) => {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6">
-          {error && (
-            <div className="bg-red-500/80 backdrop-blur-md border border-red-600/50 text-white px-4 py-3 rounded-xl mb-4 text-sm">
-              {error}
-            </div>
-          )}
-
-          {/* Order Summary */}
-          <div className="bg-white/40 backdrop-blur-md rounded-xl p-4 mb-6 border border-white/30">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-sm text-gray-700">Order Number:</span>
-              <span className="font-medium text-gray-900">{order.orderNumber}</span>
-            </div>
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-sm text-gray-700">Customer:</span>
-              <span className="font-medium text-gray-900">{order.customerName}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-700">Total Amount:</span>
-              <span className="text-xl font-bold text-green-600">
-                {formatCurrency(order.totalAmount)}
-              </span>
+        {order.paymentDetails || order.status === 'PAID' ? (
+          <div className="p-6">
+            <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
+              <div className="text-5xl mb-3">✅</div>
+              <h4 className="text-xl font-bold text-green-800 mb-2">Payment Already Completed</h4>
+              <p className="text-sm text-green-700 mb-4">This order has already been paid.</p>
+              {order.paymentDetails && (
+                <div className="text-sm text-gray-700 space-y-1">
+                  <p><span className="font-medium">Method:</span> {order.paymentDetails.method}</p>
+                  {order.paymentDetails.paidAt && (
+                    <p><span className="font-medium">Paid at:</span> {new Date(order.paymentDetails.paidAt).toLocaleString()}</p>
+                  )}
+                </div>
+              )}
+              <button
+                onClick={onClose}
+                className="mt-4 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+              >
+                Close
+              </button>
             </div>
           </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="p-6">
+            {error && (
+              <div className="bg-red-500/80 backdrop-blur-md border border-red-600/50 text-white px-4 py-3 rounded-xl mb-4 text-sm">
+                {error}
+              </div>
+            )}
 
-          {/* Payment Method */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-900 mb-3">
-              Payment Method
-            </label>
-            <div className="grid grid-cols-2 gap-3">
-              {paymentMethods.map((method) => {
-                const IconComponent = method.icon;
-                return (
-                  <button
-                    key={method.value}
-                    type="button"
-                    onClick={() => setPaymentMethod(method.value)}
-                    className={`flex items-center justify-center space-x-2 p-3 rounded-xl transition-all ${
-                      paymentMethod === method.value
-                        ? 'bg-white/60 backdrop-blur-lg text-gray-900 shadow-lg border border-white/50'
-                        : 'bg-white/30 backdrop-blur-md text-gray-700 hover:bg-white/40 border border-white/30'
-                    }`}
-                  >
-                    <IconComponent size={18} />
-                    <span className="text-sm font-medium">{method.label}</span>
-                  </button>
-                );
-              })}
+            {/* Order Summary */}
+            <div className="bg-white/40 backdrop-blur-md rounded-xl p-4 mb-6 border border-white/30">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm text-gray-700">Order Number:</span>
+                <span className="font-medium text-gray-900">{order.orderNumber}</span>
+              </div>
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm text-gray-700">Customer:</span>
+                <span className="font-medium text-gray-900">{order.customerName}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-700">Total Amount:</span>
+                <span className="text-xl font-bold text-green-600">
+                  {formatCurrency(order.totalAmount)}
+                </span>
+              </div>
             </div>
-          </div>
 
-          {/* Transaction ID */}
-          {paymentMethod !== 'CASH' && (
+            {/* Payment Method */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-900 mb-2">
-                Transaction ID *
+              <label className="block text-sm font-medium text-gray-900 mb-3">
+                Payment Method
               </label>
-              <input
-                type="text"
-                value={transactionId}
-                onChange={(e) => setTransactionId(e.target.value)}
-                className="w-full bg-white/40 backdrop-blur-md border border-white/30 rounded-xl px-4 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                placeholder="Enter transaction ID"
-                required
-              />
+              <div className="grid grid-cols-2 gap-3">
+                {paymentMethods.map((method) => {
+                  const IconComponent = method.icon;
+                  return (
+                    <button
+                      key={method.value}
+                      type="button"
+                      onClick={() => setPaymentMethod(method.value)}
+                      className={`flex items-center justify-center space-x-2 p-3 rounded-xl transition-all ${
+                        paymentMethod === method.value
+                          ? 'bg-white/60 backdrop-blur-lg text-gray-900 shadow-lg border border-white/50'
+                          : 'bg-white/30 backdrop-blur-md text-gray-700 hover:bg-white/40 border border-white/30'
+                      }`}
+                    >
+                      <IconComponent size={18} />
+                      <span className="text-sm font-medium">{method.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          )}
 
-          {/* Action Buttons */}
-          <div className="flex justify-end space-x-3">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 bg-white/30 backdrop-blur-md border border-white/30 text-gray-900 rounded-xl hover:bg-white/40 transition-all"
-              disabled={loading}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-6 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl hover:from-green-600 hover:to-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg transition-all"
-            >
-              {loading ? 'Processing...' : `Process ${formatCurrency(order.totalAmount)}`}
-            </button>
-          </div>
-        </form>
+            {/* Transaction ID */}
+            {paymentMethod !== 'CASH' && (
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-900 mb-2">
+                  Transaction ID *
+                </label>
+                <input
+                  type="text"
+                  value={transactionId}
+                  onChange={(e) => setTransactionId(e.target.value)}
+                  className="w-full bg-white/40 backdrop-blur-md border border-white/30 rounded-xl px-4 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  placeholder="Enter transaction ID"
+                  required
+                />
+              </div>
+            )}
+
+            {/* Split Bill Option - Only show if no payment made */}
+            {!order.paymentDetails && !order.status === 'PAID' && !existingSplitBill && (order.items.length > 1 || (order.extraItems && order.extraItems.length > 0)) && (
+              <div className="mb-6 p-4 bg-blue-50/50 backdrop-blur-md rounded-xl border border-blue-200/30">
+                <p className="text-sm text-gray-700 mb-3 font-medium">💳 Payment Options</p>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowSplitBill(true)}
+                    className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all text-sm font-medium shadow-md"
+                  >
+                    Split Bill
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500 mt-2">💡 Split equally or by items among multiple people</p>
+              </div>
+            )}
+
+            {!order.paymentDetails && order.status !== 'PAID' && existingSplitBill && existingSplitBill.status === 'ACTIVE' && (
+              <div className="mb-6 p-4 bg-purple-50/50 backdrop-blur-md rounded-xl border border-purple-200/30">
+                <p className="text-sm text-gray-700 mb-3 font-medium">💳 Split Payment Active</p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSplitBillData(existingSplitBill);
+                    setShowSplitPayment(true);
+                  }}
+                  className="w-full px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all text-sm font-medium shadow-md"
+                >
+                  View Split Payments
+                </button>
+                <p className="text-xs text-gray-500 mt-2">💡 Continue paying individual splits</p>
+              </div>
+            )}
+
+            {!order.paymentDetails && order.status !== 'PAID' && existingSplitBill && existingSplitBill.status === 'COMPLETED' && (
+              <div className="mb-6 p-4 bg-green-50/50 backdrop-blur-md rounded-xl border border-green-200/30">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-2xl">✅</span>
+                  <p className="text-sm text-green-800 font-bold">All Splits Paid!</p>
+                </div>
+                <div className="space-y-2">
+                  {existingSplitBill.splits.map((split) => (
+                    <div key={split.splitNumber} className="flex justify-between items-center text-xs bg-white/50 rounded-lg p-2">
+                      <span className="text-gray-700">{split.customerName}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-green-700">₹{split.totalAmount.toFixed(2)}</span>
+                        <span className="text-green-600">✓ {split.paymentDetails?.method}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <div className="flex justify-end space-x-3">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 bg-white/30 backdrop-blur-md border border-white/30 text-gray-900 rounded-xl hover:bg-white/40 transition-all"
+                disabled={loading}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-6 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl hover:from-green-600 hover:to-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg transition-all"
+              >
+                {loading ? 'Processing...' : `Process ${formatCurrency(order.totalAmount)}`}
+              </button>
+            </div>
+          </form>
+        )}
       </div>
+
+      {/* Split Bill Modals */}
+      {!order.paymentDetails && order.status !== 'PAID' && showSplitBill && (
+        <SplitBill 
+          orderId={order._id} 
+          onClose={() => setShowSplitBill(false)}
+          onSplitCreated={(splitBill) => {
+            setSplitBillData(splitBill);
+            setShowSplitBill(false);
+            setShowSplitPayment(true);
+          }}
+        />
+      )}
+      
+      {!order.paymentDetails && order.status !== 'PAID' && showSplitPayment && (
+        <SplitBillPayment 
+          orderId={order._id}
+          splitBillData={splitBillData}
+          onPaymentComplete={() => {
+            setShowSplitPayment(false);
+            setSplitBillData(null);
+            onClose();
+          }}
+          onClose={() => {
+            setShowSplitPayment(false);
+            setSplitBillData(null);
+          }} 
+        />
+      )}
     </div>
   );
 };

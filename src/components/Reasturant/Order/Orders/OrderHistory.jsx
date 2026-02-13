@@ -42,7 +42,7 @@ const OrderHistory = () => {
       if (response.ok) {
         const data = await response.json();
         const completedOrders = (data.orders || []).filter(order => 
-          order.status === 'PAID' || order.status === 'CANCELLED'
+          order.status === 'PAID' || order.status === 'CANCELLED' || order.status === 'DELIVERED'
         );
         setHistoryOrders(completedOrders);
       }
@@ -138,9 +138,11 @@ const OrderHistory = () => {
                     <td className="px-3 lg:px-4 py-3 font-bold text-green-1000 text-sm whitespace-nowrap">{formatCurrency(order.totalAmount)}</td>
                     <td className="px-3 lg:px-4 py-3">
                       <span className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap ${
-                        order.status === 'PAID' ? 'bg-gray-600 text-white' : 'bg-red-500/30 text-red-900 backdrop-blur-md'
+                        order.status === 'DELIVERED' ? 'bg-green-600 text-white' :
+                        order.status === 'READY' ? 'bg-blue-600 text-white' :
+                        'bg-red-500/30 text-red-900 backdrop-blur-md'
                       }`}>
-                        {order.status === 'PAID' ? 'PAID' : 'CANCELLED'}
+                        {order.status}
                       </span>
                     </td>
                     <td className="px-3 lg:px-4 py-3 text-xs text-gray-700 whitespace-nowrap">
