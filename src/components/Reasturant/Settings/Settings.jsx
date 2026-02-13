@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FiSettings, FiPackage } from 'react-icons/fi';
 import ModuleSettings from './Module/ModuleSettings';
+import GeneralSettings from './GeneralSettings';
 
 const Settings = () => {
-  const [activeTab, setActiveTab] = useState('modules');
+  const [activeTab, setActiveTab] = useState('general');
 
   const tabs = [
+    { id: 'general', label: 'General', icon: <FiSettings /> },
     { id: 'modules', label: 'Modules', icon: <FiPackage /> },
-    // Add more tabs here as needed
-    // { id: 'general', label: 'General', icon: <FiSettings /> },
   ];
 
   return (
@@ -44,8 +44,8 @@ const Settings = () => {
       </div>
 
       <div>
+        {activeTab === 'general' && <GeneralSettings />}
         {activeTab === 'modules' && <ModuleSettings />}
-        {/* Add more tab content here */}
       </div>
     </div>
   );

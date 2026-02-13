@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FiTrendingUp, FiTrendingDown, FiDollarSign, FiPackage } from 'react-icons/fi';
+import { FiTrendingUp, FiTrendingDown, FiDollarSign, FiPackage, FiCalendar } from 'react-icons/fi';
 import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -8,28 +8,35 @@ const ItemAnalysis = () => {
   const [itemData, setItemData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sortBy, setSortBy] = useState('revenue');
+  const [dateRange, setDateRange] = useState('all');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   useEffect(() => {
     fetchItemAnalysis();
-  }, []);
+  }, [dateRange, startDate, endDate]);
 
   const fetchItemAnalysis = async () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`${API_BASE_URL}/api/dashboard/stats`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
       
-      // Mock item analysis data based on category breakdown
-      const mockItems = [
-        { name: 'Margherita Pizza', category: 'Pizza', quantity: 45, revenue: 13500, cost: 6750, profit: 6750, margin: 50 },
-        { name: 'Chicken Burger', category: 'Burgers', quantity: 32, revenue: 9600, cost: 5760, profit: 3840, margin: 40 },
-        { name: 'Caesar Salad', category: 'Salads', quantity: 28, revenue: 5600, cost: 2240, profit: 3360, margin: 60 },
-        { name: 'Pasta Alfredo', category: 'Pasta', quantity: 25, revenue: 7500, cost: 3750, profit: 3750, margin: 50 },
-        { name: 'Fish & Chips', category: 'Mains', quantity: 20, revenue: 8000, cost: 5600, profit: 2400, margin: 30 }
-      ];
-      setItemData(mockItems);
+      // Build query params
+      const params = new URLSearchParams();
+      if (dateRange !== 'all') {
+        params.append('dateRange', dateRange);
+      }
+      if (dateRange === 'custom' && startDate && endDate) {
+        params.append('startDate', startDate);
+        params.append('endDate', endDate);
+      }
+      
+      const response = await axios.get(
+        `${API_BASE_URL}/api/reports/items/analysis?${params.toString()}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      setItemData(response.data.items || []);
     } catch (error) {
       console.error('Item analysis error:', error);
     } finally {
@@ -49,22 +56,55 @@ const ItemAnalysis = () => {
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <h1 className="text-2xl font-bold text-white">Item Profitability Analysis</h1>
-        <select
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value)}
-          className="px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg text-white"
-        >
-          <option value="revenue">Sort by Revenue</option>
-          <option value="quantity">Sort by Quantity</option>
-          <option value="profit">Sort by Profit</option>
-          <option value="margin">Sort by Margin</option>
-        </select>
+        <div className="flex flex-wrap gap-3">
+          <select
+            value={dateRange}
+            onChange={(e) => setDateRange(e.target.value)}
+            className="px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg text-white"
+          >
+            <option value="all">All Time</option>
+            <option value="today">Today</option>
+            <option value="week">Last 7 Days</option>
+            <option value="month">Last 30 Days</option>
+            <option value="custom">Custom Range</option>
+          </select>
+          
+          {dateRange === 'custom' && (
+            <>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg text-white"
+              />
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg text-white"
+              />
+            </>
+          )}
+          
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg text-white"
+          >
+            <option value="revenue">Sort by Revenue</option>
+            <option value="quantity">Sort by Quantity</option>
+            <option value="profit">Sort by Profit</option>
+            <option value="margin">Sort by Margin</option>
+          </select>
+        </div>
       </div>
 
       {loading ? (
         <div className="text-center py-8 text-white">Loading...</div>
+      ) : itemData.length === 0 ? (
+        <div className="text-center py-8 text-white/70">No data available for selected period</div>
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -114,7 +154,7 @@ const ItemAnalysis = () => {
 
           <div className="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 overflow-hidden">
             <div className="px-6 py-4 border-b border-white/20">
-              <h3 className="text-lg font-semibold text-white">Item Performance</h3>
+              <h3 className="text-lg font-semibold text-white">Item Performance ({sortedItems.length} items)</h3>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -137,9 +177,9 @@ const ItemAnalysis = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-white/70">{item.category}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-white">{item.quantity}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-green-400 font-medium">₹{item.revenue.toLocaleString()}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-red-400">₹{item.cost.toLocaleString()}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-blue-400 font-medium">₹{item.profit.toLocaleString()}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-green-400 font-medium">₹{item.revenue.toFixed(2)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-red-400">₹{item.cost.toFixed(2)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-blue-400 font-medium">₹{item.profit.toFixed(2)}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                           item.margin >= 50 ? 'bg-green-400/20 text-green-400' :

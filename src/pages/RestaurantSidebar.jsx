@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FiHome, FiGrid, FiUsers, FiCreditCard, FiClipboard, FiPackage, FiShoppingBag, FiTag, FiStar, FiTarget, FiList, FiPlus, FiSettings, FiLogOut, FiChevronDown, FiMenu, FiX, FiBarChart, FiClock, FiCpu, FiTruck, FiFileText, FiTrendingUp, FiPieChart, FiDownload } from 'react-icons/fi';
-import { FiHome, FiGrid, FiUsers, FiCreditCard, FiClipboard, FiPackage, FiShoppingBag, FiTag, FiStar, FiTarget, FiList, FiPlus, FiSettings, FiLogOut, FiChevronDown, FiMenu, FiX, FiBarChart, FiClock, FiCpu, FiTruck, FiUserCheck } from 'react-icons/fi';
+import { FiHome, FiGrid, FiUsers, FiCreditCard, FiClipboard, FiPackage, FiShoppingBag, FiTag, FiStar, FiTarget, FiList, FiPlus, FiSettings, FiLogOut, FiChevronDown, FiMenu, FiX, FiBarChart, FiClock, FiCpu, FiTruck, FiFileText, FiTrendingUp, FiPieChart, FiDownload, FiUserCheck } from 'react-icons/fi';
 import { hasAccess } from '../utils/rolePermissions';
 import { useModules } from '../context/ModuleContext';
 
