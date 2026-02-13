@@ -52,7 +52,7 @@ const Dashboard = () => {
         headers: { Authorization: `Bearer ${token}` }
       };
 
-      console.log('Fetching dashboard data from:', import.meta.env.VITE_API_URL);
+      
 
       let url = `${import.meta.env.VITE_API_URL}/api/dashboard/stats?filter=${filter}`;
       if (filter === 'custom' && startDate && endDate) {
@@ -150,7 +150,7 @@ const Dashboard = () => {
   ];
 
   const handleQuickAction = (actionId) => {
-    console.log('Quick action clicked:', actionId);
+    
     // TODO: Implement navigation or modal opening based on actionId
   };
 

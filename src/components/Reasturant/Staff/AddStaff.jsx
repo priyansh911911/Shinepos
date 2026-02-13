@@ -35,9 +35,9 @@ const AddStaff = ({ onSuccess, onBack }) => {
       shiftSchedule: formData.shiftSchedule
     };
     
-    console.log('=== FRONTEND SUBMIT ===');
-    console.log('Form data:', formData);
-    console.log('Payload to send:', payload);
+    
+    
+    
 
     try {
       const token = localStorage.getItem('token');

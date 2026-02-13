@@ -17,7 +17,7 @@ const MyAttendanceHistory = () => {
       const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/attendance/my-attendance`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      console.log('My attendance response:', response.data);
+      
       setAttendance(response.data.attendance || []);
     } catch (error) {
       console.error('Error fetching my attendance:', error);

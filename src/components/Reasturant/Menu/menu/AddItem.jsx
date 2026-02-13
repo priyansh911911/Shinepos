@@ -59,18 +59,18 @@ const AddItem = ({ onSuccess, onBack }) => {
 
   const uploadToCloudinary = async (file, type) => {
     try {
-      console.log('Creating FormData...');
+      
       const formData = new FormData();
       formData.append('file', file);
-      console.log('FormData created');
+      
 
       const token = localStorage.getItem('token');
-      console.log('Token:', token ? 'exists' : 'missing');
+      
       
       const url = `${import.meta.env.VITE_API_URL}/api/upload/media`;
-      console.log('Upload URL:', url);
       
-      console.log('Sending fetch request...');
+      
+      
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
       
@@ -81,7 +81,7 @@ const AddItem = ({ onSuccess, onBack }) => {
         signal: controller.signal
       });
       clearTimeout(timeoutId);
-      console.log('Response received:', response.status);
+      
 
       if (!response.ok) {
         const error = await response.json();
@@ -89,7 +89,7 @@ const AddItem = ({ onSuccess, onBack }) => {
         throw new Error(error.error || 'Upload failed');
       }
       const data = await response.json();
-      console.log('Upload data:', data);
+      
       return data.url;
     } catch (error) {
       if (error.name === 'AbortError') {
@@ -308,12 +308,12 @@ const AddItem = ({ onSuccess, onBack }) => {
                 onChange={async (e) => {
                   const file = e.target.files[0];
                   if (file) {
-                    console.log('File selected:', file.name, file.size);
+                    
                     setUploadingImage(true);
                     try {
-                      console.log('Starting upload...');
+                      
                       const url = await uploadToCloudinary(file, 'image');
-                      console.log('Upload successful:', url);
+                      
                       setFormData(prev => ({ ...prev, imageUrl: url }));
                     } catch (error) {
                       console.error('Upload failed:', error);

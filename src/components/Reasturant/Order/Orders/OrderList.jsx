@@ -6,8 +6,8 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
   const [expandedOrderItems, setExpandedOrderItems] = useState(null);
   const [refreshingList, setRefreshingList] = useState(false);
 
-  console.log('OrderList loaded with onUpdatePriority:', !!onUpdatePriority);
-  console.log('Sample order priority:', orders[0]?.priority);
+  
+  
 
   const statusColors = {
     PENDING: 'bg-gradient-to-r from-yellow-400 to-orange-400 text-white',

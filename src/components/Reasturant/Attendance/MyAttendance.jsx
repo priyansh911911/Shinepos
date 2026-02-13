@@ -24,14 +24,14 @@ const MyAttendance = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
       
-      console.log('My attendance response:', response.data);
+      
       
       const today = new Date().toDateString();
       const todayRecord = response.data.attendance?.find(record => 
         new Date(record.date).toDateString() === today
       );
       
-      console.log('Today record found:', todayRecord);
+      
       setTodayAttendance(todayRecord?.actual || todayRecord);
       
     } catch (error) {
@@ -46,12 +46,12 @@ const MyAttendance = () => {
       const token = localStorage.getItem('token');
       // Decode JWT to get the actual user ID that backend expects
       const payload = JSON.parse(atob(token.split('.')[1]));
-      console.log('JWT payload:', payload);
-      console.log('User from localStorage:', user);
+      
+      
       
       // Use userId from JWT payload since that's what the token contains
       const userId = payload.userId;
-      console.log('Using userId:', userId);
+      
       
       await axios.post(`${import.meta.env.VITE_API_URL}/api/attendance/checkin/${userId}`, {}, {
         headers: { Authorization: `Bearer ${token}` }
