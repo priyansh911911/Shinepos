@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FiHome, FiGrid, FiUsers, FiCreditCard, FiClipboard, FiPackage, FiShoppingBag, FiTag, FiStar, FiTarget, FiList, FiPlus, FiSettings, FiLogOut, FiChevronDown, FiMenu, FiX, FiBarChart, FiClock, FiCpu, FiTruck } from 'react-icons/fi';
+import { FiHome, FiGrid, FiUsers, FiCreditCard, FiClipboard, FiPackage, FiShoppingBag, FiTag, FiStar, FiTarget, FiList, FiPlus, FiSettings, FiLogOut, FiChevronDown, FiMenu, FiX, FiBarChart, FiClock, FiCpu, FiTruck, FiFileText, FiTrendingUp, FiPieChart, FiDownload } from 'react-icons/fi';
 import { hasAccess } from '../utils/rolePermissions';
 import { useModules } from '../context/ModuleContext';
 
@@ -8,6 +8,7 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout, sidebarOpen, set
   const [menuOpen, setMenuOpen] = useState(false);
   const [orderOpen, setOrderOpen] = useState(false);
   const [inventoryOpen, setInventoryOpen] = useState(false);
+  const [reportsOpen, setReportsOpen] = useState(false);
   const { isModuleEnabled } = useModules();
 
   const menuItems = [
@@ -37,6 +38,15 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout, sidebarOpen, set
     { id: 'variations', label: 'Variations', icon: <FiTarget /> }
   ];
 
+  const reportsSubItems = [
+    { id: 'sales-report', label: 'Sales Report', icon: <FiTrendingUp /> },
+    { id: 'item-analysis', label: 'Item Analysis', icon: <FiPieChart /> },
+    { id: 'staff-performance', label: 'Staff Performance', icon: <FiUsers /> },
+    { id: 'peak-hours', label: 'Peak Hours', icon: <FiClock /> },
+    { id: 'tax-reports', label: 'Tax Reports', icon: <FiFileText /> },
+    { id: 'profit-loss', label: 'P&L Statement', icon: <FiBarChart /> }
+  ];
+
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const userRole = user.role;
 
@@ -54,11 +64,13 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout, sidebarOpen, set
     hasAccess(userRole, item.id) && isModuleEnabled(item.module)
   );
   const filteredMenuSubItems = menuSubItems.filter(item => hasAccess(userRole, item.id));
+  const filteredReportsSubItems = reportsSubItems.filter(item => hasAccess(userRole, 'reports'));
 
   // Check if dropdowns should be shown
   const showOrdersDropdown = filteredOrderSubItems.length > 0;
   const showInventoryDropdown = filteredInventorySubItems.length > 0;
   const showMenuDropdown = filteredMenuSubItems.length > 0;
+  const showReportsDropdown = filteredReportsSubItems.length > 0;
 
   return (
     <>
@@ -233,6 +245,46 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout, sidebarOpen, set
                   className="ml-6 mt-1 space-y-1"
                 >
                   {filteredMenuSubItems.map((subItem) => (
+                    <button
+                      key={subItem.id}
+                      onClick={() => handleNavClick(subItem.id)}
+                      className={`w-full flex items-center gap-2 text-left px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                        activeTab === subItem.id
+                          ? 'bg-white/40 backdrop-blur-lg text-black shadow-md'
+                          : 'text-black hover:bg-white/20 backdrop-blur-md'
+                      }`}
+                    >
+                      <span className="text-lg">{subItem.icon}</span>
+                      <span>{subItem.label}</span>
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </div>
+            )}
+            {/* Reports Dropdown */}
+            {showReportsDropdown && (
+            <div>
+              <button
+                onClick={() => setReportsOpen(!reportsOpen)}
+                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+                  reportsOpen ? 'bg-white/40 backdrop-blur-lg text-black' : 'text-black hover:bg-white/20 backdrop-blur-md'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-lg"><FiFileText /></span>
+                  <span>Reports</span>
+                </div>
+                <FiChevronDown className={`transition-transform ${reportsOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {reportsOpen && (
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.15 }}
+                  className="ml-6 mt-1 space-y-1"
+                >
+                  {filteredReportsSubItems.map((subItem) => (
                     <button
                       key={subItem.id}
                       onClick={() => handleNavClick(subItem.id)}

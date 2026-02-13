@@ -21,6 +21,12 @@ import SubscriptionPlans from '../components/Reasturant/Subscription/Subscriptio
 import Settings from '../components/Reasturant/Settings/Settings';
 import SubscriptionBlocker from './SubscriptionBlocker';
 import Attendance from '../components/Reasturant/Attendance/Attendance';
+import SalesReport from '../components/Reasturant/Reports/SalesReport';
+import ItemAnalysis from '../components/Reasturant/Reports/ItemAnalysis';
+import StaffPerformance from '../components/Reasturant/Reports/StaffPerformance';
+import PeakHours from '../components/Reasturant/Reports/PeakHours';
+import TaxReports from '../components/Reasturant/Reports/TaxReports';
+import ProfitLoss from '../components/Reasturant/Reports/ProfitLoss';
 import { getDefaultPage, hasAccess } from '../utils/rolePermissions';
 import { useModules } from '../context/ModuleContext';
 
@@ -59,7 +65,13 @@ const RestaurantDashboard = () => {
     inventory: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=1920&q=80',
     staff: 'https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=1920&q=80',
     subscription: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1920&q=80',
-    settings: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=1920&q=80'
+    settings: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=1920&q=80',
+    'sales-report': 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1920&q=80',
+    'item-analysis': 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1920&q=80',
+    'staff-performance': 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1920&q=80',
+    'peak-hours': 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1920&q=80',
+    'tax-reports': 'https://images.unsplash.com/photo-1554224154-26032fced8bd?w=1920&q=80',
+    'profit-loss': 'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=1920&q=80'
   };
 
   const handleLogout = () => {
@@ -117,6 +129,18 @@ const RestaurantDashboard = () => {
           return <StaffList />;
         case 'attendance':
           return <Attendance />;
+        case 'sales-report':
+          return <SalesReport />;
+        case 'item-analysis':
+          return <ItemAnalysis />;
+        case 'staff-performance':
+          return <StaffPerformance />;
+        case 'peak-hours':
+          return <PeakHours />;
+        case 'tax-reports':
+          return <TaxReports />;
+        case 'profit-loss':
+          return <ProfitLoss />;
         case 'subscription':
           return <SubscriptionPlans />;
         case 'settings':
@@ -157,6 +181,12 @@ const RestaurantDashboard = () => {
       'vendors': 'Vendors',
       staff: 'Staff',
       attendance: 'Attendance',
+      'sales-report': 'Sales Report',
+      'item-analysis': 'Item Analysis',
+      'staff-performance': 'Staff Performance',
+      'peak-hours': 'Peak Hours Analysis',
+      'tax-reports': 'Tax Reports',
+      'profit-loss': 'Profit & Loss',
       subscription: 'Subscription',
       settings: 'Settings'
     };
