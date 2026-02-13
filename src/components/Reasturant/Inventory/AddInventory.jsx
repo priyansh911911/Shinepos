@@ -45,8 +45,8 @@ const AddInventory = ({ onAdd, onCancel }) => {
   };
 
   return (
-    <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6 animate-fadeIn">
-      <h2 className="text-xl font-bold text-gray-900 mb-6">📦 Add Inventory Item</h2>
+    <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-4 sm:p-6 animate-fadeIn">
+      <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-6">📦 Add Inventory Item</h2>
 
       {error && (
         <div className="bg-red-500/20 backdrop-blur-lg border border-red-400/50 text-red-700 px-4 py-3 rounded-xl mb-4">
@@ -55,7 +55,7 @@ const AddInventory = ({ onAdd, onCancel }) => {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-900 mb-2">
               Item Name *
@@ -156,7 +156,7 @@ const AddInventory = ({ onAdd, onCancel }) => {
             />
           </div>
 
-          <div className="col-span-2">
+          <div className="sm:col-span-2">
             <label className="block text-sm font-medium text-gray-900 mb-2">
               Supplier
             </label>
@@ -170,20 +170,20 @@ const AddInventory = ({ onAdd, onCancel }) => {
           </div>
         </div>
 
-        <div className="flex justify-end space-x-4 pt-4">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="px-6 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl transition-colors"
-          >
-            ← Cancel
-          </button>
+        <div className="flex flex-col space-y-3 pt-4">
           <button
             type="submit"
             disabled={loading}
-            className="px-6 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full px-6 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Adding...' : '✓ Add Item'}
+          </button>
+          <button
+            type="button"
+            onClick={onCancel}
+            className="w-full px-6 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl transition-colors"
+          >
+            ← Cancel
           </button>
         </div>
       </form>

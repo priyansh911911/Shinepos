@@ -15,6 +15,11 @@ export const rolePermissions = {
   },
   [ROLES.MANAGER]: {
     pages: ['dashboard', 'analytics', 'tables', 'staff', 'attendance', 'orders', 'kot', 'inventory', 'add-inventory', 'smart-inventory', 'vendors', 'category', 'menu', 'addons', 'variations', 'reports', 'sales-report', 'item-analysis', 'staff-performance', 'peak-hours', 'tax-reports', 'profit-loss'],
+    pages: ['dashboard', 'analytics', 'tables', 'crm', 'staff', 'attendance', 'subscription', 'orders', 'kot', 'inventory', 'add-inventory', 'smart-inventory', 'vendors', 'category', 'menu', 'addons', 'variations', 'settings'],
+    defaultPage: 'dashboard'
+  },
+  [ROLES.MANAGER]: {
+    pages: ['dashboard', 'analytics', 'tables', 'crm', 'staff', 'attendance', 'orders', 'kot', 'inventory', 'add-inventory', 'smart-inventory', 'vendors', 'category', 'menu', 'addons', 'variations'],
     defaultPage: 'dashboard'
   },
   [ROLES.CHEF]: {

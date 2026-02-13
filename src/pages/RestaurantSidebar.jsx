@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FiHome, FiGrid, FiUsers, FiCreditCard, FiClipboard, FiPackage, FiShoppingBag, FiTag, FiStar, FiTarget, FiList, FiPlus, FiSettings, FiLogOut, FiChevronDown, FiMenu, FiX, FiBarChart, FiClock, FiCpu, FiTruck, FiFileText, FiTrendingUp, FiPieChart, FiDownload } from 'react-icons/fi';
+import { FiHome, FiGrid, FiUsers, FiCreditCard, FiClipboard, FiPackage, FiShoppingBag, FiTag, FiStar, FiTarget, FiList, FiPlus, FiSettings, FiLogOut, FiChevronDown, FiMenu, FiX, FiBarChart, FiClock, FiCpu, FiTruck, FiUserCheck } from 'react-icons/fi';
 import { hasAccess } from '../utils/rolePermissions';
 import { useModules } from '../context/ModuleContext';
 
@@ -15,6 +16,7 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout, sidebarOpen, set
     { id: 'dashboard', label: 'Dashboard', icon: <FiHome /> },
     { id: 'analytics', label: 'Analytics', icon: <FiBarChart /> },
     { id: 'tables', label: 'Tables', icon: <FiGrid /> },
+    { id: 'crm', label: 'CRM', icon: <FiUserCheck /> },
     { id: 'staff', label: 'Staff', icon: <FiUsers /> },
     { id: 'attendance', label: 'Attendance', icon: <FiClock /> },
     { id: 'subscription', label: 'Subscription', icon: <FiCreditCard /> }
