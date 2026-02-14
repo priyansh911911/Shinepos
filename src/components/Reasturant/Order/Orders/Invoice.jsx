@@ -147,14 +147,14 @@ const Invoice = ({ order, onClose, restaurantInfo }) => {
                           <td className="p-1 border border-black text-center">{index + 1}</td>
                           <td className="p-1 border border-black">{item.name}</td>
                           <td className="p-1 border border-black text-center">{item.quantity}</td>
-                          <td className="p-1 border border-black text-right">{formatCurrency(item.price)}</td>
+                          <td className="p-1 border border-black text-right">{formatCurrency(item.variation?.price || item.basePrice || 0)}</td>
                           <td className="p-1 border border-black text-center">{item.hsn || '996331'}</td>
-                          <td className="p-1 border border-black text-right font-bold">{formatCurrency(item.price * item.quantity)}</td>
+                          <td className="p-1 border border-black text-right font-bold">{formatCurrency(item.itemTotal || 0)}</td>
                         </tr>
                       ))}
                       <tr className="border border-black bg-gray-100">
                         <td colSpan="5" className="p-1 text-right font-bold border border-black">SUB TOTAL :</td>
-                        <td className="p-1 text-right border border-black font-bold">{formatCurrency(order.totalAmount)}</td>
+                        <td className="p-1 text-right border border-black font-bold">{formatCurrency(order.subtotal || order.totalAmount)}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -167,11 +167,19 @@ const Invoice = ({ order, onClose, restaurantInfo }) => {
                       <tbody>
                         <tr>
                           <td className="p-1 text-right text-xs font-medium">Subtotal:</td>
-                          <td className="p-1 border-l border-black text-right text-xs">{formatCurrency(order.totalAmount)}</td>
+                          <td className="p-1 border-l border-black text-right text-xs">{formatCurrency(order.subtotal || order.totalAmount)}</td>
                         </tr>
+                        {(order.paymentDetails?.amount < (order.subtotal || order.totalAmount)) && (
+                          <tr className="text-green-600">
+                            <td className="p-1 text-right text-xs font-medium">
+                              Loyalty Discount {order.paymentDetails?.loyaltyPointsUsed ? `(${order.paymentDetails.loyaltyPointsUsed} pts)` : ''}:
+                            </td>
+                            <td className="p-1 border-l border-black text-right text-xs">-{formatCurrency((order.subtotal || order.totalAmount) - (order.paymentDetails?.amount || order.totalAmount))}</td>
+                          </tr>
+                        )}
                         <tr className="font-bold">
                           <td className="p-1 text-right text-xs">NET AMOUNT:</td>
-                          <td className="p-1 border-l border-black text-right text-xs">{formatCurrency(order.totalAmount)}</td>
+                          <td className="p-1 border-l border-black text-right text-xs">{formatCurrency(order.paymentDetails?.amount || order.totalAmount)}</td>
                         </tr>
                       </tbody>
                     </table>

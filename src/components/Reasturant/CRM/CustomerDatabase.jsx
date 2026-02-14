@@ -7,7 +7,7 @@ const CustomerDatabase = () => {
   const [search, setSearch] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState(null);
-  const [formData, setFormData] = useState({ name: '', phone: '', email: '', address: '' });
+  const [formData, setFormData] = useState({ name: '', phone: '', email: '' });
 
   useEffect(() => {
     fetchCustomers();
@@ -29,10 +29,12 @@ const CustomerDatabase = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
+      console.log('Submitting:', formData);
       if (editingCustomer) {
-        await axios.put(`${import.meta.env.VITE_API_URL}/api/customers/${editingCustomer._id}`, formData, {
+        const response = await axios.put(`${import.meta.env.VITE_API_URL}/api/customers/${editingCustomer._id}`, formData, {
           headers: { Authorization: `Bearer ${token}` }
         });
+        console.log('Update response:', response.data);
       } else {
         await axios.post(`${import.meta.env.VITE_API_URL}/api/customers`, formData, {
           headers: { Authorization: `Bearer ${token}` }
@@ -40,10 +42,11 @@ const CustomerDatabase = () => {
       }
       fetchCustomers();
       setShowModal(false);
-      setFormData({ name: '', phone: '', email: '', address: '' });
+      setFormData({ name: '', phone: '', email: '' });
       setEditingCustomer(null);
     } catch (error) {
       console.error('Error saving customer:', error);
+      alert('Failed to save customer');
     }
   };
 
@@ -71,7 +74,11 @@ const CustomerDatabase = () => {
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-white">Customer Database</h2>
-        <button onClick={() => { setShowModal(true); setEditingCustomer(null); }} className="bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-2">
+        <button onClick={() => { 
+          setEditingCustomer(null);
+          setFormData({ name: '', phone: '', email: '' });
+          setShowModal(true);
+        }} className="bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-2">
           <FaPlus /> Add Customer
         </button>
       </div>
@@ -103,7 +110,15 @@ const CustomerDatabase = () => {
                 <td className="px-4 py-3 text-white">{customer.totalOrders || 0}</td>
                 <td className="px-4 py-3 text-white">₹{customer.totalSpent || 0}</td>
                 <td className="px-4 py-3 flex gap-2">
-                  <button onClick={() => { setEditingCustomer(customer); setFormData(customer); setShowModal(true); }} className="text-blue-400 hover:text-blue-300">
+                  <button onClick={() => { 
+                    setEditingCustomer(customer);
+                    setFormData({
+                      name: customer.name || '',
+                      phone: customer.phone || '',
+                      email: customer.email || ''
+                    });
+                    setShowModal(true);
+                  }} className="text-blue-400 hover:text-blue-300">
                     <FaEdit />
                   </button>
                   <button onClick={() => handleDelete(customer._id)} className="text-red-400 hover:text-red-300">
@@ -127,8 +142,6 @@ const CustomerDatabase = () => {
                 className="w-full mb-3 px-4 py-2 bg-gray-700 text-white rounded" required />
               <input type="email" placeholder="Email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="w-full mb-3 px-4 py-2 bg-gray-700 text-white rounded" />
-              <textarea placeholder="Address" value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                className="w-full mb-3 px-4 py-2 bg-gray-700 text-white rounded" rows="3" />
               <div className="flex gap-2">
                 <button type="submit" className="flex-1 bg-blue-600 text-white py-2 rounded">Save</button>
                 <button type="button" onClick={() => { setShowModal(false); setEditingCustomer(null); }} className="flex-1 bg-gray-600 text-white py-2 rounded">Cancel</button>

@@ -13,11 +13,41 @@ const PaymentModal = ({ order, onProcessPayment, onClose }) => {
   const [splitBillData, setSplitBillData] = useState(null);
   const [existingSplitBill, setExistingSplitBill] = useState(null);
   const [checkingSplit, setCheckingSplit] = useState(true);
+  const [customer, setCustomer] = useState(null);
+  const [loyaltySettings, setLoyaltySettings] = useState(null);
+  const [pointsToRedeem, setPointsToRedeem] = useState(0);
 
   // Check if split bill already exists
   useEffect(() => {
     checkExistingSplitBill();
+    fetchCustomerLoyalty();
   }, [order._id]);
+
+  const fetchCustomerLoyalty = async () => {
+    if (!order.customerPhone) return;
+    try {
+      const token = localStorage.getItem('token');
+      const [customerRes, settingsRes] = await Promise.all([
+        fetch(`${import.meta.env.VITE_API_URL}/api/customers?phone=${order.customerPhone}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }),
+        fetch(`${import.meta.env.VITE_API_URL}/api/loyalty/settings`, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+      ]);
+      if (customerRes.ok) {
+        const customers = await customerRes.json();
+        const foundCustomer = customers.find(c => c.phone === order.customerPhone);
+        setCustomer(foundCustomer);
+      }
+      if (settingsRes.ok) {
+        const settings = await settingsRes.json();
+        setLoyaltySettings(settings);
+      }
+    } catch (error) {
+      console.error('Error fetching loyalty data:', error);
+    }
+  };
 
   const checkExistingSplitBill = async () => {
     try {
@@ -45,6 +75,15 @@ const PaymentModal = ({ order, onProcessPayment, onClose }) => {
 
   const formatCurrency = (amount) => `₹${amount.toFixed(2)}`;
 
+  const calculateDiscount = () => {
+    if (!loyaltySettings || pointsToRedeem === 0) return 0;
+    return pointsToRedeem / loyaltySettings.redeemRate;
+  };
+
+  const getFinalAmount = () => {
+    return Math.max(0, order.totalAmount - calculateDiscount());
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -58,8 +97,9 @@ const PaymentModal = ({ order, onProcessPayment, onClose }) => {
 
     const paymentData = {
       method: paymentMethod,
-      amount: order.totalAmount,
-      transactionId: transactionId.trim() || undefined
+      amount: getFinalAmount(),
+      transactionId: transactionId.trim() || undefined,
+      loyaltyPointsUsed: pointsToRedeem
     };
 
     const result = await onProcessPayment(order._id, paymentData);
@@ -125,13 +165,46 @@ const PaymentModal = ({ order, onProcessPayment, onClose }) => {
                 <span className="text-sm text-gray-700">Customer:</span>
                 <span className="font-medium text-gray-900">{order.customerName}</span>
               </div>
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm text-gray-700">Subtotal:</span>
+                <span className="font-medium text-gray-900">{formatCurrency(order.totalAmount)}</span>
+              </div>
+              {pointsToRedeem > 0 && (
+                <div className="flex justify-between items-center mb-2 text-green-600">
+                  <span className="text-sm">Loyalty Discount:</span>
+                  <span className="font-medium">-{formatCurrency(calculateDiscount())}</span>
+                </div>
+              )}
+              <div className="flex justify-between items-center pt-2 border-t border-white/20">
                 <span className="text-sm text-gray-700">Total Amount:</span>
                 <span className="text-xl font-bold text-green-600">
-                  {formatCurrency(order.totalAmount)}
+                  {formatCurrency(getFinalAmount())}
                 </span>
               </div>
             </div>
+
+            {/* Loyalty Points */}
+            {customer && customer.loyaltyPoints > 0 && loyaltySettings && (
+              <div className="mb-6 p-4 bg-purple-50/50 backdrop-blur-md rounded-xl border border-purple-200/30">
+                <div className="flex justify-between items-center mb-3">
+                  <span className="text-sm font-medium text-gray-900">🎁 Loyalty Points</span>
+                  <span className="text-sm font-bold text-purple-600">{customer.loyaltyPoints} pts available</span>
+                </div>
+                <p className="text-xs text-gray-600 mb-3">{loyaltySettings.redeemRate} points = ₹1 discount</p>
+                <input
+                  type="number"
+                  min="0"
+                  max={Math.min(customer.loyaltyPoints, Math.floor(order.totalAmount * loyaltySettings.redeemRate))}
+                  value={pointsToRedeem}
+                  onChange={(e) => setPointsToRedeem(Math.min(Number(e.target.value), customer.loyaltyPoints, Math.floor(order.totalAmount * loyaltySettings.redeemRate)))}
+                  className="w-full bg-white/40 backdrop-blur-md border border-white/30 rounded-lg px-3 py-2 text-gray-900 text-sm"
+                  placeholder="Points to redeem"
+                />
+                {pointsToRedeem > 0 && (
+                  <p className="text-xs text-green-600 mt-2 font-medium">💰 You'll save {formatCurrency(calculateDiscount())}</p>
+                )}
+              </div>
+            )}
 
             {/* Payment Method */}
             <div className="mb-6">
@@ -246,7 +319,7 @@ const PaymentModal = ({ order, onProcessPayment, onClose }) => {
                 disabled={loading}
                 className="px-6 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl hover:from-green-600 hover:to-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg transition-all"
               >
-                {loading ? 'Processing...' : `Process ${formatCurrency(order.totalAmount)}`}
+                {loading ? 'Processing...' : `Pay ${formatCurrency(getFinalAmount())}`}
               </button>
             </div>
           </form>

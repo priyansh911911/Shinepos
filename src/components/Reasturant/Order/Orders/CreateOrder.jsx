@@ -6,6 +6,8 @@ import OrderItemsList from './OrderItemsList';
 const CreateOrder = ({ onCreateOrder, onCancel }) => {
   const [step, setStep] = React.useState(1);
   const [searchQuery, setSearchQuery] = React.useState('');
+  const [customers, setCustomers] = React.useState([]);
+  const [showCustomerDropdown, setShowCustomerDropdown] = React.useState(false);
   const {
     menuItems,
     tables,
@@ -42,6 +44,37 @@ const CreateOrder = ({ onCreateOrder, onCancel }) => {
     handleSubmit,
     fetchMenuItems
   } = useCreateOrder(onCreateOrder);
+
+  React.useEffect(() => {
+    if (customerPhone.length >= 3) {
+      fetchCustomers(customerPhone);
+    } else {
+      setCustomers([]);
+      setShowCustomerDropdown(false);
+    }
+  }, [customerPhone]);
+
+  const fetchCustomers = async (phone) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/customers?phone=${phone}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setCustomers(data);
+        setShowCustomerDropdown(data.length > 0);
+      }
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+    }
+  };
+
+  const selectCustomer = (customer) => {
+    setCustomerName(customer.name);
+    setCustomerPhone(customer.phone);
+    setShowCustomerDropdown(false);
+  };
 
   const handleNext = () => {
     if (!customerName || !guestCount) {
@@ -82,12 +115,31 @@ const CreateOrder = ({ onCreateOrder, onCancel }) => {
               <label className="block text-sm font-medium text-white mb-2">
                 Phone Number
               </label>
-              <input
-                type="tel"
-                value={customerPhone}
-                onChange={(e) => setCustomerPhone(e.target.value)}
-                className="w-full bg-white/20 backdrop-blur-md border border-white/30 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 text-white placeholder-gray-300"
-              />
+              <div className="relative">
+                <input
+                  type="tel"
+                  value={customerPhone}
+                  onChange={(e) => setCustomerPhone(e.target.value)}
+                  className="w-full bg-white/20 backdrop-blur-md border border-white/30 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 text-white placeholder-gray-300"
+                  placeholder="Search by phone..."
+                />
+                {showCustomerDropdown && customers.length > 0 && (
+                  <div className="absolute z-10 w-full mt-1 bg-white rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                    {customers.map((customer) => (
+                      <button
+                        key={customer._id}
+                        type="button"
+                        onClick={() => selectCustomer(customer)}
+                        className="w-full text-left px-4 py-2 hover:bg-gray-100 border-b border-gray-200 last:border-0"
+                      >
+                        <div className="font-medium text-gray-900">{customer.name}</div>
+                        <div className="text-sm text-gray-600">{customer.phone}</div>
+                        <div className="text-xs text-purple-600">🎁 {customer.loyaltyPoints || 0} points</div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
             <div>
