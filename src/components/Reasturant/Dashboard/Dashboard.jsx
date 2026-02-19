@@ -170,7 +170,7 @@ const Dashboard = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="p-6 bg-transparent min-h-screen space-y-6"
+      className="p-3 lg:p-4 bg-transparent space-y-3"
     >
       {/* My Attendance - Show only for staff, not admin */}
       {!isAdmin && <MyAttendance />}
@@ -182,18 +182,18 @@ const Dashboard = () => {
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.1, duration: 0.3 }}
-        className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20"
+        className="bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/20"
       >
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Welcome back! 👋</h1>
-            <p className="text-gray-200">Here's what's happening at your restaurant</p>
+            <h1 className="text-2xl font-bold text-white mb-1">Welcome back! 👋</h1>
+            <p className="text-gray-200 text-sm">Here's what's happening at your restaurant</p>
           </div>
           <div className="flex items-center gap-3">
             <select 
               value={filter} 
               onChange={(e) => setFilter(e.target.value)}
-              className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg px-4 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg px-3 py-1.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="today" className="bg-gray-800">Today</option>
               <option value="weekly" className="bg-gray-800">This Week</option>
@@ -206,13 +206,13 @@ const Dashboard = () => {
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg px-2 py-1.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <input
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                  className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg px-2 py-1.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </>
             )}
@@ -225,7 +225,7 @@ const Dashboard = () => {
       </motion.div>
       
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
         {cards.map((card, index) => (
           <AnalyticsCard
             key={index}
@@ -241,7 +241,7 @@ const Dashboard = () => {
       </div>
 
       {/* Charts and Analytics Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         <PaymentStatistics stats={stats} delay={1.0} />
         <RecentOrders
           className="bg-white/10 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20"
@@ -282,7 +282,7 @@ const Dashboard = () => {
       </div>
 
       {/* Payment Statistics and Top Selling Items */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         <OrderStatus stats={stats} delay={0.6} />
         <TopSellingItems items={topItems} delay={1.1} />
       </div>
