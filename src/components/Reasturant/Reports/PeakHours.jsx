@@ -9,6 +9,13 @@ const PeakHours = () => {
   const [loading, setLoading] = useState(false);
   const [viewType, setViewType] = useState('hourly');
 
+  const formatTime = (minutes) => {
+    if (!minutes || isNaN(minutes)) return '0:00';
+    const mins = Math.floor(minutes);
+    const secs = Math.round((minutes - mins) * 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
   useEffect(() => {
     fetchPeakHours();
   }, [viewType]);
@@ -17,31 +24,13 @@ const PeakHours = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`${API_BASE_URL}/api/dashboard/stats`, {
+      const response = await axios.get(`${API_BASE_URL}/api/dashboard/peak-hours`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
-      // Mock peak hours data
-      const hourlyData = Array.from({ length: 24 }, (_, i) => ({
-        hour: i,
-        orders: Math.floor(Math.random() * 20) + (i >= 11 && i <= 14 ? 30 : i >= 18 && i <= 21 ? 25 : 5),
-        revenue: Math.floor(Math.random() * 5000) + (i >= 11 && i <= 14 ? 8000 : i >= 18 && i <= 21 ? 6000 : 1000),
-        avgWaitTime: Math.floor(Math.random() * 10) + (i >= 11 && i <= 14 ? 15 : i >= 18 && i <= 21 ? 12 : 5)
-      }));
-
-      const weeklyData = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => ({
-        day,
-        orders: Math.floor(Math.random() * 100) + 50,
-        revenue: Math.floor(Math.random() * 20000) + 15000,
-        avgWaitTime: Math.floor(Math.random() * 5) + 8
-      }));
-
-      setPeakData({
-        hourly: hourlyData,
-        weekly: weeklyData,
-        peakHour: hourlyData.reduce((max, hour) => hour.orders > max.orders ? hour : max),
-        peakDay: weeklyData.reduce((max, day) => day.orders > max.orders ? day : max)
-      });
+      if (response.data.success) {
+        setPeakData(response.data);
+      }
     } catch (error) {
       console.error('Peak hours error:', error);
     } finally {
@@ -112,7 +101,7 @@ const PeakHours = () => {
                 <div>
                   <p className="text-sm text-white/70">Avg Wait Time</p>
                   <p className="text-2xl font-bold text-purple-400">
-                    {Math.round(currentData.reduce((sum, d) => sum + d.avgWaitTime, 0) / currentData.length)} min
+                    {currentData.length > 0 ? formatTime(currentData.reduce((sum, d) => sum + (d.avgWaitTime || 0), 0) / currentData.length) : '0:00'}
                   </p>
                 </div>
                 <FiUsers className="text-purple-400" size={24} />
@@ -184,7 +173,7 @@ const PeakHours = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-green-400 font-medium">
                         ₹{item.revenue?.toLocaleString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-white">{item.avgWaitTime} min</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-white">{formatTime(item.avgWaitTime)}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                           item.orders >= maxOrders * 0.8 ? 'bg-red-400/20 text-red-400' :
