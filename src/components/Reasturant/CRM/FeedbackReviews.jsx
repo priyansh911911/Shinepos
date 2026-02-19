@@ -57,30 +57,30 @@ const FeedbackReviews = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 bg-transparent min-h-screen">
       <h2 className="text-2xl font-bold text-white mb-6">Customer Feedback & Reviews</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-gradient-to-r from-blue-600 to-blue-800 p-4 rounded-lg">
-          <p className="text-blue-200 text-sm">Average Rating</p>
+        <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-4 rounded-xl shadow-lg">
+          <p className="text-blue-100 text-sm">Average Rating</p>
           <div className="flex items-center gap-2 mt-2">
             <p className="text-3xl font-bold text-white">{stats.avgRating}</p>
             <FaStar className="text-yellow-400 text-2xl" />
           </div>
         </div>
-        <div className="bg-gradient-to-r from-purple-600 to-purple-800 p-4 rounded-lg">
-          <p className="text-purple-200 text-sm">Total Reviews</p>
+        <div className="bg-gradient-to-r from-purple-500 to-purple-600 p-4 rounded-xl shadow-lg">
+          <p className="text-purple-100 text-sm">Total Reviews</p>
           <p className="text-3xl font-bold text-white mt-2">{stats.total}</p>
         </div>
-        <div className="bg-gradient-to-r from-green-600 to-green-800 p-4 rounded-lg">
-          <p className="text-green-200 text-sm">Positive</p>
+        <div className="bg-gradient-to-r from-green-500 to-green-600 p-4 rounded-xl shadow-lg">
+          <p className="text-green-100 text-sm">Positive</p>
           <div className="flex items-center gap-2 mt-2">
             <p className="text-3xl font-bold text-white">{stats.positive}</p>
             <FaThumbsUp className="text-white text-xl" />
           </div>
         </div>
-        <div className="bg-gradient-to-r from-red-600 to-red-800 p-4 rounded-lg">
-          <p className="text-red-200 text-sm">Negative</p>
+        <div className="bg-gradient-to-r from-red-500 to-red-600 p-4 rounded-xl shadow-lg">
+          <p className="text-red-100 text-sm">Negative</p>
           <div className="flex items-center gap-2 mt-2">
             <p className="text-3xl font-bold text-white">{stats.negative}</p>
             <FaThumbsDown className="text-white text-xl" />
@@ -89,41 +89,41 @@ const FeedbackReviews = () => {
       </div>
 
       <div className="mb-4 flex gap-2">
-        <button onClick={() => setFilter('all')} className={`px-4 py-2 rounded ${filter === 'all' ? 'bg-blue-600' : 'bg-gray-700'} text-white`}>
+        <button onClick={() => setFilter('all')} className={`px-4 py-2 rounded-lg transition-all ${filter === 'all' ? 'bg-gradient-to-r from-blue-500 to-blue-600' : 'bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20'} text-white`}>
           All
         </button>
-        <button onClick={() => setFilter('positive')} className={`px-4 py-2 rounded ${filter === 'positive' ? 'bg-green-600' : 'bg-gray-700'} text-white`}>
+        <button onClick={() => setFilter('positive')} className={`px-4 py-2 rounded-lg transition-all ${filter === 'positive' ? 'bg-gradient-to-r from-green-500 to-green-600' : 'bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20'} text-white`}>
           Positive
         </button>
-        <button onClick={() => setFilter('negative')} className={`px-4 py-2 rounded ${filter === 'negative' ? 'bg-red-600' : 'bg-gray-700'} text-white`}>
+        <button onClick={() => setFilter('negative')} className={`px-4 py-2 rounded-lg transition-all ${filter === 'negative' ? 'bg-gradient-to-r from-red-500 to-red-600' : 'bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20'} text-white`}>
           Negative
         </button>
       </div>
 
       <div className="space-y-4">
         {filteredReviews.map((review) => (
-          <div key={review._id} className="bg-gray-800 p-4 rounded-lg">
+          <div key={review._id} className="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 p-4">
             <div className="flex justify-between items-start mb-3">
               <div>
                 <h3 className="text-white font-semibold">{review.customerName}</h3>
                 <div className="flex gap-1 mt-1">{renderStars(review.rating)}</div>
               </div>
               <div className="text-right">
-                <p className="text-gray-400 text-sm">{new Date(review.createdAt).toLocaleDateString()}</p>
+                <p className="text-gray-300 text-sm">{new Date(review.createdAt).toLocaleDateString()}</p>
                 <span className={`text-xs px-2 py-1 rounded mt-1 inline-block ${review.status === 'resolved' ? 'bg-green-600' : 'bg-yellow-600'} text-white`}>
                   {review.status || 'pending'}
                 </span>
               </div>
             </div>
-            <p className="text-gray-300 mb-3">{review.comment}</p>
+            <p className="text-gray-200 mb-3">{review.comment}</p>
             {review.orderNumber && (
-              <p className="text-gray-500 text-sm mb-3">Order #{review.orderNumber}</p>
+              <p className="text-gray-400 text-sm mb-3">Order #{review.orderNumber}</p>
             )}
             <div className="flex gap-2">
-              <button onClick={() => updateReviewStatus(review._id, 'resolved')} className="px-3 py-1 bg-green-600 text-white text-sm rounded">
+              <button onClick={() => updateReviewStatus(review._id, 'resolved')} className="px-3 py-1 bg-gradient-to-r from-green-500 to-green-600 text-white text-sm rounded-lg hover:from-green-600 hover:to-green-700 transition-all">
                 Mark Resolved
               </button>
-              <button onClick={() => updateReviewStatus(review._id, 'pending')} className="px-3 py-1 bg-yellow-600 text-white text-sm rounded">
+              <button onClick={() => updateReviewStatus(review._id, 'pending')} className="px-3 py-1 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white text-sm rounded-lg hover:from-yellow-600 hover:to-yellow-700 transition-all">
                 Mark Pending
               </button>
             </div>
