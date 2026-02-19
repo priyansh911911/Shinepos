@@ -230,7 +230,7 @@ const RestaurantDashboard = () => {
         </div>
         
         {/* Main Content */}
-        <div className="flex-1 overflow-auto pt-16 lg:pt-0">
+        <div className="flex-1 overflow-auto pt-16 lg:pt-0 lg:pb-0">
           <AnimatePresence mode="wait">
             {renderContent()}
           </AnimatePresence>
