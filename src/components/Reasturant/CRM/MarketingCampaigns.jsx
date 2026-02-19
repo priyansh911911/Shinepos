@@ -82,38 +82,38 @@ const MarketingCampaigns = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 bg-transparent min-h-screen">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-white">Marketing Campaigns</h2>
-        <button onClick={() => setShowModal(true)} className="bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-2">
+        <button onClick={() => setShowModal(true)} className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:from-blue-600 hover:to-blue-700 transition-all">
           <FaPaperPlane /> Create Campaign
         </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-gradient-to-r from-blue-600 to-blue-800 p-4 rounded-lg">
+        <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-4 rounded-xl shadow-lg">
           <div className="flex items-center gap-3">
             <FaEnvelope className="text-3xl text-white" />
             <div>
-              <p className="text-blue-200 text-sm">Email Campaigns</p>
+              <p className="text-blue-100 text-sm">Email Campaigns</p>
               <p className="text-2xl font-bold text-white">{campaigns.filter(c => c.type === 'email').length}</p>
             </div>
           </div>
         </div>
-        <div className="bg-gradient-to-r from-green-600 to-green-800 p-4 rounded-lg">
+        <div className="bg-gradient-to-r from-green-500 to-green-600 p-4 rounded-xl shadow-lg">
           <div className="flex items-center gap-3">
             <FaSms className="text-3xl text-white" />
             <div>
-              <p className="text-green-200 text-sm">SMS Campaigns</p>
+              <p className="text-green-100 text-sm">SMS Campaigns</p>
               <p className="text-2xl font-bold text-white">{campaigns.filter(c => c.type === 'sms').length}</p>
             </div>
           </div>
         </div>
-        <div className="bg-gradient-to-r from-purple-600 to-purple-800 p-4 rounded-lg">
+        <div className="bg-gradient-to-r from-purple-500 to-purple-600 p-4 rounded-xl shadow-lg">
           <div className="flex items-center gap-3">
             <FaUsers className="text-3xl text-white" />
             <div>
-              <p className="text-purple-200 text-sm">Total Reach</p>
+              <p className="text-purple-100 text-sm">Total Reach</p>
               <p className="text-2xl font-bold text-white">{campaigns.reduce((sum, c) => sum + (c.sentCount || 0), 0)}</p>
             </div>
           </div>
@@ -122,7 +122,7 @@ const MarketingCampaigns = () => {
 
       <div className="space-y-4">
         {campaigns.map((campaign) => (
-          <div key={campaign._id} className="bg-gray-800 p-4 rounded-lg">
+          <div key={campaign._id} className="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 p-4">
             <div className="flex justify-between items-start">
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
@@ -132,9 +132,9 @@ const MarketingCampaigns = () => {
                     {campaign.status || 'draft'}
                   </span>
                 </div>
-                {campaign.subject && <p className="text-gray-400 text-sm mb-1">Subject: {campaign.subject}</p>}
-                <p className="text-gray-300 text-sm mb-2">{campaign.message}</p>
-                <div className="flex gap-4 text-sm text-gray-400">
+                {campaign.subject && <p className="text-gray-300 text-sm mb-1">Subject: {campaign.subject}</p>}
+                <p className="text-gray-200 text-sm mb-2">{campaign.message}</p>
+                <div className="flex gap-4 text-sm text-gray-300">
                   <span>Target: {campaign.targetAudience}</span>
                   <span>Sent: {campaign.sentCount || 0}</span>
                   <span>Created: {new Date(campaign.createdAt).toLocaleDateString()}</span>
@@ -142,7 +142,7 @@ const MarketingCampaigns = () => {
               </div>
               <div>
                 {campaign.status !== 'sent' && (
-                  <button onClick={() => sendCampaign(campaign._id)} className="bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-2">
+                  <button onClick={() => sendCampaign(campaign._id)} className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:from-blue-600 hover:to-blue-700 transition-all">
                     <FaPaperPlane /> Send
                   </button>
                 )}
@@ -153,56 +153,56 @@ const MarketingCampaigns = () => {
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
-          <div className="bg-gray-800 p-6 rounded-lg w-[500px] my-8">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 overflow-y-auto">
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-xl w-[500px] my-8">
             <h3 className="text-xl font-bold text-white mb-4">Create Campaign</h3>
             <form onSubmit={handleSubmit}>
               <input type="text" placeholder="Campaign Name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full mb-3 px-4 py-2 bg-gray-700 text-white rounded" required />
+                className="w-full mb-3 px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-300" required />
               
               <select value={formData.type} onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                className="w-full mb-3 px-4 py-2 bg-gray-700 text-white rounded">
-                <option value="email">Email</option>
-                <option value="sms">SMS</option>
+                className="w-full mb-3 px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="email" className="bg-gray-800">Email</option>
+                <option value="sms" className="bg-gray-800">SMS</option>
               </select>
 
               {formData.type === 'email' && (
                 <input type="text" placeholder="Subject" value={formData.subject} onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                  className="w-full mb-3 px-4 py-2 bg-gray-700 text-white rounded" required />
+                  className="w-full mb-3 px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-300" required />
               )}
 
               <textarea placeholder="Message" value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                className="w-full mb-3 px-4 py-2 bg-gray-700 text-white rounded" rows="4" required />
+                className="w-full mb-3 px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-300" rows="4" required />
 
               <div className="mb-3">
                 <label className="text-white block mb-2 flex items-center gap-2">
                   <FaFilter /> Target Audience
                 </label>
                 <select value={formData.targetAudience} onChange={(e) => setFormData({ ...formData, targetAudience: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-700 text-white rounded">
-                  <option value="all">All Customers</option>
-                  <option value="vip">VIP Customers (by spending)</option>
-                  <option value="frequent">Frequent Customers (by orders)</option>
+                  className="w-full px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <option value="all" className="bg-gray-800">All Customers</option>
+                  <option value="vip" className="bg-gray-800">VIP Customers (by spending)</option>
+                  <option value="frequent" className="bg-gray-800">Frequent Customers (by orders)</option>
                 </select>
               </div>
 
               {formData.targetAudience === 'vip' && (
                 <input type="number" placeholder="Minimum Spent (₹)" value={formData.minSpent} onChange={(e) => setFormData({ ...formData, minSpent: Number(e.target.value) })}
-                  className="w-full mb-3 px-4 py-2 bg-gray-700 text-white rounded" />
+                  className="w-full mb-3 px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-300" />
               )}
 
               {formData.targetAudience === 'frequent' && (
                 <input type="number" placeholder="Minimum Orders" value={formData.minOrders} onChange={(e) => setFormData({ ...formData, minOrders: Number(e.target.value) })}
-                  className="w-full mb-3 px-4 py-2 bg-gray-700 text-white rounded" />
+                  className="w-full mb-3 px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-300" />
               )}
 
-              <div className="bg-blue-900 p-3 rounded mb-3">
-                <p className="text-blue-200 text-sm">Target Reach: <span className="font-bold text-white">{getTargetCount()} customers</span></p>
+              <div className="bg-blue-500/20 backdrop-blur-md border border-blue-400/30 p-3 rounded-lg mb-3">
+                <p className="text-blue-100 text-sm">Target Reach: <span className="font-bold text-white">{getTargetCount()} customers</span></p>
               </div>
 
               <div className="flex gap-2">
-                <button type="submit" className="flex-1 bg-blue-600 text-white py-2 rounded">Create</button>
-                <button type="button" onClick={() => setShowModal(false)} className="flex-1 bg-gray-600 text-white py-2 rounded">Cancel</button>
+                <button type="submit" className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all">Create</button>
+                <button type="button" onClick={() => setShowModal(false)} className="flex-1 bg-white/10 backdrop-blur-md border border-white/20 text-white py-2 rounded-lg hover:bg-white/20 transition-all">Cancel</button>
               </div>
             </form>
           </div>

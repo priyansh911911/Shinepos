@@ -56,45 +56,45 @@ const LoyaltyProgram = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 bg-transparent min-h-screen">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-white">Loyalty & Rewards Program</h2>
-        <button onClick={() => setShowSettings(true)} className="bg-blue-600 text-white px-4 py-2 rounded">Settings</button>
+        <button onClick={() => setShowSettings(true)} className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all">Settings</button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-gradient-to-r from-purple-600 to-purple-800 p-4 rounded-lg">
+        <div className="bg-gradient-to-r from-purple-500 to-purple-600 p-4 rounded-xl shadow-lg">
           <div className="flex items-center gap-3">
             <FaTrophy className="text-3xl text-white" />
             <div>
-              <p className="text-purple-200 text-sm">Total Members</p>
+              <p className="text-purple-100 text-sm">Total Members</p>
               <p className="text-2xl font-bold text-white">{customers.length}</p>
             </div>
           </div>
         </div>
-        <div className="bg-gradient-to-r from-yellow-600 to-yellow-800 p-4 rounded-lg">
+        <div className="bg-gradient-to-r from-yellow-500 to-yellow-600 p-4 rounded-xl shadow-lg">
           <div className="flex items-center gap-3">
             <FaCoins className="text-3xl text-white" />
             <div>
-              <p className="text-yellow-200 text-sm">Points Issued</p>
+              <p className="text-yellow-100 text-sm">Points Issued</p>
               <p className="text-2xl font-bold text-white">{customers.reduce((sum, c) => sum + (c.loyaltyPoints || 0), 0)}</p>
             </div>
           </div>
         </div>
-        <div className="bg-gradient-to-r from-green-600 to-green-800 p-4 rounded-lg">
+        <div className="bg-gradient-to-r from-green-500 to-green-600 p-4 rounded-xl shadow-lg">
           <div className="flex items-center gap-3">
             <FaGift className="text-3xl text-white" />
             <div>
-              <p className="text-green-200 text-sm">Points Redeemed</p>
+              <p className="text-green-100 text-sm">Points Redeemed</p>
               <p className="text-2xl font-bold text-white">{customers.reduce((sum, c) => sum + (c.redeemedPoints || 0), 0)}</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="bg-gray-800 rounded-lg overflow-hidden">
+      <div className="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 overflow-hidden">
         <table className="w-full">
-          <thead className="bg-gray-700">
+          <thead className="bg-white/5">
             <tr>
               <th className="px-4 py-3 text-left text-white">Customer</th>
               <th className="px-4 py-3 text-left text-white">Tier</th>
@@ -108,7 +108,7 @@ const LoyaltyProgram = () => {
               const tier = getTier(customer.loyaltyPoints || 0);
               const TierIcon = tier.icon;
               return (
-                <tr key={customer._id} className="border-t border-gray-700 hover:bg-gray-700">
+                <tr key={customer._id} className="border-t border-white/10 hover:bg-white/5 transition-colors">
                   <td className="px-4 py-3 text-white">{customer.name}</td>
                   <td className="px-4 py-3">
                     <span className={`flex items-center gap-2 ${tier.color}`}>
@@ -117,7 +117,7 @@ const LoyaltyProgram = () => {
                   </td>
                   <td className="px-4 py-3 text-white">{customer.loyaltyPoints || 0}</td>
                   <td className="px-4 py-3 text-white">{customer.redeemedPoints || 0}</td>
-                  <td className="px-4 py-3 text-white">₹{customer.totalSpent || 0}</td>
+                  <td className="px-4 py-3 text-white">₹{(customer.totalSpent || 0).toFixed(2)}</td>
                 </tr>
               );
             })}
@@ -126,22 +126,22 @@ const LoyaltyProgram = () => {
       </div>
 
       {showSettings && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 p-6 rounded-lg w-96">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-xl w-96">
             <h3 className="text-xl font-bold text-white mb-4">Loyalty Settings</h3>
             <div className="mb-4">
               <label className="text-white block mb-2">Points per ₹1 spent</label>
               <input type="number" value={settings.pointsPerRupee} onChange={(e) => setSettings({ ...settings, pointsPerRupee: Number(e.target.value) })}
-                className="w-full px-4 py-2 bg-gray-700 text-white rounded" />
+                className="w-full px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div className="mb-4">
               <label className="text-white block mb-2">Points needed for ₹1 discount</label>
               <input type="number" value={settings.redeemRate} onChange={(e) => setSettings({ ...settings, redeemRate: Number(e.target.value) })}
-                className="w-full px-4 py-2 bg-gray-700 text-white rounded" />
+                className="w-full px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div className="flex gap-2">
-              <button onClick={updateSettings} className="flex-1 bg-blue-600 text-white py-2 rounded">Save</button>
-              <button onClick={() => setShowSettings(false)} className="flex-1 bg-gray-600 text-white py-2 rounded">Cancel</button>
+              <button onClick={updateSettings} className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all">Save</button>
+              <button onClick={() => setShowSettings(false)} className="flex-1 bg-white/10 backdrop-blur-md border border-white/20 text-white py-2 rounded-lg hover:bg-white/20 transition-all">Cancel</button>
             </div>
           </div>
         </div>
