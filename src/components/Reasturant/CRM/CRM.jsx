@@ -20,17 +20,17 @@ const CRM = () => {
   const ActiveComponent = tabs.find(t => t.id === activeTab)?.component;
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      <div className="bg-gray-800 border-b border-gray-700">
+    <div className="min-h-screen bg-transparent">
+      <div className="bg-white/10 backdrop-blur-md border-b border-white/20">
         <div className="flex overflow-x-auto">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             return (
               <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-6 py-4 whitespace-nowrap transition-colors ${
+                className={`flex items-center gap-2 px-6 py-4 whitespace-nowrap transition-all ${
                   activeTab === tab.id
-                    ? 'bg-blue-600 text-white border-b-2 border-blue-400'
-                    : 'text-gray-400 hover:text-white hover:bg-gray-700'
+                    ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white border-b-2 border-blue-400'
+                    : 'text-gray-300 hover:text-white hover:bg-white/10'
                 }`}>
                 <Icon /> {tab.label}
               </button>
