@@ -63,29 +63,29 @@ const LoyaltyProgram = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-gradient-to-r from-purple-500 to-purple-600 p-4 rounded-xl shadow-lg">
+        <div className="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl">
           <div className="flex items-center gap-3">
             <FaTrophy className="text-3xl text-white" />
             <div>
-              <p className="text-purple-100 text-sm">Total Members</p>
+              <p className="text-gray-300 text-sm">Total Members</p>
               <p className="text-2xl font-bold text-white">{customers.length}</p>
             </div>
           </div>
         </div>
-        <div className="bg-gradient-to-r from-yellow-500 to-yellow-600 p-4 rounded-xl shadow-lg">
+        <div className="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl">
           <div className="flex items-center gap-3">
             <FaCoins className="text-3xl text-white" />
             <div>
-              <p className="text-yellow-100 text-sm">Points Issued</p>
+              <p className="text-gray-300 text-sm">Points Issued</p>
               <p className="text-2xl font-bold text-white">{customers.reduce((sum, c) => sum + (c.loyaltyPoints || 0), 0)}</p>
             </div>
           </div>
         </div>
-        <div className="bg-gradient-to-r from-green-500 to-green-600 p-4 rounded-xl shadow-lg">
+        <div className="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl">
           <div className="flex items-center gap-3">
             <FaGift className="text-3xl text-white" />
             <div>
-              <p className="text-green-100 text-sm">Points Redeemed</p>
+              <p className="text-gray-300 text-sm">Points Redeemed</p>
               <p className="text-2xl font-bold text-white">{customers.reduce((sum, c) => sum + (c.redeemedPoints || 0), 0)}</p>
             </div>
           </div>

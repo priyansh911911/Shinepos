@@ -91,29 +91,29 @@ const MarketingCampaigns = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-4 rounded-xl shadow-lg">
+        <div className="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl">
           <div className="flex items-center gap-3">
             <FaEnvelope className="text-3xl text-white" />
             <div>
-              <p className="text-blue-100 text-sm">Email Campaigns</p>
+              <p className="text-gray-300 text-sm">Email Campaigns</p>
               <p className="text-2xl font-bold text-white">{campaigns.filter(c => c.type === 'email').length}</p>
             </div>
           </div>
         </div>
-        <div className="bg-gradient-to-r from-green-500 to-green-600 p-4 rounded-xl shadow-lg">
+        <div className="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl">
           <div className="flex items-center gap-3">
             <FaSms className="text-3xl text-white" />
             <div>
-              <p className="text-green-100 text-sm">SMS Campaigns</p>
+              <p className="text-gray-300 text-sm">SMS Campaigns</p>
               <p className="text-2xl font-bold text-white">{campaigns.filter(c => c.type === 'sms').length}</p>
             </div>
           </div>
         </div>
-        <div className="bg-gradient-to-r from-purple-500 to-purple-600 p-4 rounded-xl shadow-lg">
+        <div className="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl">
           <div className="flex items-center gap-3">
             <FaUsers className="text-3xl text-white" />
             <div>
-              <p className="text-purple-100 text-sm">Total Reach</p>
+              <p className="text-gray-300 text-sm">Total Reach</p>
               <p className="text-2xl font-bold text-white">{campaigns.reduce((sum, c) => sum + (c.sentCount || 0), 0)}</p>
             </div>
           </div>
