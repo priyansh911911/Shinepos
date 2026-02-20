@@ -61,26 +61,26 @@ const FeedbackReviews = () => {
       <h2 className="text-2xl font-bold text-white mb-6">Customer Feedback & Reviews</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-4 rounded-xl shadow-lg">
-          <p className="text-blue-100 text-sm">Average Rating</p>
+        <div className="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl">
+          <p className="text-gray-300 text-sm">Average Rating</p>
           <div className="flex items-center gap-2 mt-2">
             <p className="text-3xl font-bold text-white">{stats.avgRating}</p>
             <FaStar className="text-yellow-400 text-2xl" />
           </div>
         </div>
-        <div className="bg-gradient-to-r from-purple-500 to-purple-600 p-4 rounded-xl shadow-lg">
-          <p className="text-purple-100 text-sm">Total Reviews</p>
+        <div className="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl">
+          <p className="text-gray-300 text-sm">Total Reviews</p>
           <p className="text-3xl font-bold text-white mt-2">{stats.total}</p>
         </div>
-        <div className="bg-gradient-to-r from-green-500 to-green-600 p-4 rounded-xl shadow-lg">
-          <p className="text-green-100 text-sm">Positive</p>
+        <div className="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl">
+          <p className="text-gray-300 text-sm">Positive</p>
           <div className="flex items-center gap-2 mt-2">
             <p className="text-3xl font-bold text-white">{stats.positive}</p>
             <FaThumbsUp className="text-white text-xl" />
           </div>
         </div>
-        <div className="bg-gradient-to-r from-red-500 to-red-600 p-4 rounded-xl shadow-lg">
-          <p className="text-red-100 text-sm">Negative</p>
+        <div className="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl">
+          <p className="text-gray-300 text-sm">Negative</p>
           <div className="flex items-center gap-2 mt-2">
             <p className="text-3xl font-bold text-white">{stats.negative}</p>
             <FaThumbsDown className="text-white text-xl" />
