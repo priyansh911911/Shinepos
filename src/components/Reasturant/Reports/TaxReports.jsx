@@ -18,31 +18,12 @@ const TaxReports = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`${API_BASE_URL}/api/dashboard/stats`, {
+      const params = new URLSearchParams({ period, month: selectedMonth });
+      const response = await axios.get(`${API_BASE_URL}/api/reports/tax?${params}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
-      // Mock tax data
-      const mockTaxData = {
-        totalSales: 150000,
-        taxableAmount: 142857, // Sales / 1.05 (assuming 5% GST)
-        cgst: 3571.43, // 2.5%
-        sgst: 3571.43, // 2.5%
-        totalTax: 7142.86,
-        exemptSales: 7143,
-        gstBreakdown: [
-          { rate: '5%', taxableAmount: 50000, cgst: 1250, sgst: 1250, total: 2500 },
-          { rate: '12%', taxableAmount: 60000, cgst: 3600, sgst: 3600, total: 7200 },
-          { rate: '18%', taxableAmount: 32857, cgst: 2957.14, sgst: 2957.14, total: 5914.28 }
-        ],
-        monthlyData: Array.from({ length: 12 }, (_, i) => ({
-          month: new Date(2024, i, 1).toLocaleDateString('en-US', { month: 'short' }),
-          sales: Math.floor(Math.random() * 50000) + 100000,
-          tax: Math.floor(Math.random() * 5000) + 5000
-        }))
-      };
-      
-      setTaxData(mockTaxData);
+      setTaxData(response.data);
     } catch (error) {
       console.error('Tax data error:', error);
     } finally {
@@ -51,11 +32,16 @@ const TaxReports = () => {
   };
 
   const exportGSTR = (type) => {
-    // Mock export functionality
     const data = {
-      GSTR1: taxData?.gstBreakdown,
+      GSTR1: {
+        taxableAmount: taxData?.taxableAmount,
+        exemptSales: taxData?.exemptSales,
+        totalSales: taxData?.totalSales
+      },
       GSTR3B: {
         outwardSupplies: taxData?.totalSales,
+        cgst: taxData?.cgst,
+        sgst: taxData?.sgst,
         taxLiability: taxData?.totalTax
       }
     };
@@ -165,30 +151,20 @@ const TaxReports = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 p-6">
-              <h3 className="text-lg font-semibold mb-4 text-white">GST Breakdown by Rate</h3>
+              <h3 className="text-lg font-semibold mb-4 text-white">Tax Summary</h3>
               <div className="space-y-4">
-                {taxData.gstBreakdown?.map((item, index) => (
-                  <div key={index} className="bg-white/5 backdrop-blur-md border border-white/10 rounded-lg p-4">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="font-medium text-lg text-white">{item.rate} GST</span>
-                      <span className="text-sm text-white/70">₹{item.total.toLocaleString()}</span>
+                <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-lg p-4">
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <p className="text-white/70">CGST</p>
+                      <p className="font-medium text-white">₹{taxData.cgst?.toLocaleString()}</p>
                     </div>
-                    <div className="grid grid-cols-3 gap-4 text-sm">
-                      <div>
-                        <p className="text-white/70">Taxable Amount</p>
-                        <p className="font-medium text-white">₹{item.taxableAmount.toLocaleString()}</p>
-                      </div>
-                      <div>
-                        <p className="text-white/70">CGST</p>
-                        <p className="font-medium text-white">₹{item.cgst.toLocaleString()}</p>
-                      </div>
-                      <div>
-                        <p className="text-white/70">SGST</p>
-                        <p className="font-medium text-white">₹{item.sgst.toLocaleString()}</p>
-                      </div>
+                    <div>
+                      <p className="text-white/70">SGST</p>
+                      <p className="font-medium text-white">₹{taxData.sgst?.toLocaleString()}</p>
                     </div>
                   </div>
-                ))}
+                </div>
               </div>
             </div>
 

@@ -1,10 +1,46 @@
 import React, { useState } from 'react';
 import { FiRefreshCw, FiUser, FiPhone, FiGrid, FiShoppingBag, FiFileText, FiPlus, FiRotateCcw, FiCreditCard, FiChevronDown, FiCheckCircle, FiEye } from 'react-icons/fi';
+import axios from 'axios';
 
 const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRefresh, onUpdatePriority, onTransfer, onAddItems, onViewSplitBill, activeTab, setActiveTab }) => {
   const [filterStatus, setFilterStatus] = useState('ALL');
   const [expandedOrderItems, setExpandedOrderItems] = useState(null);
   const [refreshingList, setRefreshingList] = useState(false);
+  const [updatingItem, setUpdatingItem] = useState(null);
+  const [currentTime, setCurrentTime] = useState(Date.now());
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  const userRole = JSON.parse(localStorage.getItem('user'))?.role;
+  const canUpdateItemStatus = ['RESTAURANT_ADMIN', 'CHEF'].includes(userRole);
+
+  React.useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const calculateElapsedTime = (startedAt, status) => {
+    if (status === 'READY' || status === 'SERVED') return null;
+    if (!startedAt) return null;
+    const elapsed = Math.floor((currentTime - new Date(startedAt).getTime()) / 1000);
+    const minutes = Math.floor(elapsed / 60);
+    const seconds = elapsed % 60;
+    return { minutes, seconds, totalSeconds: elapsed };
+  };
+
+  const getTimerColor = (elapsed, prepTime) => {
+    const percentage = (elapsed / (prepTime * 60)) * 100;
+    if (percentage >= 100) return 'text-red-600 font-bold';
+    if (percentage >= 80) return 'text-orange-600 font-bold';
+    if (percentage >= 60) return 'text-yellow-600 font-semibold';
+    return 'text-green-600';
+  };
+
+  const getProgressColor = (elapsed, prepTime) => {
+    const percentage = (elapsed / (prepTime * 60)) * 100;
+    if (percentage >= 100) return 'bg-red-500';
+    if (percentage >= 80) return 'bg-orange-500';
+    if (percentage >= 60) return 'bg-yellow-500';
+    return 'bg-green-500';
+  };
 
   
   
@@ -51,6 +87,41 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
 
   const handleOrderClick = (order) => {
     setSelectedOrder(order);
+  };
+
+  const handleItemStatusChange = async (orderId, itemIndex, newStatus, isExtraItem = false) => {
+    setUpdatingItem(`${orderId}-${isExtraItem ? 'extra-' : ''}${itemIndex}`);
+    try {
+      const token = localStorage.getItem('token');
+      const endpoint = isExtraItem 
+        ? `${API_URL}/api/orders/update/extra-item-status/${orderId}/${itemIndex}`
+        : `${API_URL}/api/orders/update/item-status/${orderId}/${itemIndex}`;
+      
+      const response = await axios.patch(endpoint, { status: newStatus }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      // Update both selected order and orders list
+      const updatedOrderData = response.data.order;
+      
+      if (selectedOrder && selectedOrder._id === orderId) {
+        setSelectedOrder(updatedOrderData);
+      }
+      
+      // Update in orders list without full refresh
+      const updatedOrders = orders.map(order => 
+        order._id === orderId ? updatedOrderData : order
+      );
+      // Trigger parent update if available
+      if (onRefresh) {
+        onRefresh(updatedOrders);
+      }
+    } catch (error) {
+      console.error('Failed to update item status:', error);
+      alert('Failed to update item status');
+    } finally {
+      setUpdatingItem(null);
+    }
   };
 
   return (
@@ -180,51 +251,127 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
                   <div className="bg-white/30 backdrop-blur-md rounded-xl p-4">
                     <h4 className="font-bold text-gray-900 mb-3"><FiShoppingBag className="inline mr-2" />Order Items</h4>
                     <div className="space-y-2 max-h-60 overflow-y-auto">
-                      {selectedOrder.items.map((item, index) => (
+                      {selectedOrder.items.map((item, index) => {
+                        const elapsed = calculateElapsedTime(item.startedAt, item.status);
+                        const prepTime = item.timeToPrepare || 15;
+                        const progress = elapsed ? Math.min((elapsed.totalSeconds / (prepTime * 60)) * 100, 100) : 100;
+                        
+                        return (
                         <div key={index} className="flex justify-between items-start text-sm p-2 rounded-lg bg-white/20">
                           <div className="flex-1">
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 flex-wrap">
                               <p className="font-medium text-gray-900">{item.quantity}x {item.name}</p>
-                              <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
-                                item.status === 'PENDING' ? 'bg-yellow-500 text-white' :
-                                item.status === 'PREPARING' ? 'bg-orange-500 text-white' :
-                                item.status === 'READY' ? 'bg-green-500 text-white' :
-                                item.status === 'SERVED' ? 'bg-purple-500 text-white' :
-                                'bg-gray-500 text-white'
-                              }`}>
-                                {item.status || 'PENDING'}
-                              </span>
+                              {canUpdateItemStatus ? (
+                                <select
+                                  value={item.status || 'PENDING'}
+                                  onChange={(e) => handleItemStatusChange(selectedOrder._id, index, e.target.value, false)}
+                                  disabled={updatingItem === `${selectedOrder._id}-${index}`}
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="text-[10px] px-2 py-0.5 rounded-full font-bold border-0 focus:ring-1 focus:ring-purple-500 bg-yellow-500 text-white"
+                                >
+                                  <option value="PENDING">PENDING</option>
+                                  <option value="PREPARING">PREPARING</option>
+                                  <option value="READY">READY</option>
+                                  <option value="SERVED">SERVED</option>
+                                </select>
+                              ) : (
+                                <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                                  item.status === 'PENDING' ? 'bg-yellow-500 text-white' :
+                                  item.status === 'PREPARING' ? 'bg-orange-500 text-white' :
+                                  item.status === 'READY' ? 'bg-green-500 text-white' :
+                                  item.status === 'SERVED' ? 'bg-purple-500 text-white' :
+                                  'bg-gray-500 text-white'
+                                }`}>
+                                  {item.status || 'PENDING'}
+                                </span>
+                              )}
+                              {item.status === 'PREPARING' && elapsed && (
+                                <span className={`text-[10px] font-mono px-2 py-0.5 rounded ${getTimerColor(elapsed.totalSeconds, prepTime)} bg-white/50`}>
+                                  ⏱ {elapsed.minutes}:{elapsed.seconds.toString().padStart(2, '0')}
+                                </span>
+                              )}
                             </div>
                             {item.variation && <p className="text-xs text-gray-700">Variation: {item.variation.name}</p>}
+                            {item.status === 'PREPARING' && elapsed && (
+                              <>
+                                <div className="w-full bg-gray-300/50 rounded-full h-1 mt-1 overflow-hidden">
+                                  <div 
+                                    className={`h-1 rounded-full transition-all duration-500 ${getProgressColor(elapsed.totalSeconds, prepTime)}`}
+                                    style={{ width: `${progress}%` }}
+                                  />
+                                </div>
+                                <div className="text-[9px] text-gray-700 mt-0.5">
+                                  Target: {prepTime}min {progress >= 100 && <span className="text-red-600 font-bold">⚠️ DELAYED</span>}
+                                </div>
+                              </>
+                            )}
                           </div>
                           <span className="font-bold text-gray-900">{formatCurrency(item.itemTotal || (item.variation?.price * item.quantity) || (item.basePrice * item.quantity) || 0)}</span>
                         </div>
-                      ))}
+                      );})}
                       {selectedOrder.extraItems && selectedOrder.extraItems.length > 0 && (
                         <>
                           <div className="border-t border-red-400 pt-2 mt-2">
-                            <p className="text-[10px] font-bold text-red-600 mb-1">EXTRA ITEMS</p>
+                            <p className="text-[10px] font-bold text-red-600 mb-1">NEW ITEMS</p>
                           </div>
-                          {selectedOrder.extraItems.map((item, index) => (
+                          {selectedOrder.extraItems.map((item, index) => {
+                            const elapsed = calculateElapsedTime(item.startedAt, item.status);
+                            const prepTime = item.timeToPrepare || 15;
+                            const progress = elapsed ? Math.min((elapsed.totalSeconds / (prepTime * 60)) * 100, 100) : 100;
+                            
+                            return (
                             <div key={`extra-${index}`} className="flex justify-between items-start text-sm p-2 rounded-lg bg-red-50/30 border border-red-300">
                               <div className="flex-1">
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2 flex-wrap">
                                   <p className="font-medium text-gray-900">{item.quantity}x {item.name}</p>
-                                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
-                                    item.status === 'PENDING' ? 'bg-yellow-500 text-white' :
-                                    item.status === 'PREPARING' ? 'bg-orange-500 text-white' :
-                                    item.status === 'READY' ? 'bg-green-500 text-white' :
-                                    item.status === 'SERVED' ? 'bg-purple-500 text-white' :
-                                    'bg-gray-500 text-white'
-                                  }`}>
-                                    {item.status || 'PENDING'}
-                                  </span>
+                                  {canUpdateItemStatus ? (
+                                    <select
+                                      value={item.status || 'PENDING'}
+                                      onChange={(e) => handleItemStatusChange(selectedOrder._id, index, e.target.value, true)}
+                                      disabled={updatingItem === `${selectedOrder._id}-extra-${index}`}
+                                      onClick={(e) => e.stopPropagation()}
+                                      className="text-[10px] px-2 py-0.5 rounded-full font-bold border-0 focus:ring-1 focus:ring-purple-500 bg-yellow-500 text-white"
+                                    >
+                                      <option value="PENDING">PENDING</option>
+                                      <option value="PREPARING">PREPARING</option>
+                                      <option value="READY">READY</option>
+                                      <option value="SERVED">SERVED</option>
+                                    </select>
+                                  ) : (
+                                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                                      item.status === 'PENDING' ? 'bg-yellow-500 text-white' :
+                                      item.status === 'PREPARING' ? 'bg-orange-500 text-white' :
+                                      item.status === 'READY' ? 'bg-green-500 text-white' :
+                                      item.status === 'SERVED' ? 'bg-purple-500 text-white' :
+                                      'bg-gray-500 text-white'
+                                    }`}>
+                                      {item.status || 'PENDING'}
+                                    </span>
+                                  )}
+                                  {item.status === 'PREPARING' && elapsed && (
+                                    <span className={`text-[10px] font-mono px-2 py-0.5 rounded ${getTimerColor(elapsed.totalSeconds, prepTime)} bg-white/50`}>
+                                      ⏱ {elapsed.minutes}:{elapsed.seconds.toString().padStart(2, '0')}
+                                    </span>
+                                  )}
                                 </div>
                                 {item.variation && <p className="text-xs text-gray-700">Variation: {item.variation.name}</p>}
+                                {item.status === 'PREPARING' && elapsed && (
+                                  <>
+                                    <div className="w-full bg-gray-300/50 rounded-full h-1 mt-1 overflow-hidden">
+                                      <div 
+                                        className={`h-1 rounded-full transition-all duration-500 ${getProgressColor(elapsed.totalSeconds, prepTime)}`}
+                                        style={{ width: `${progress}%` }}
+                                      />
+                                    </div>
+                                    <div className="text-[9px] text-gray-700 mt-0.5">
+                                      Target: {prepTime}min {progress >= 100 && <span className="text-red-600 font-bold">⚠️ DELAYED</span>}
+                                    </div>
+                                  </>
+                                )}
                               </div>
                               <span className="font-bold text-gray-900">{formatCurrency(item.itemTotal || item.total || 0)}</span>
                             </div>
-                          ))}
+                          );})}
                         </>
                       )}
                     </div>
@@ -238,7 +385,11 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
                       <span className="text-gray-900 font-medium">Status:</span>
                       <select
                         value={selectedOrder.status}
-                        onChange={(e) => onUpdateStatus(selectedOrder._id, e.target.value)}
+                        onChange={(e) => {
+                          const newStatus = e.target.value;
+                          onUpdateStatus(selectedOrder._id, newStatus);
+                          setSelectedOrder({ ...selectedOrder, status: newStatus });
+                        }}
                         className="px-3 py-2 bg-white/50 backdrop-blur-md border border-white/30 rounded-lg text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-purple-500"
                       >
                         <option value="READY">Ready</option>

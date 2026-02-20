@@ -134,7 +134,7 @@ const KOT = () => {
             animate={{ scale: [1, 1.1, 1] }}
             transition={{ duration: 1.5, repeat: Infinity }}
           >
-            👨‍🍳
+            👨🍳
           </motion.div>
           <motion.div 
             className="rounded-full h-16 w-16 border-4 border-orange-500 border-t-transparent mx-auto"
@@ -223,7 +223,11 @@ const KOT = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {getFilteredKots().map((kot) => (
+              {getFilteredKots().map((kot) => {
+                const allItems = [...(kot.items || []), ...(kot.extraItems || [])];
+                const filteredItems = allItems.filter(item => activeTab === 'all' || item.status !== 'PENDING');
+                
+                return (
                 <motion.div 
                   key={kot._id} 
                   className="bg-gradient-to-br from-white/40 to-white/20 backdrop-blur-lg rounded-2xl shadow-xl border-2 border-white/30 transition-all hover:shadow-2xl"
@@ -243,10 +247,12 @@ const KOT = () => {
                   </div>
 
                   <div className="p-3 space-y-2">
-                    {kot.items?.filter(item => activeTab === 'all' || item.status !== 'PENDING').map((item, idx) => {
+                    {filteredItems.map((item, idx) => {
                       const elapsed = calculateElapsedTime(item.startedAt, item.status);
                       const prepTime = item.timeToPrepare || 15;
                       const progress = elapsed ? Math.min((elapsed.totalSeconds / (prepTime * 60)) * 100, 100) : 100;
+                      const isExtraItem = idx >= (kot.items?.length || 0);
+                      const actualIndex = isExtraItem ? idx - (kot.items?.length || 0) : idx;
                       
                       return (
                       <div key={idx} className="bg-white/30 backdrop-blur-sm rounded-xl p-2 border border-white/40">
@@ -254,6 +260,7 @@ const KOT = () => {
                           <span className="font-semibold text-gray-900 text-xs">
                             <span className="bg-orange-500 text-white px-2 py-0.5 rounded mr-1">{item.quantity}×</span>
                             {item.name}
+                            {isExtraItem && <span className="ml-1 text-[9px] bg-blue-500 text-white px-1.5 py-0.5 rounded">NEW</span>}
                           </span>
                           {item.status === 'PREPARING' && elapsed && (
                             <div className={`text-xs font-mono font-bold px-1.5 py-0.5 rounded ${getTimerColor(elapsed.totalSeconds, prepTime)} bg-white/50`}>
@@ -276,19 +283,32 @@ const KOT = () => {
                         )}
                         {item.status === 'PENDING' && (
                           <button
-                            onClick={() => updateItemStatus(kot._id, idx, 'PREPARING')}
+                            onClick={() => updateItemStatus(kot._id, actualIndex, 'PREPARING', isExtraItem)}
                             className="w-full py-1 px-2 rounded text-[10px] font-bold text-white bg-orange-500 hover:bg-orange-600"
                           >
-                            👨‍🍳 Start
+                            👨🍳 Start
                           </button>
                         )}
                         {item.status === 'PREPARING' && (
                           <button
-                            onClick={() => updateItemStatus(kot._id, idx, 'READY')}
+                            onClick={() => updateItemStatus(kot._id, actualIndex, 'READY', isExtraItem)}
                             className="w-full py-1 px-2 rounded text-[10px] font-bold text-white bg-green-500 hover:bg-green-600"
                           >
                             ✅ Mark Ready
                           </button>
+                        )}
+                        {item.status === 'READY' && (
+                          <button
+                            onClick={() => updateItemStatus(kot._id, actualIndex, 'SERVED', isExtraItem)}
+                            className="w-full py-1 px-2 rounded text-[10px] font-bold text-white bg-purple-500 hover:bg-purple-600"
+                          >
+                            🍽️ Mark Served
+                          </button>
+                        )}
+                        {item.status === 'SERVED' && (
+                          <div className="w-full py-1 px-2 rounded text-[10px] font-bold text-white text-center bg-gray-500">
+                            ✓ Served
+                          </div>
                         )}
                       </div>
                       );
@@ -297,34 +317,28 @@ const KOT = () => {
 
                   <div className="px-3 pb-3">
                     {(() => {
-                      const allItemsReady = kot.items?.every(item => item.status === 'READY');
+                      const allItemsServed = allItems.length > 0 && allItems.every(item => item.status === 'SERVED');
                       
-                      if (kot.status === 'READY') {
+                      if (allItemsServed) {
                         return (
-                          <div className="w-full px-3 py-2 rounded-xl text-sm font-bold text-white text-center bg-green-500">
-                            ✅ Completed
+                          <div className="w-full px-3 py-2 rounded-xl text-sm font-bold text-white text-center bg-purple-500">
+                            🍽️ All Served
                           </div>
                         );
-                      } else if (allItemsReady) {
-                        return (
-                          <button
-                            onClick={() => updateKOTStatus(kot._id, 'READY')}
-                            className="w-full px-3 py-2 rounded-xl text-sm font-bold text-white bg-green-500 hover:bg-green-600"
-                          >
-                            ✅ Complete KOT
-                          </button>
-                        );
                       } else {
+                        const readyCount = allItems.filter(item => item.status === 'READY').length || 0;
+                        const servedCount = allItems.filter(item => item.status === 'SERVED').length || 0;
+                        const totalCount = allItems.length || 0;
                         return (
                           <div className="w-full px-3 py-2 rounded-xl text-xs font-medium text-gray-700 text-center bg-gray-300/50">
-                            ⏳ Preparing items...
+                            {servedCount > 0 ? `🍽️ ${servedCount}/${totalCount} Served` : readyCount > 0 ? `✅ ${readyCount}/${totalCount} Ready` : '⏳ Preparing...'}
                           </div>
                         );
                       }
                     })()}
                   </div>
                 </motion.div>
-              ))}
+              )})}
             </div>
           )}
         </>

@@ -102,12 +102,11 @@ export const useOrders = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
-      setOrders(prev => prev.map(order => 
-        order._id === orderId ? response.data.order : order
-      ));
+      // Remove paid order from list immediately
+      setOrders(prev => prev.filter(order => order._id !== orderId));
       
       if (selectedOrder?._id === orderId) {
-        setSelectedOrder(response.data.order);
+        setSelectedOrder(null);
       }
       
       setShowPaymentModal(false);
