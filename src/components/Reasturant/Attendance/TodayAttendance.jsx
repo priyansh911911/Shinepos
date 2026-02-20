@@ -4,11 +4,11 @@ import { FiClock, FiUser, FiCheckCircle, FiXCircle, FiLoader } from 'react-icons
 
 const getShiftName = (startTime, endTime) => {
   const shiftMap = {
-    '06:00-14:00': '🌅 Morning',
-    '09:00-17:00': '🏢 Day', 
-    '14:00-22:00': '🌆 Evening',
-    '22:00-06:00': '🌙 Night',
-    '10:00-18:00': '☀️ Regular'
+    '06:00-14:00': 'Morning',
+    '09:00-17:00': 'Day', 
+    '14:00-22:00': 'Evening',
+    '22:00-06:00': 'Night',
+    '10:00-18:00': 'Regular'
   };
   return shiftMap[`${startTime}-${endTime}`] || `${startTime}-${endTime}`;
 };
@@ -57,11 +57,11 @@ const TodayAttendance = () => {
 
   return (
     <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6">
-      <h2 className="text-xl font-bold text-white mb-6">📅 Today's Attendance</h2>
+      <h2 className="text-xl font-bold text-white mb-6">Today's Attendance</h2>
       
       {attendance.length === 0 ? (
         <div className="text-center py-8">
-          <div className="text-6xl mb-4">📋</div>
+          <div className="text-6xl mb-4"></div>
           <p className="text-white">No attendance records for today</p>
         </div>
       ) : (

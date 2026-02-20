@@ -4,11 +4,11 @@ import { FiClock, FiUser, FiCalendar, FiFilter, FiLoader } from 'react-icons/fi'
 
 const getShiftName = (startTime, endTime) => {
   const shiftMap = {
-    '06:00-14:00': '🌅 Morning',
-    '09:00-17:00': '🏢 Day', 
-    '14:00-22:00': '🌆 Evening',
-    '22:00-06:00': '🌙 Night',
-    '10:00-18:00': '☀️ Regular'
+    '06:00-14:00': 'Morning',
+    '09:00-17:00': 'Day', 
+    '14:00-22:00': 'Evening',
+    '22:00-06:00': 'Night',
+    '10:00-18:00': 'Regular'
   };
   return shiftMap[`${startTime}-${endTime}`] || `${startTime}-${endTime}`;
 };
@@ -81,7 +81,7 @@ const AttendanceList = () => {
   return (
     <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold text-white">📊 All Attendance Records</h2>
+        <h2 className="text-xl font-bold text-white">All Attendance Records</h2>
         <div className="flex items-center space-x-2">
           <FiFilter className="text-white" />
           <select
