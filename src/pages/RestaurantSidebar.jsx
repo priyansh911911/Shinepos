@@ -5,8 +5,11 @@ import { hasAccess } from '../utils/rolePermissions';
 import { useModules } from '../context/ModuleContext';
 
 const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout, sidebarOpen, setSidebarOpen }) => {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const userRole = user.role;
+  
   const [menuOpen, setMenuOpen] = useState(false);
-  const [orderOpen, setOrderOpen] = useState(false);
+  const [orderOpen, setOrderOpen] = useState(userRole === 'CHEF');
   const [inventoryOpen, setInventoryOpen] = useState(false);
   const [reportsOpen, setReportsOpen] = useState(false);
   const { isModuleEnabled } = useModules();
@@ -48,9 +51,6 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout, sidebarOpen, set
     { id: 'profit-loss', label: 'P&L Statement', icon: <FiBarChart /> }
   ];
 
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-  const userRole = user.role;
-
   const handleNavClick = (tabId) => {
     setActiveTab(tabId);
     setSidebarOpen(false);
@@ -58,9 +58,11 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout, sidebarOpen, set
 
   // Filter menu items based on role permissions AND module status
   const filteredMenuItems = menuItems.filter(item => hasAccess(userRole, item.id));
-  const filteredOrderSubItems = orderSubItems.filter(item => 
-    hasAccess(userRole, item.id) && isModuleEnabled(item.module)
-  );
+  const filteredOrderSubItems = orderSubItems.filter(item => {
+    const hasRoleAccess = hasAccess(userRole, item.id);
+    const moduleEnabled = item.module ? isModuleEnabled(item.module) : true;
+    return hasRoleAccess && moduleEnabled;
+  });
   const filteredInventorySubItems = inventorySubItems.filter(item => 
     hasAccess(userRole, item.id) && isModuleEnabled(item.module)
   );

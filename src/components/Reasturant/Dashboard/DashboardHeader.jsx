@@ -38,7 +38,7 @@ const DashboardHeader = ({ title, onMenuClick, user }) => {
     <motion.header 
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="bg-white/10 backdrop-blur-md border-b border-white/20 px-4 py-3 lg:px-6 lg:py-4 z-10"
+      className="bg-white/10 backdrop-blur-md border-b border-white/20 px-4 py-2 lg:px-6 lg:py-3 z-50 relative"
     >
       <div className="flex items-center justify-between">
         {/* Left Section */}
@@ -80,7 +80,7 @@ const DashboardHeader = ({ title, onMenuClick, user }) => {
         {/* Right Section */}
         <div className="flex items-center gap-2 lg:gap-4">
           {/* Notifications */}
-          <div className="relative z-20 dropdown-container">
+          <div className="relative dropdown-container">
             <button
               onClick={() => {
                 setShowNotifications(!showNotifications);
@@ -102,7 +102,7 @@ const DashboardHeader = ({ title, onMenuClick, user }) => {
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  className="absolute right-0 top-full mt-2 w-80 bg-white/95 backdrop-blur-md rounded-lg shadow-xl border border-white/20 z-20"
+                  className="absolute right-0 top-full mt-2 w-80 bg-white/95 backdrop-blur-md rounded-lg shadow-xl border border-white/20 z-50"
                 >
                   <div className="p-4">
                     <h3 className="font-semibold text-gray-800 mb-3">Notifications</h3>
@@ -127,7 +127,7 @@ const DashboardHeader = ({ title, onMenuClick, user }) => {
           </div>
 
           {/* User Profile */}
-          <div className="relative z-20 dropdown-container">
+          <div className="relative dropdown-container">
             <button
               onClick={() => {
                 setShowProfile(!showProfile);
