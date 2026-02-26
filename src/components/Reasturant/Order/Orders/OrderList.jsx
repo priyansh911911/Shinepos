@@ -394,7 +394,7 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
                       >
                         <option value="READY">Ready</option>
                         <option value="DELIVERED">Delivered</option>
-                        <option value="CANCELLED">Cancelled</option>
+                        {selectedOrder.status !== 'DELIVERED' && <option value="CANCELLED">Cancelled</option>}
                       </select>
                     </div>
                     <span className="text-2xl font-bold text-gray-900">{formatCurrency(selectedOrder.totalAmount)}</span>
