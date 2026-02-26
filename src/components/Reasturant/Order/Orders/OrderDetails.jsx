@@ -101,6 +101,12 @@ const OrderDetails = ({ order, onUpdateStatus, onProcessPayment, onBack }) => {
                   <span className="text-gray-600">Items Total:</span>
                   <span className="font-medium">{formatCurrency(order.subtotal || order.totalAmount)}</span>
                 </div>
+                {order.couponCode && (
+                  <div className="flex justify-between text-green-600">
+                    <span>Coupon ({order.couponCode}):</span>
+                    <span className="font-medium">-{formatCurrency((order.subtotal || order.totalAmount) - order.totalAmount)}</span>
+                  </div>
+                )}
                 {order.discount && order.discount.amount > 0 && (
                   <div className="flex justify-between text-red-600">
                     <span>Discount ({order.discount.percentage}%):</span>
@@ -301,6 +307,16 @@ const OrderDetails = ({ order, onUpdateStatus, onProcessPayment, onBack }) => {
                     {formatCurrency(order.subtotal || order.totalAmount)}
                   </td>
                 </tr>
+                {order.couponCode && (
+                  <tr>
+                    <td colSpan="5" className="px-4 py-2 text-right text-sm text-gray-600">
+                      Coupon ({order.couponCode}):
+                    </td>
+                    <td className="px-4 py-2 text-sm font-medium text-green-600">
+                      -{formatCurrency((order.subtotal || order.totalAmount) - order.totalAmount)}
+                    </td>
+                  </tr>
+                )}
                 {order.discount && order.discount.amount > 0 && (
                   <tr>
                     <td colSpan="5" className="px-4 py-2 text-right text-sm text-gray-600">

@@ -172,7 +172,9 @@ const Invoice = ({ order, onClose, restaurantInfo }) => {
                         {(order.paymentDetails?.amount < (order.subtotal || order.totalAmount)) && (
                           <tr className="text-green-600">
                             <td className="p-1 text-right text-xs font-medium">
-                              Loyalty Discount {order.paymentDetails?.loyaltyPointsUsed ? `(${order.paymentDetails.loyaltyPointsUsed} pts)` : ''}:
+                              {order.couponCode ? `Coupon (${order.couponCode})` : 
+                               order.paymentDetails?.loyaltyPointsUsed ? `Loyalty Discount (${order.paymentDetails.loyaltyPointsUsed} pts)` : 
+                               'Discount'}:
                             </td>
                             <td className="p-1 border-l border-black text-right text-xs">-{formatCurrency((order.subtotal || order.totalAmount) - (order.paymentDetails?.amount || order.totalAmount))}</td>
                           </tr>

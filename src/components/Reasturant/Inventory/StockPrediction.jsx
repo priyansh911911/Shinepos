@@ -174,7 +174,7 @@ const StockPrediction = ({ onAlert }) => {
               <p className="text-2xl font-bold text-green-200">
                 {predictions.filter(item => item.priority === 'low').length}
               </p>
-              <p className="text-xs text-green-400">> 14 days left</p>
+              <p className="text-xs text-green-400">&gt; 14 days left</p>
             </div>
             <FiCalendar className="text-green-400 text-2xl" />
           </div>

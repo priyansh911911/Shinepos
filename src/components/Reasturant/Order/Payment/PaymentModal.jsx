@@ -16,11 +16,23 @@ const PaymentModal = ({ order, onProcessPayment, onClose }) => {
   const [customer, setCustomer] = useState(null);
   const [loyaltySettings, setLoyaltySettings] = useState(null);
   const [pointsToRedeem, setPointsToRedeem] = useState(0);
+  const [couponCode, setCouponCode] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [couponError, setCouponError] = useState('');
+  const [applyingCoupon, setApplyingCoupon] = useState(false);
 
   // Check if split bill already exists
   useEffect(() => {
     checkExistingSplitBill();
     fetchCustomerLoyalty();
+    // Check if coupon already applied
+    if (order.discount?.couponCode) {
+      setAppliedCoupon({
+        code: order.discount.couponCode,
+        name: order.discount.reason,
+        amount: order.discount.amount
+      });
+    }
   }, [order._id]);
 
   const fetchCustomerLoyalty = async () => {
@@ -75,13 +87,76 @@ const PaymentModal = ({ order, onProcessPayment, onClose }) => {
 
   const formatCurrency = (amount) => `₹${amount.toFixed(2)}`;
 
-  const calculateDiscount = () => {
+  const calculateLoyaltyDiscount = () => {
     if (!loyaltySettings || pointsToRedeem === 0) return 0;
     return pointsToRedeem / loyaltySettings.redeemRate;
   };
 
   const getFinalAmount = () => {
-    return Math.max(0, order.totalAmount - calculateDiscount());
+    // Order totalAmount already includes coupon discount from backend
+    return Math.max(0, order.totalAmount - calculateLoyaltyDiscount());
+  };
+
+  const applyCoupon = async () => {
+    if (!couponCode.trim()) return;
+    setApplyingCoupon(true);
+    setCouponError('');
+    
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/orders/coupon/${order._id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          couponCode: couponCode.trim(),
+          customerId: customer?._id || null
+        })
+      });
+
+      const data = await res.json();
+      
+      if (res.ok) {
+        setAppliedCoupon(data.discountApplied);
+        setCouponCode('');
+        // Update order object
+        order.totalAmount = data.order.totalAmount;
+        order.discount = data.order.discount;
+      } else {
+        setCouponError(data.error || 'Invalid coupon');
+      }
+    } catch (error) {
+      setCouponError('Failed to apply coupon');
+    } finally {
+      setApplyingCoupon(false);
+    }
+  };
+
+  const removeCoupon = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/orders/coupon/${order._id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setAppliedCoupon(null);
+        // Update order object
+        order.totalAmount = data.order.totalAmount;
+        order.discount = data.order.discount;
+        order.subtotal = data.order.subtotal;
+      } else {
+        alert('Failed to remove coupon');
+      }
+    } catch (error) {
+      alert('Failed to remove coupon');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -167,12 +242,18 @@ const PaymentModal = ({ order, onProcessPayment, onClose }) => {
               </div>
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm text-gray-700">Subtotal:</span>
-                <span className="font-medium text-gray-900">{formatCurrency(order.totalAmount)}</span>
+                <span className="font-medium text-gray-900">{formatCurrency(order.subtotal || order.totalAmount)}</span>
               </div>
-              {pointsToRedeem > 0 && (
+              {appliedCoupon && (
                 <div className="flex justify-between items-center mb-2 text-green-600">
-                  <span className="text-sm">Loyalty Discount:</span>
-                  <span className="font-medium">-{formatCurrency(calculateDiscount())}</span>
+                  <span className="text-sm">🎟️ Coupon ({appliedCoupon.code}):</span>
+                  <span className="font-medium">-{formatCurrency(appliedCoupon.amount)}</span>
+                </div>
+              )}
+              {pointsToRedeem > 0 && (
+                <div className="flex justify-between items-center mb-2 text-purple-600">
+                  <span className="text-sm">🎁 Loyalty Points:</span>
+                  <span className="font-medium">-{formatCurrency(calculateLoyaltyDiscount())}</span>
                 </div>
               )}
               <div className="flex justify-between items-center pt-2 border-t border-white/20">
@@ -182,6 +263,55 @@ const PaymentModal = ({ order, onProcessPayment, onClose }) => {
                 </span>
               </div>
             </div>
+
+            {/* Coupon Section */}
+            {!appliedCoupon ? (
+              <div className="mb-6 p-4 bg-orange-50/50 backdrop-blur-md rounded-xl border border-orange-200/30">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-lg">🎟️</span>
+                  <span className="text-sm font-medium text-gray-900">Have a Coupon?</span>
+                </div>
+                {couponError && (
+                  <div className="mb-3 text-xs text-red-600 bg-red-50 p-2 rounded">{couponError}</div>
+                )}
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                    placeholder="Enter coupon code"
+                    className="flex-1 bg-white/40 backdrop-blur-md border border-white/30 rounded-lg px-3 py-2 text-gray-900 text-sm uppercase"
+                  />
+                  <button
+                    type="button"
+                    onClick={applyCoupon}
+                    disabled={applyingCoupon || !couponCode.trim()}
+                    className="px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 disabled:opacity-50 text-sm font-medium"
+                  >
+                    {applyingCoupon ? 'Applying...' : 'Apply'}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="mb-6 p-4 bg-green-50/50 backdrop-blur-md rounded-xl border border-green-200/30">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-lg">✅</span>
+                      <span className="text-sm font-bold text-green-800">{appliedCoupon.name}</span>
+                    </div>
+                    <p className="text-xs text-green-700">Code: {appliedCoupon.code} • Saved {formatCurrency(appliedCoupon.amount)}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={removeCoupon}
+                    className="text-red-600 hover:text-red-800 text-xs font-medium"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Loyalty Points */}
             {customer && customer.loyaltyPoints > 0 && loyaltySettings && (
@@ -201,7 +331,7 @@ const PaymentModal = ({ order, onProcessPayment, onClose }) => {
                   placeholder="Points to redeem"
                 />
                 {pointsToRedeem > 0 && (
-                  <p className="text-xs text-green-600 mt-2 font-medium">💰 You'll save {formatCurrency(calculateDiscount())}</p>
+                  <p className="text-xs text-green-600 mt-2 font-medium">💰 You'll save {formatCurrency(calculateLoyaltyDiscount())}</p>
                 )}
               </div>
             )}

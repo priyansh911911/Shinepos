@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { FaUsers, FaStar, FaHistory, FaComment, FaBullhorn } from 'react-icons/fa';
+import { FaUsers, FaStar, FaHistory, FaComment, FaBullhorn, FaTicketAlt } from 'react-icons/fa';
 import CustomerDatabase from './CustomerDatabase';
 import LoyaltyProgram from './LoyaltyProgram';
 import OrderHistory from './OrderHistory';
 import FeedbackReviews from './FeedbackReviews';
 import MarketingCampaigns from './MarketingCampaigns';
+import CouponManagement from './CouponManagement';
 
 const CRM = () => {
   const [activeTab, setActiveTab] = useState('customers');
@@ -12,6 +13,7 @@ const CRM = () => {
   const tabs = [
     { id: 'customers', label: 'Customers', icon: FaUsers, component: CustomerDatabase },
     { id: 'loyalty', label: 'Loyalty Program', icon: FaStar, component: LoyaltyProgram },
+    { id: 'coupons', label: 'Coupons', icon: FaTicketAlt, component: CouponManagement },
     { id: 'history', label: 'Order History', icon: FaHistory, component: OrderHistory },
     { id: 'feedback', label: 'Feedback', icon: FaComment, component: FeedbackReviews },
     { id: 'marketing', label: 'Marketing', icon: FaBullhorn, component: MarketingCampaigns }
