@@ -9,6 +9,7 @@ import RestaurantDashboard from './pages/RestaurantDashboard';
 import EditRestaurant from './components/superadmin/Addreasturant/EditRestaurantInline';
 import ProtectedRoute from './components/ProtectedRoute';
 import PageTransition from './components/PageTransition';
+import { ModuleProvider } from './context/ModuleContext';
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -48,9 +49,11 @@ const AnimatedRoutes = () => {
 function App() {
   return (
     <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <div className="min-h-screen bg-gray-800">
-        <AnimatedRoutes />
-      </div>
+      <ModuleProvider>
+        <div className="min-h-screen bg-gray-800">
+          <AnimatedRoutes />
+        </div>
+      </ModuleProvider>
     </Router>
   );
 }
