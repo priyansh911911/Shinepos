@@ -21,8 +21,7 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout, sidebarOpen, set
     { id: 'crm', label: 'CRM', icon: <FiUserCheck /> },
     { id: 'staff', label: 'Staff', icon: <FiUsers /> },
     { id: 'attendance', label: 'Attendance', icon: <FiClock /> },
-    { id: 'subscription', label: 'Subscription', icon: <FiCreditCard /> },
-    { id: 'vendors', label: 'Vendors', icon: <FiTruck />, module: 'inventory' }
+    { id: 'subscription', label: 'Subscription', icon: <FiCreditCard /> }
   ];
 
   const orderSubItems = [
@@ -32,7 +31,7 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout, sidebarOpen, set
 
   const inventorySubItems = [
     { id: 'inventory', label: 'Inventory List', icon: <FiList />, module: 'inventory' },
-    { id: 'add-inventory', label: 'Add Item', icon: <FiPlus />, module: 'inventory' }
+    { id: 'vendors', label: 'Vendors', icon: <FiTruck />, module: 'inventory' }
   ];
 
   const menuSubItems = [
@@ -52,11 +51,7 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout, sidebarOpen, set
   };
 
   // Filter menu items based on role permissions AND module status
-  const filteredMenuItems = menuItems.filter(item => {
-    const hasRoleAccess = hasAccess(userRole, item.id);
-    const moduleEnabled = item.module ? isModuleEnabled(item.module) : true;
-    return hasRoleAccess && moduleEnabled;
-  });
+  const filteredMenuItems = menuItems.filter(item => hasAccess(userRole, item.id));
   const filteredOrderSubItems = orderSubItems.filter(item => {
     const hasRoleAccess = hasAccess(userRole, item.id);
     const moduleEnabled = item.module ? isModuleEnabled(item.module) : true;
