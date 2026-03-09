@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
+import { FiPlus } from 'react-icons/fi'
 import AddCategory from './AddCategory'
 import EditCategory from './EditCategory'
 import CategoryList from './CategoryList'
@@ -47,7 +48,7 @@ const MainCategorys = () => {
           onClick={() => setView('add')}
           className="px-6 py-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl flex items-center space-x-2 font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105 border border-white/40"
         >
-          <span>➕ Add Category</span>
+          <span className="flex items-center gap-2"><FiPlus /> Add Category</span>
         </button>
       </div>
       

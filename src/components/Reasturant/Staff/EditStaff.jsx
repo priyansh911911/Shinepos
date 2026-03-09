@@ -81,10 +81,10 @@ const EditStaff = ({ staff, onSuccess, onBack }) => {
     <div className="p-6 animate-fadeIn">
       <div className="bg-white/20 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/40 p-6">
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-2xl font-bold text-gray-900">✏️ Edit Staff Member</h3>
+          <h3 className="text-2xl font-bold text-white">✏️ Edit Staff Member</h3>
           <button
             onClick={onBack}
-            className="px-4 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl border border-white/40"
+            className="px-4 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-white rounded-xl border border-white/40"
           >
             ← Back
           </button>
@@ -93,49 +93,49 @@ const EditStaff = ({ staff, onSuccess, onBack }) => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-1">Name *</label>
+              <label className="block text-sm font-medium text-white mb-1">Name *</label>
               <input
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+                className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-1">Email *</label>
+              <label className="block text-sm font-medium text-white mb-1">Email *</label>
               <input
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+                className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-1">Phone *</label>
+              <label className="block text-sm font-medium text-white mb-1">Phone *</label>
               <input
                 type="tel"
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
                 required
-                className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+                className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-1">Role *</label>
+              <label className="block text-sm font-medium text-white mb-1">Role *</label>
               <select
                 name="role"
                 value={formData.role}
                 onChange={handleChange}
                 required
-                className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+                className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
               >
                 <option value="CASHIER">💰 Cashier</option>
                 <option value="KITCHEN_STAFF">👨🍳 Kitchen Staff</option>
@@ -145,7 +145,7 @@ const EditStaff = ({ staff, onSuccess, onBack }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-1">Hourly Rate *</label>
+              <label className="block text-sm font-medium text-white mb-1">Hourly Rate *</label>
               <input
                 type="number"
                 name="hourlyRate"
@@ -153,15 +153,15 @@ const EditStaff = ({ staff, onSuccess, onBack }) => {
                 onChange={handleChange}
                 required
                 min="0"
-                className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+                className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
               />
             </div>
           </div>
 
           <div className="bg-white/20 rounded-xl p-4 mt-4">
-            <h4 className="text-lg font-medium text-gray-900 mb-3">⏰ Shift Schedule</h4>
+            <h4 className="text-lg font-medium text-white mb-3">⏰ Shift Schedule</h4>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-900 mb-1">Shift Type</label>
+              <label className="block text-sm font-medium text-white mb-1">Shift Type</label>
               <select
                 name="shiftType"
                 value={formData.shiftSchedule.shiftType}
@@ -173,7 +173,7 @@ const EditStaff = ({ staff, onSuccess, onBack }) => {
                     rotatingShifts: e.target.value === 'rotating' ? [] : null
                   }
                 })}
-                className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+                className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
               >
                 <option value="fixed">Fixed Shift</option>
                 <option value="rotating">Rotating Shifts</option>
@@ -184,7 +184,7 @@ const EditStaff = ({ staff, onSuccess, onBack }) => {
             {formData.shiftSchedule.shiftType === 'fixed' && (
               <div>
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-900 mb-2">Select Predefined Shift</label>
+                  <label className="block text-sm font-medium text-white mb-2">Select Predefined Shift</label>
                   <select
                     onChange={(e) => {
                       const [start, end] = e.target.value.split('-');
@@ -202,7 +202,7 @@ const EditStaff = ({ staff, onSuccess, onBack }) => {
                         });
                       }
                     }}
-                    className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+                    className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
                   >
                     <option value="">Choose a predefined shift</option>
                     <option value="06:00-14:00">🌅 Morning Shift (6:00 AM - 2:00 PM)</option>
@@ -214,23 +214,23 @@ const EditStaff = ({ staff, onSuccess, onBack }) => {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-1">Start Time</label>
+                    <label className="block text-sm font-medium text-white mb-1">Start Time</label>
                     <input
                       type="time"
                       name="shift.startTime"
                       value={formData.shiftSchedule.fixedShift.startTime}
                       onChange={handleChange}
-                      className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+                      className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-1">End Time</label>
+                    <label className="block text-sm font-medium text-white mb-1">End Time</label>
                     <input
                       type="time"
                       name="shift.endTime"
                       value={formData.shiftSchedule.fixedShift.endTime}
                       onChange={handleChange}
-                      className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+                      className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
                     />
                   </div>
                 </div>
@@ -238,7 +238,7 @@ const EditStaff = ({ staff, onSuccess, onBack }) => {
             )}
             
             {formData.shiftSchedule.shiftType === 'flexible' && (
-              <p className="text-sm text-gray-600">Flexible scheduling - no fixed hours</p>
+              <p className="text-sm text-white">Flexible scheduling - no fixed hours</p>
             )}
           </div>
 
@@ -246,14 +246,14 @@ const EditStaff = ({ staff, onSuccess, onBack }) => {
             <button
               type="button"
               onClick={onBack}
-              className="px-6 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl border border-white/40"
+              className="px-6 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-white rounded-xl border border-white/40"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl border border-white/40 disabled:opacity-50"
+              className="px-6 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-white rounded-xl border border-white/40 disabled:opacity-50"
             >
               {loading ? 'Updating...' : '✓ Update Staff Member'}
             </button>

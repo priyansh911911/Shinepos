@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FiTrendingUp, FiAlertTriangle, FiCalendar } from 'react-icons/fi';
+import { FiTrendingUp, FiAlertTriangle, FiCalendar, FiLoader } from 'react-icons/fi';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -116,7 +116,10 @@ const StockPrediction = ({ onAlert }) => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="text-center">
+          <FiLoader className="animate-spin mx-auto text-orange-500 mb-4" size={64} />
+          <p className="text-gray-300 font-medium">Loading predictions...</p>
+        </div>
       </div>
     );
   }

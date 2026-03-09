@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FiPlus, FiEye, FiClipboard, FiRefreshCw, FiArchive, FiList } from 'react-icons/fi';
+import { FiPlus, FiEye, FiClipboard, FiRefreshCw, FiArchive, FiList, FiLoader } from 'react-icons/fi';
 import OrderList from './OrderList';
 import CreateOrder from './CreateOrder';
 import OrderDetails from './OrderDetails';
@@ -13,7 +13,6 @@ import axios from 'axios';
 
 const Order = () => {
   const [showAddItems, setShowAddItems] = useState(null);
-  const [syncing, setSyncing] = useState(false);
   const [showSplitBillView, setShowSplitBillView] = useState(null);
   const {
     orders,
@@ -50,26 +49,6 @@ const Order = () => {
     }
   };
 
-  const handleSyncOrders = async () => {
-    const resId = prompt('Enter Restaurant ID (e.g., 21351606):');
-    if (!resId) return;
-    
-    setSyncing(true);
-    try {
-      const token = localStorage.getItem('token');
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-      const response = await axios.post(`${API_URL}/api/dyno/sync-orders`, { resId }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      alert(`✓ Synced ${response.data.stats.synced} orders`);
-      fetchOrders();
-    } catch (error) {
-      alert(error.response?.data?.error || 'Sync failed');
-    } finally {
-      setSyncing(false);
-    }
-  };
-
   return (
     <div className="min-h-screen p-3 sm:p-4 md:p-6">
       <div className="max-w-auto mx-auto">
@@ -83,7 +62,7 @@ const Order = () => {
         )}
 
         {/* Persistent Navigation Header */}
-        <div className="bg-white/30 backdrop-blur-md rounded-2xl p-3 sm:p-4 mb-6">
+        <div className="bg-white/10 backdrop-blur-md rounded-xl p-3 sm:p-4 mb-6 border border-white/20">
           <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
             <div className="flex flex-wrap items-center gap-2">
               <button
@@ -91,7 +70,7 @@ const Order = () => {
                 className={`flex-1 sm:flex-none px-4 sm:px-6 py-2 sm:py-3 rounded-xl flex items-center justify-center space-x-2 font-medium transition-colors text-sm ${
                   activeTab === 'list' 
                     ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white' 
-                    : 'bg-white/30 text-gray-900 hover:bg-white/40'
+                    : 'bg-white/10 text-white hover:bg-white/20'
                 }`}
               >
                 <FiClipboard />
@@ -103,7 +82,7 @@ const Order = () => {
                 className={`flex-1 sm:flex-none px-4 sm:px-6 py-2 sm:py-3 rounded-xl flex items-center justify-center space-x-2 font-medium transition-colors text-sm ${
                   activeTab === 'create' 
                     ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white' 
-                    : 'bg-white/30 text-gray-900 hover:bg-white/40'
+                    : 'bg-white/10 text-white hover:bg-white/20'
                 }`}
               >
                 <FiPlus />
@@ -115,7 +94,7 @@ const Order = () => {
                 className={`flex-1 sm:flex-none px-4 sm:px-6 py-2 sm:py-3 rounded-xl flex items-center justify-center space-x-2 font-medium transition-colors text-sm ${
                   activeTab === 'history' 
                     ? 'bg-gradient-to-r from-purple-500 to-purple-600 text-white' 
-                    : 'bg-white/30 text-gray-900 hover:bg-white/40'
+                    : 'bg-white/10 text-white hover:bg-white/20'
                 }`}
               >
                 <FiArchive />
@@ -123,7 +102,7 @@ const Order = () => {
               </button>
               
               <select
-                className="flex-1 sm:flex-none bg-white/30 backdrop-blur-md border border-white/40 text-gray-900 rounded-xl px-3 sm:px-6 py-2 sm:py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all font-medium text-sm"
+                className="flex-1 sm:flex-none bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-xl px-3 sm:px-6 py-2 sm:py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all font-medium text-sm"
               >
                 <option value="ALL">All Orders</option>
                 <option value="PENDING">Pending</option>
@@ -136,19 +115,9 @@ const Order = () => {
             </div>
             
             <div className="flex gap-2">
-              {import.meta.env.DEV && (
-                <button
-                  onClick={handleSyncOrders}
-                  disabled={syncing}
-                  className="flex items-center justify-center space-x-2 px-4 sm:px-6 py-2 sm:py-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl transition-colors font-medium text-sm disabled:opacity-50"
-                >
-                  <span>{syncing ? '⏳' : '🔄'}</span>
-                  <span className="hidden sm:inline">{syncing ? 'Syncing...' : 'Sync Orders'}</span>
-                </button>
-              )}
               <button
                 onClick={fetchOrders}
-                className="flex items-center justify-center space-x-2 px-4 sm:px-6 py-2 sm:py-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl transition-colors font-medium text-sm"
+                className="flex items-center justify-center space-x-2 px-4 sm:px-6 py-2 sm:py-3 bg-white/10 backdrop-blur-md hover:bg-white/20 text-white rounded-xl transition-colors font-medium text-sm border border-white/20"
               >
                 <FiRefreshCw />
                 <span className="hidden sm:inline">Refresh</span>
@@ -160,8 +129,8 @@ const Order = () => {
         {loading ? (
           <div className="flex items-center justify-center min-h-[60vh]">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-16 w-16 border-4 border-purple-500 border-t-transparent mx-auto mb-4"></div>
-              <p className="text-gray-900 font-medium text-lg">Loading orders...</p>
+              <FiLoader className="animate-spin mx-auto text-orange-500 mb-4" size={64} />
+              <p className="text-white font-medium text-lg">Loading orders...</p>
             </div>
           </div>
         ) : (

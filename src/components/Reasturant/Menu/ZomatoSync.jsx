@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FiRefreshCw, FiCheckCircle } from 'react-icons/fi';
 import axios from 'axios';
 
 const ZomatoSync = () => {
@@ -32,7 +33,7 @@ const ZomatoSync = () => {
   return (
     <div className="p-6 max-w-2xl mx-auto">
       <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20">
-        <h2 className="text-2xl font-bold text-white mb-6">🔄 Sync Menu from Zomato</h2>
+        <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2"><FiRefreshCw /> Sync Menu from Zomato</h2>
 
         <div className="mb-4">
           <label className="block text-sm font-medium text-white mb-2">
@@ -52,7 +53,7 @@ const ZomatoSync = () => {
           disabled={loading || !resId}
           className="w-full px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
         >
-          {loading ? '🔄 Syncing...' : '✓ Sync Menu'}
+          {loading ? <><FiRefreshCw className="inline animate-spin" /> Syncing...</> : <><FiCheckCircle className="inline" /> Sync Menu</>}
         </button>
 
         {error && (
@@ -63,7 +64,7 @@ const ZomatoSync = () => {
 
         {result && (
           <div className="mt-4 bg-green-500/20 border border-green-500/50 text-white px-4 py-3 rounded-xl">
-            <p className="font-medium mb-2">✓ Sync Successful!</p>
+            <p className="font-medium mb-2 flex items-center gap-2"><FiCheckCircle /> Sync Successful!</p>
             <div className="text-sm space-y-1">
               <p>Categories: {result.stats.categories}</p>
               <p>Items: {result.stats.items}</p>

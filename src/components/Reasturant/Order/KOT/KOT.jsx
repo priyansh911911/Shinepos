@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { FiClock, FiRefreshCw, FiList, FiZap, FiArchive, FiCheckCircle, FiAlertCircle, FiUser, FiLoader, FiPackage } from 'react-icons/fi';
 import KOTHistory from './KOTHistory';
 import PendingKOT from './PendingKOT';
 
@@ -129,19 +130,8 @@ const KOT = () => {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="text-center">
-          <motion.div 
-            className="text-6xl mb-4"
-            animate={{ scale: [1, 1.1, 1] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-          >
-            👨🍳
-          </motion.div>
-          <motion.div 
-            className="rounded-full h-16 w-16 border-4 border-orange-500 border-t-transparent mx-auto"
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          />
-          <p className="mt-4 text-gray-900 font-medium">Loading kitchen orders...</p>
+          <FiLoader className="animate-spin mx-auto text-orange-500 mb-4" size={64} />
+          <p className="mt-4 text-white font-medium">Loading kitchen orders...</p>
         </div>
       </div>
     );
@@ -158,49 +148,49 @@ const KOT = () => {
         <div className="flex space-x-3">
           <button
             onClick={() => setActiveTab('all')}
-            className={`px-6 py-3 rounded-xl font-medium transition-colors ${
+            className={`px-6 py-3 rounded-xl font-medium transition-colors flex items-center gap-2 border ${
               activeTab === 'all' 
-                ? 'bg-white/40 backdrop-blur-lg text-gray-900' 
-                : 'bg-white/20 backdrop-blur-md text-gray-800'
+                ? 'bg-white/20 backdrop-blur-lg text-white border-white/30' 
+                : 'bg-white/10 backdrop-blur-md text-white border-white/20 hover:bg-white/20'
             }`}
           >
-            📋 All
+            <FiList /> All
           </button>
           <button
             onClick={() => setActiveTab('pending')}
-            className={`px-6 py-3 rounded-xl font-medium transition-colors ${
+            className={`px-6 py-3 rounded-xl font-medium transition-colors flex items-center gap-2 border ${
               activeTab === 'pending' 
-                ? 'bg-white/40 backdrop-blur-lg text-gray-900' 
-                : 'bg-white/20 backdrop-blur-md text-gray-800'
+                ? 'bg-white/20 backdrop-blur-lg text-white border-white/30' 
+                : 'bg-white/10 backdrop-blur-md text-white border-white/20 hover:bg-white/20'
             }`}
           >
-            ⏳ Pending
+            <FiClock /> Pending
           </button>
           <button
             onClick={() => setActiveTab('active')}
-            className={`px-6 py-3 rounded-xl font-medium transition-colors ${
+            className={`px-6 py-3 rounded-xl font-medium transition-colors flex items-center gap-2 border ${
               activeTab === 'active' 
-                ? 'bg-white/40 backdrop-blur-lg text-gray-900' 
-                : 'bg-white/20 backdrop-blur-md text-gray-800'
+                ? 'bg-white/20 backdrop-blur-lg text-white border-white/30' 
+                : 'bg-white/10 backdrop-blur-md text-white border-white/20 hover:bg-white/20'
             }`}
           >
-            🔥 Active
+            <FiZap /> Active
           </button>
           <button
             onClick={() => setActiveTab('history')}
-            className={`px-6 py-3 rounded-xl font-medium transition-colors ${
+            className={`px-6 py-3 rounded-xl font-medium transition-colors flex items-center gap-2 border ${
               activeTab === 'history' 
-                ? 'bg-white/40 backdrop-blur-lg text-gray-900' 
-                : 'bg-white/20 backdrop-blur-md text-gray-800'
+                ? 'bg-white/20 backdrop-blur-lg text-white border-white/30' 
+                : 'bg-white/10 backdrop-blur-md text-white border-white/20 hover:bg-white/20'
             }`}
           >
-            📜 History
+            <FiArchive /> History
           </button>
           <button
             onClick={fetchKitchenOrders}
-            className="px-6 py-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl font-medium transition-colors"
+            className="px-6 py-3 bg-white/10 backdrop-blur-md hover:bg-white/20 text-white rounded-xl font-medium transition-colors flex items-center gap-2 border border-white/20"
           >
-            🔄 Refresh
+            <FiRefreshCw /> Refresh
           </button>
         </div>
       </div>
@@ -210,16 +200,16 @@ const KOT = () => {
       {(activeTab === 'active' || activeTab === 'all') && (
         <>
           {getFilteredKots().length === 0 ? (
-            <div className="text-center py-16 bg-white/70 backdrop-blur-md rounded-2xl shadow-xl">
+            <div className="text-center py-16 bg-white/10 backdrop-blur-md rounded-2xl shadow-xl border border-white/20">
               <motion.div 
                 className="text-6xl mb-4"
                 animate={{ scale: [1, 1.1, 1] }}
                 transition={{ duration: 1.5, repeat: Infinity }}
               >
-                🍳
+                <FiPackage className="mx-auto text-white" />
               </motion.div>
-              <p className="text-gray-500 text-lg font-medium">No {activeTab} KOTs in kitchen</p>
-              <p className="text-gray-400 text-sm mt-2">Orders will appear here when placed</p>
+              <p className="text-white text-lg font-medium">No {activeTab} KOTs in kitchen</p>
+              <p className="text-gray-200 text-sm mt-2">Orders will appear here when placed</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -241,8 +231,8 @@ const KOT = () => {
                       <p className="text-[10px] opacity-90">{kot.orderNumber}</p>
                     </div>
                     <div className="text-right text-[10px]">
-                      <div>⏰ {new Date(kot.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</div>
-                      {kot.tableNumber && <div>🪑 {kot.tableNumber}</div>}
+                      <div className="flex items-center gap-1"><FiClock size={10} /> {new Date(kot.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</div>
+                      {kot.tableNumber && <div>Table {kot.tableNumber}</div>}
                     </div>
                   </div>
 
@@ -263,8 +253,8 @@ const KOT = () => {
                             {isExtraItem && <span className="ml-1 text-[9px] bg-blue-500 text-white px-1.5 py-0.5 rounded">NEW</span>}
                           </span>
                           {item.status === 'PREPARING' && elapsed && (
-                            <div className={`text-xs font-mono font-bold px-1.5 py-0.5 rounded ${getTimerColor(elapsed.totalSeconds, prepTime)} bg-white/50`}>
-                              ⏱ {elapsed.minutes}:{elapsed.seconds.toString().padStart(2, '0')}
+                            <div className={`text-xs font-mono font-bold px-1.5 py-0.5 rounded flex items-center gap-1 ${getTimerColor(elapsed.totalSeconds, prepTime)} bg-white/50`}>
+                              <FiClock size={10} /> {elapsed.minutes}:{elapsed.seconds.toString().padStart(2, '0')}
                             </div>
                           )}
                         </div>
@@ -277,37 +267,37 @@ const KOT = () => {
                               />
                             </div>
                             <div className="text-[9px] text-gray-700 font-medium mb-1">
-                              Target: {prepTime}min {progress >= 100 && <span className="text-red-600 font-bold">⚠️ DELAYED</span>}
+                              Target: {prepTime}min {progress >= 100 && <span className="text-red-600 font-bold flex items-center gap-1"><FiAlertCircle size={10} /> DELAYED</span>}
                             </div>
                           </>
                         )}
                         {item.status === 'PENDING' && (
                           <button
                             onClick={() => updateItemStatus(kot._id, actualIndex, 'PREPARING', isExtraItem)}
-                            className="w-full py-1 px-2 rounded text-[10px] font-bold text-white bg-orange-500 hover:bg-orange-600"
+                            className="w-full py-1 px-2 rounded text-[10px] font-bold text-white bg-orange-500 hover:bg-orange-600 flex items-center justify-center gap-1"
                           >
-                            👨🍳 Start
+                            <FiUser size={10} /> Start
                           </button>
                         )}
                         {item.status === 'PREPARING' && (
                           <button
                             onClick={() => updateItemStatus(kot._id, actualIndex, 'READY', isExtraItem)}
-                            className="w-full py-1 px-2 rounded text-[10px] font-bold text-white bg-green-500 hover:bg-green-600"
+                            className="w-full py-1 px-2 rounded text-[10px] font-bold text-white bg-green-500 hover:bg-green-600 flex items-center justify-center gap-1"
                           >
-                            ✅ Mark Ready
+                            <FiCheckCircle size={10} /> Mark Ready
                           </button>
                         )}
                         {item.status === 'READY' && (
                           <button
                             onClick={() => updateItemStatus(kot._id, actualIndex, 'SERVED', isExtraItem)}
-                            className="w-full py-1 px-2 rounded text-[10px] font-bold text-white bg-purple-500 hover:bg-purple-600"
+                            className="w-full py-1 px-2 rounded text-[10px] font-bold text-white bg-purple-500 hover:bg-purple-600 flex items-center justify-center gap-1"
                           >
-                            🍽️ Mark Served
+                            <FiCheckCircle size={10} /> Mark Served
                           </button>
                         )}
                         {item.status === 'SERVED' && (
-                          <div className="w-full py-1 px-2 rounded text-[10px] font-bold text-white text-center bg-gray-500">
-                            ✓ Served
+                          <div className="w-full py-1 px-2 rounded text-[10px] font-bold text-white text-center bg-gray-500 flex items-center justify-center gap-1">
+                            <FiCheckCircle size={10} /> Served
                           </div>
                         )}
                       </div>
@@ -321,8 +311,8 @@ const KOT = () => {
                       
                       if (allItemsServed) {
                         return (
-                          <div className="w-full px-3 py-2 rounded-xl text-sm font-bold text-white text-center bg-purple-500">
-                            🍽️ All Served
+                          <div className="w-full px-3 py-2 rounded-xl text-sm font-bold text-white text-center bg-purple-500 flex items-center justify-center gap-1">
+                            <FiCheckCircle /> All Served
                           </div>
                         );
                       } else {
@@ -331,7 +321,7 @@ const KOT = () => {
                         const totalCount = allItems.length || 0;
                         return (
                           <div className="w-full px-3 py-2 rounded-xl text-xs font-medium text-gray-700 text-center bg-gray-300/50">
-                            {servedCount > 0 ? `🍽️ ${servedCount}/${totalCount} Served` : readyCount > 0 ? `✅ ${readyCount}/${totalCount} Ready` : '⏳ Preparing...'}
+                            {servedCount > 0 ? `Served ${servedCount}/${totalCount}` : readyCount > 0 ? `Ready ${readyCount}/${totalCount}` : 'Preparing...'}
                           </div>
                         );
                       }

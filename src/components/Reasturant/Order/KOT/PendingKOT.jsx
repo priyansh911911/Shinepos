@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { FiClock, FiCheckCircle, FiAlertCircle, FiCircle, FiTarget, FiStar, FiUser, FiLoader } from 'react-icons/fi';
 
 const PendingKOT = ({ onItemStarted }) => {
   const [kots, setKots] = useState([]);
@@ -58,13 +59,7 @@ const PendingKOT = ({ onItemStarted }) => {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="text-center">
-          <motion.div 
-            className="text-6xl mb-4"
-            animate={{ scale: [1, 1.1, 1] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-          >
-            ⏳
-          </motion.div>
+          <FiLoader className="animate-spin mx-auto text-orange-500 mb-4" size={64} />
           <p className="mt-4 text-gray-900 font-medium">Loading pending KOTs...</p>
         </div>
       </div>
@@ -80,16 +75,16 @@ const PendingKOT = ({ onItemStarted }) => {
     >
 
       {kots.length === 0 ? (
-        <div className="text-center py-16 bg-white/70 backdrop-blur-md rounded-2xl shadow-xl">
+        <div className="text-center py-16 bg-white/10 backdrop-blur-md rounded-2xl shadow-xl border border-white/20">
           <motion.div 
             className="text-6xl mb-4"
             animate={{ scale: [1, 1.1, 1] }}
             transition={{ duration: 1.5, repeat: Infinity }}
           >
-            ✅
+            <FiCheckCircle className="mx-auto text-white" size={64} />
           </motion.div>
-          <p className="text-gray-500 text-lg font-medium">No pending KOTs</p>
-          <p className="text-gray-400 text-sm mt-2">All orders have been accepted</p>
+          <p className="text-white text-lg font-medium">No pending KOTs</p>
+          <p className="text-gray-200 text-sm mt-2">All orders have been accepted</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -113,9 +108,9 @@ const PendingKOT = ({ onItemStarted }) => {
               } text-white shadow-lg`}>
                 <div className="flex items-center gap-2">
                   <div className="text-xl">
-                    {kot.priority === 'URGENT' ? '🔴' :
-                     kot.priority === 'HIGH' ? '🟠' :
-                     kot.priority === 'NORMAL' ? '🟡' : '🟢'}
+                    {kot.priority === 'URGENT' ? <FiAlertCircle className="text-white" /> :
+                     kot.priority === 'HIGH' ? <FiAlertCircle className="text-white" /> :
+                     kot.priority === 'NORMAL' ? <FiCircle className="text-white" /> : <FiCircle className="text-white" />}
                   </div>
                   <div>
                     <h3 className="font-bold text-base leading-tight">{kot.kotNumber}</h3>
@@ -123,8 +118,8 @@ const PendingKOT = ({ onItemStarted }) => {
                   </div>
                 </div>
                 <div className="text-right text-[10px]">
-                  <div>⏰ {new Date(kot.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</div>
-                  {kot.tableNumber && <div>🪑 {kot.tableNumber}</div>}
+                  <div className="flex items-center gap-1 justify-end"><FiClock size={10} /> {new Date(kot.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</div>
+                  {kot.tableNumber && <div>Table {kot.tableNumber}</div>}
                 </div>
               </div>
 
@@ -145,7 +140,7 @@ const PendingKOT = ({ onItemStarted }) => {
                     <div className="space-y-0.5 mb-2">
                       {item.variation && (
                         <div className="text-[10px] text-gray-700 flex items-center gap-1">
-                          <span className="bg-blue-500/20 px-1.5 py-0.5 rounded">🎯 {item.variation.name}</span>
+                          <span className="bg-blue-500/20 px-1.5 py-0.5 rounded flex items-center gap-1"><FiTarget size={8} /> {item.variation.name}</span>
                         </div>
                       )}
                       {item.addons?.length > 0 && (
@@ -159,9 +154,9 @@ const PendingKOT = ({ onItemStarted }) => {
 
                     <button
                       onClick={() => updateItemStatus(kot._id, originalIdx, 'PREPARING')}
-                      className="w-full py-1.5 px-2 rounded-lg text-[10px] font-bold text-white bg-orange-500 hover:bg-orange-600 transition-all shadow-sm"
+                      className="w-full py-1.5 px-2 rounded-lg text-[10px] font-bold text-white bg-orange-500 hover:bg-orange-600 transition-all shadow-sm flex items-center justify-center gap-1"
                     >
-                      👨‍🍳 Accept & Start
+                      <FiUser size={10} /> Accept & Start
                     </button>
                   </div>
                   );
@@ -170,7 +165,7 @@ const PendingKOT = ({ onItemStarted }) => {
                 {kot.extraItems?.length > 0 && (
                   <div className="border-t-2 border-dashed border-red-400 pt-2 mt-2">
                     <div className="text-[10px] font-bold text-white mb-2 flex items-center gap-1">
-                      <span>⭐</span>
+                      <FiStar />
                       <span>EXTRA ITEMS ADDED</span>
                     </div>
                     {kot.extraItems.map((item, idx) => (
@@ -188,7 +183,7 @@ const PendingKOT = ({ onItemStarted }) => {
                         <div className="space-y-0.5 mb-2">
                           {item.variation && (
                             <div className="text-[10px] text-gray-700 flex items-center gap-1">
-                              <span className="bg-blue-500/20 px-1.5 py-0.5 rounded">🎯 {item.variation.name}</span>
+                              <span className="bg-blue-500/20 px-1.5 py-0.5 rounded flex items-center gap-1"><FiTarget size={8} /> {item.variation.name}</span>
                             </div>
                           )}
                           {item.addons?.length > 0 && (
@@ -202,9 +197,9 @@ const PendingKOT = ({ onItemStarted }) => {
 
                         <button
                           onClick={() => updateItemStatus(kot._id, idx, 'PREPARING', true)}
-                          className="w-full py-1.5 px-2 rounded-lg text-[10px] font-bold text-white bg-red-600 hover:bg-red-700 transition-all shadow-sm"
+                          className="w-full py-1.5 px-2 rounded-lg text-[10px] font-bold text-white bg-red-600 hover:bg-red-700 transition-all shadow-sm flex items-center justify-center gap-1"
                         >
-                          👨‍🍳 Accept Extra Item
+                          <FiUser size={10} /> Accept Extra Item
                         </button>
                       </div>
                     ))}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FiPlus, FiMinus, FiX, FiSearch } from 'react-icons/fi';
+import { FiPlus, FiMinus, FiX, FiSearch, FiCoffee, FiRefreshCw } from 'react-icons/fi';
 import { useAddNewOrder } from './hooks/useAddNewOrder';
 
 const AddNewOrder = ({ onClose, orderId }) => {
@@ -98,7 +98,7 @@ const AddNewOrder = ({ onClose, orderId }) => {
                   </div>
                 ) : (
                   <div className="text-gray-600 text-center py-6 bg-white/30 backdrop-blur-md rounded-xl">
-                    <div className="text-3xl mb-2">🍽️</div>
+                    <FiCoffee className="text-3xl mb-2 mx-auto" />
                     <p className="text-sm">No items selected</p>
                   </div>
                 )}
@@ -128,7 +128,7 @@ const AddNewOrder = ({ onClose, orderId }) => {
                 <div className="grid grid-cols-2 gap-2 max-h-80 overflow-y-auto">
                   {loadingMenu ? (
                     <div className="col-span-2 text-center py-8 text-gray-600">
-                      <div className="text-3xl mb-2">🔄</div>
+                      <FiRefreshCw className="text-3xl mb-2 mx-auto animate-spin" />
                       <p className="text-sm">Loading menu items...</p>
                     </div>
                   ) : menuItems
@@ -161,7 +161,7 @@ const AddNewOrder = ({ onClose, orderId }) => {
                               : 'bg-gray-400 text-gray-200 cursor-not-allowed'
                           }`}
                         >
-                          {item.status === 'active' ? '➕' : 'N/A'}
+                          {item.status === 'active' ? <FiPlus size={12} /> : 'N/A'}
                         </button>
                       </div>
                     ))}

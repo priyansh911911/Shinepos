@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiPlus } from 'react-icons/fi';
+import { FiPlus, FiRefreshCw, FiArrowLeft } from 'react-icons/fi';
 import ItemList from './ItemList';
 import AddItem from './AddItem';
 import EditItem from './EditItem';
@@ -30,7 +30,7 @@ const Menu = () => {
   if (view === 'sync') {
     return (
       <motion.div key="sync" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.2 }} className="p-6">
-        <button onClick={() => setView('list')} className="mb-4 px-4 py-2 bg-white/20 backdrop-blur-md hover:bg-white/30 text-white rounded-xl">← Back</button>
+        <button onClick={() => setView('list')} className="mb-4 px-4 py-2 bg-white/20 backdrop-blur-md hover:bg-white/30 text-white rounded-xl flex items-center gap-2"><FiArrowLeft /> Back</button>
         <ZomatoSync onSuccess={() => { setView('list'); setRefreshKey(k => k + 1); }} />
       </motion.div>
     );
@@ -45,7 +45,7 @@ const Menu = () => {
               onClick={() => setView('sync')}
               className="px-6 py-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl flex items-center space-x-2 font-medium transition-colors"
             >
-              <span>🔄 Sync Zomato</span>
+              <span className="flex items-center gap-2"><FiRefreshCw /> Sync Zomato</span>
             </button>
           )}
           <button

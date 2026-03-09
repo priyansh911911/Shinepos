@@ -103,7 +103,7 @@ const Tables = () => {
       <div className="flex justify-center items-center h-64">
         <div className="text-center">
           <FiLoader className="text-6xl mb-4 animate-spin mx-auto text-orange-500" size={64} />
-          <p className="mt-4 text-gray-900 font-medium">Loading tables...</p>
+          <p className="mt-4 text-white font-medium">Loading tables...</p>
         </div>
       </div>
     );
@@ -114,7 +114,7 @@ const Tables = () => {
       <div className="flex justify-end items-center mb-6">
         <button
           onClick={() => setView('add')}
-          className="px-6 py-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl flex items-center space-x-2 font-medium transition-all border border-white/40"
+          className="px-6 py-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-white rounded-xl flex items-center space-x-2 font-medium transition-all border border-white/40"
         >
           <FiPlus />
           <span>Add Table</span>

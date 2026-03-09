@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FiPlus, FiPackage, FiAlertTriangle, FiCpu } from 'react-icons/fi';
+import { FiPlus, FiPackage, FiAlertTriangle, FiCpu, FiLoader } from 'react-icons/fi';
 import InventoryList from './InventoryList';
 import AddInventory from './AddInventory';
 import EditInventory from './EditInventory';
@@ -111,7 +111,10 @@ const Inventory = ({ initialTab, onTabChange }) => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="text-center">
+          <FiLoader className="animate-spin mx-auto text-orange-500 mb-4" size={64} />
+          <p className="text-gray-900 font-medium">Loading inventory...</p>
+        </div>
       </div>
     );
   }

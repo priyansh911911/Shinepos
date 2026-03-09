@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { FiClipboard } from 'react-icons/fi';
 import axios from 'axios';
 import OrderDetailsPopup from './OrderDetailsPopup';
 
@@ -60,7 +61,7 @@ const RecentOrders = ({ orders, delay = 0, onOrderClick }) => {
           </motion.div>
         )) : (
           <div className="text-center py-8">
-            <div className="text-4xl mb-2">📋</div>
+            <FiClipboard className="text-4xl mb-2 mx-auto text-gray-400" />
             <p className="text-gray-300">No recent orders</p>
           </div>
         )}

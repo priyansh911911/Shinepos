@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useCategory } from '../Category/hooks/useCategory';
+import { FiCircle } from 'react-icons/fi';
 
 const EditItem = ({ item, onSuccess, onBack }) => {
   const { categories } = useCategory();
@@ -170,10 +171,10 @@ const EditItem = ({ item, onSuccess, onBack }) => {
       <div className="lg:col-span-1 space-y-6">
         {/* Addons */}
         <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-4">🍟 Addons</h3>
+          <h3 className="text-lg font-bold text-gray-900 mb-4">Addons</h3>
           <input
             type="text"
-            placeholder="🔍 Search addons..."
+            placeholder="Search addons..."
             value={searchAddon}
             onChange={(e) => setSearchAddon(e.target.value)}
             className="w-full bg-white/30 backdrop-blur-md border border-white/40 rounded-xl px-4 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900 placeholder-gray-600"
@@ -191,7 +192,7 @@ const EditItem = ({ item, onSuccess, onBack }) => {
                   <div className="font-medium text-gray-900">{addon.name}</div>
                   <div className="text-sm text-gray-700">₹{addon.price}</div>
                 </div>
-                <span>{addon.veg ? '🟢' : '🔴'}</span>
+                <span><FiCircle className={`${addon.veg ? 'text-green-500 fill-green-500' : 'text-red-500 fill-red-500'}`} size={12} /></span>
               </label>
             ))}
           </div>
@@ -199,10 +200,10 @@ const EditItem = ({ item, onSuccess, onBack }) => {
 
         {/* Variations */}
         <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-4">📏 Variations</h3>
+          <h3 className="text-lg font-bold text-gray-900 mb-4">Variations</h3>
           <input
             type="text"
-            placeholder="🔍 Search variations..."
+            placeholder="Search variations..."
             value={searchVariation}
             onChange={(e) => setSearchVariation(e.target.value)}
             className="w-full bg-white/30 backdrop-blur-md border border-white/40 rounded-xl px-4 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900 placeholder-gray-600"
@@ -230,7 +231,7 @@ const EditItem = ({ item, onSuccess, onBack }) => {
       <div className="lg:col-span-2 space-y-6 animate-slideIn" style={{ animationDelay: '0.2s' }}>
         {/* Basic Information */}
         <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-4">🍽️ Item Details</h3>
+          <h3 className="text-lg font-bold text-gray-900 mb-4">Item Details</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -283,8 +284,8 @@ const EditItem = ({ item, onSuccess, onBack }) => {
                 onChange={handleInputChange}
                 className="w-full bg-white/30 backdrop-blur-md border border-white/40 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
               >
-                <option value="veg">🟢 Vegetarian</option>
-                <option value="nonveg">🔴 Non-Vegetarian</option>
+                <option value="veg">Vegetarian</option>
+                <option value="nonveg">Non-Vegetarian</option>
               </select>
             </div>
 
@@ -377,7 +378,7 @@ const EditItem = ({ item, onSuccess, onBack }) => {
 
         {/* Selected Summary */}
         <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-4">📋 Summary</h3>
+          <h3 className="text-lg font-bold text-gray-900 mb-4">Summary</h3>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <span className="text-gray-700">Selected Addons:</span>
@@ -404,7 +405,7 @@ const EditItem = ({ item, onSuccess, onBack }) => {
             disabled={loading}
             className="px-6 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Updating...' : '✓ Update Item'}
+            {loading ? 'Updating...' : 'Update Item'}
           </button>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FiSearch } from 'react-icons/fi';
+import { FiSearch, FiLoader, FiPackage } from 'react-icons/fi';
 import { useCategory } from './hooks/useCategory';
 
 const CategoryList = ({ onEdit }) => {
@@ -20,18 +20,7 @@ const CategoryList = ({ onEdit }) => {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="text-center">
-          <motion.div 
-            className="text-6xl mb-4"
-            animate={{ scale: [1, 1.1, 1] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-          >
-            🏷️
-          </motion.div>
-          <motion.div 
-            className="rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent mx-auto"
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          />
+          <FiLoader className="animate-spin mx-auto text-orange-500 mb-4" size={64} />
           <p className="mt-4 text-gray-900 font-medium">Loading categories...</p>
         </div>
       </div>
@@ -69,7 +58,7 @@ const CategoryList = ({ onEdit }) => {
             {filteredCategories.length === 0 ? (
               <tr>
                 <td colSpan="4" className="px-6 py-8 text-center">
-                  <div className="text-6xl mb-2">📦</div>
+                  <FiPackage className="mx-auto text-gray-400" size={64} />
                   <p className="text-gray-500 font-medium">{searchQuery ? 'No categories found matching your search' : 'No categories found'}</p>
                   <p className="text-gray-400 text-sm">Create your first category to get started</p>
                 </td>

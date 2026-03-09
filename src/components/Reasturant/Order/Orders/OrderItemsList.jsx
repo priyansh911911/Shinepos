@@ -1,27 +1,27 @@
 import React from 'react';
-import { FiPlus, FiMinus, FiX } from 'react-icons/fi';
+import { FiPlus, FiMinus, FiX, FiCoffee, FiRefreshCw, FiSearch } from 'react-icons/fi';
 
 const OrderItemsList = ({ menuItems, loadingMenu, searchQuery, setSearchQuery, fetchMenuItems, openItemModal }) => {
   return (
     <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-4 lg:p-6 border border-white/20">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-bold text-white">🍽️ Select Menu Items</h3>
+        <h3 className="text-lg font-bold text-white">Select Menu Items</h3>
         <button
           type="button"
           onClick={() => {
             setSearchQuery('');
             fetchMenuItems();
           }}
-          className="text-xs bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-lg transition-colors"
+          className="text-xs bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"
         >
-          🔄 Refresh
+          <FiRefreshCw size={12} /> Refresh
         </button>
       </div>
 
       <div className="mb-4">
         <input
           type="text"
-          placeholder="🔍 Search menu items..."
+          placeholder="Search menu items..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full bg-white/20 backdrop-blur-md border border-white/30 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 text-white placeholder-gray-300"
@@ -72,7 +72,7 @@ const OrderItemsList = ({ menuItems, loadingMenu, searchQuery, setSearchQuery, f
                     : 'bg-gray-600/50 text-gray-400 cursor-not-allowed'
                 }`}
               >
-                {item.status === 'active' ? '➕ Add' : 'Not Available'}
+                {item.status === 'active' ? <><FiPlus size={10} /> Add</> : 'Not Available'}
               </button>
             </div>
           ))

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { FiShoppingBag, FiDollarSign, FiTarget, FiUsers, FiStar, FiLoader } from 'react-icons/fi';
+import { FiShoppingBag, FiDollarSign, FiTarget, FiUsers, FiStar, FiLoader, FiSmile } from 'react-icons/fi';
 import axios from 'axios';
 import AnalyticsCard from './AnalyticsCard';
 import RecentOrders from './RecentOrders';
@@ -186,7 +186,7 @@ const Dashboard = () => {
       >
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-white mb-1">Welcome back! 👋</h1>
+            <h1 className="text-2xl font-bold text-white mb-1 flex items-center gap-2">Welcome back! <FiSmile /></h1>
             <p className="text-gray-200 text-sm">Here's what's happening at your restaurant</p>
           </div>
           <div className="flex items-center gap-3">
