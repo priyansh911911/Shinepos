@@ -21,7 +21,7 @@ const Vendor = () => {
         <h1 className="text-2xl font-bold text-white mb-2">Vendor Management</h1>
       </div>
 
-      <div className="bg-white/20 backdrop-blur-2xl rounded-2xl animate-fadeIn">
+      <div className="bg-white/5 backdrop-blur-2xl rounded-2xl animate-fadeIn">
         <div className="border-b border-white/30">
           <nav className="flex space-x-8 px-6">
             {tabs.map((tab) => {

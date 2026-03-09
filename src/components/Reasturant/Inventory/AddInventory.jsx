@@ -46,11 +46,11 @@ const AddInventory = ({ onAdd, onCancel }) => {
   };
 
   return (
-    <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-4 sm:p-6 animate-fadeIn">
-      <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-6 flex items-center gap-2"><FiCheckCircle /> Add Inventory Item</h2>
+    <div className="bg-white/5 backdrop-blur-2xl rounded-2xl p-4 sm:p-6 animate-fadeIn">
+      <h2 className="text-lg sm:text-xl font-bold text-white mb-6 flex items-center gap-2"><FiCheckCircle /> Add Inventory Item</h2>
 
       {error && (
-        <div className="bg-red-500/20 backdrop-blur-lg border border-red-400/50 text-red-700 px-4 py-3 rounded-xl mb-4">
+        <div className="bg-red-500/20 backdrop-blur-lg border border-red-400/50 text-white px-4 py-3 rounded-xl mb-4">
           {error}
         </div>
       )}
@@ -58,7 +58,7 @@ const AddInventory = ({ onAdd, onCancel }) => {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
+            <label className="block text-sm font-medium text-white mb-2">
               Item Name *
             </label>
             <input
@@ -67,12 +67,12 @@ const AddInventory = ({ onAdd, onCancel }) => {
               value={formData.name}
               onChange={handleChange}
               required
-              className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+              className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
+            <label className="block text-sm font-medium text-white mb-2">
               Category *
             </label>
             <select
@@ -80,7 +80,7 @@ const AddInventory = ({ onAdd, onCancel }) => {
               value={formData.category}
               onChange={handleChange}
               required
-              className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+              className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="ingredient">Ingredient</option>
               <option value="beverage">Beverage</option>
@@ -90,7 +90,7 @@ const AddInventory = ({ onAdd, onCancel }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
+            <label className="block text-sm font-medium text-white mb-2">
               Current Stock *
             </label>
             <input
@@ -101,12 +101,12 @@ const AddInventory = ({ onAdd, onCancel }) => {
               required
               min="0"
               step="0.01"
-              className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+              className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
+            <label className="block text-sm font-medium text-white mb-2">
               Minimum Stock *
             </label>
             <input
@@ -117,12 +117,12 @@ const AddInventory = ({ onAdd, onCancel }) => {
               required
               min="0"
               step="0.01"
-              className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+              className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
+            <label className="block text-sm font-medium text-white mb-2">
               Unit *
             </label>
             <select
@@ -130,7 +130,7 @@ const AddInventory = ({ onAdd, onCancel }) => {
               value={formData.unit}
               onChange={handleChange}
               required
-              className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+              className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="kg">Kilogram (kg)</option>
               <option value="g">Gram (g)</option>
@@ -142,7 +142,7 @@ const AddInventory = ({ onAdd, onCancel }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
+            <label className="block text-sm font-medium text-white mb-2">
               Cost Per Unit *
             </label>
             <input
@@ -153,12 +153,12 @@ const AddInventory = ({ onAdd, onCancel }) => {
               required
               min="0"
               step="0.01"
-              className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+              className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
 
           <div className="sm:col-span-2">
-            <label className="block text-sm font-medium text-gray-900 mb-2">
+            <label className="block text-sm font-medium text-white mb-2">
               Supplier
             </label>
             <input
@@ -166,7 +166,7 @@ const AddInventory = ({ onAdd, onCancel }) => {
               name="supplier"
               value={formData.supplier}
               onChange={handleChange}
-              className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+              className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
         </div>
@@ -175,14 +175,14 @@ const AddInventory = ({ onAdd, onCancel }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full px-6 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full px-6 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-white rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Adding...' : <><FiCheckCircle /> Add Item</>}
           </button>
           <button
             type="button"
             onClick={onCancel}
-            className="w-full px-6 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl transition-colors"
+            className="w-full px-6 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-white rounded-xl transition-colors"
           >
             <FiArrowLeft /> Cancel
           </button>

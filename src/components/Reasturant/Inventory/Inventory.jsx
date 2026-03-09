@@ -113,7 +113,7 @@ const Inventory = ({ initialTab, onTabChange }) => {
       <div className="flex justify-center items-center h-64">
         <div className="text-center">
           <FiLoader className="animate-spin mx-auto text-orange-500 mb-4" size={64} />
-          <p className="text-gray-900 font-medium">Loading inventory...</p>
+          <p className="text-white font-medium">Loading inventory...</p>
         </div>
       </div>
     );
@@ -123,9 +123,9 @@ const Inventory = ({ initialTab, onTabChange }) => {
     <div className="p-3 sm:p-6">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 space-y-4 sm:space-y-0">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Inventory Management</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-white">Inventory Management</h1>
           {lowStockCount > 0 && (
-            <div className="flex items-center mt-2 text-orange-600">
+            <div className="flex items-center mt-2 text-orange-300">
               <FiAlertTriangle className="mr-2" />
               <span className="text-sm">{lowStockCount} item(s) low on stock</span>
             </div>
@@ -143,7 +143,7 @@ const Inventory = ({ initialTab, onTabChange }) => {
                 className={`px-3 sm:px-4 py-2 rounded-lg flex items-center space-x-1 sm:space-x-2 text-sm sm:text-base ${
                   activeTab === 'list' 
                     ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    : 'bg-white/20 text-white hover:bg-white/30'
                 }`}
               >
                 <FiPackage />
@@ -158,7 +158,7 @@ const Inventory = ({ initialTab, onTabChange }) => {
                 className={`px-3 sm:px-4 py-2 rounded-lg flex items-center space-x-1 sm:space-x-2 text-sm sm:text-base ${
                   activeTab === 'smart' 
                     ? 'bg-purple-600 text-white' 
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    : 'bg-white/20 text-white hover:bg-white/30'
                 }`}
               >
                 <FiCpu />
@@ -175,7 +175,7 @@ const Inventory = ({ initialTab, onTabChange }) => {
             className={`px-3 sm:px-4 py-2 rounded-lg flex items-center space-x-1 sm:space-x-2 text-sm sm:text-base ${
               activeTab === 'add' 
                 ? 'bg-green-600 text-white' 
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                : 'bg-white/20 text-white hover:bg-white/30'
             }`}
           >
             <FiPlus />
@@ -185,7 +185,7 @@ const Inventory = ({ initialTab, onTabChange }) => {
       </div>
 
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        <div className="bg-red-500/20 border border-red-400/50 text-white px-4 py-3 rounded mb-4">
           {error}
         </div>
       )}
