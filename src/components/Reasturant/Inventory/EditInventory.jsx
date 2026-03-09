@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { FiCheckCircle, FiArrowLeft } from 'react-icons/fi';
 
 const EditInventory = ({ item, onUpdate, onCancel }) => {
   const [formData, setFormData] = useState({
@@ -44,7 +45,7 @@ const EditInventory = ({ item, onUpdate, onCancel }) => {
 
   return (
     <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-4 sm:p-6 animate-fadeIn">
-      <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-6">📦 Edit Inventory Item</h2>
+      <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-6 flex items-center gap-2"><FiCheckCircle /> Edit Inventory Item</h2>
       
       {error && (
         <div className="bg-red-500/20 backdrop-blur-lg border border-red-400/50 text-red-700 px-4 py-3 rounded-xl mb-4">
@@ -146,14 +147,14 @@ const EditInventory = ({ item, onUpdate, onCancel }) => {
             disabled={loading}
             className="w-full px-6 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl transition-colors disabled:opacity-50"
           >
-            {loading ? 'Updating...' : '✓ Update Item'}
+            {loading ? 'Updating...' : <><FiCheckCircle /> Update Item</>}
           </button>
           <button
             type="button"
             onClick={onCancel}
             className="w-full px-6 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl transition-colors"
           >
-            ← Cancel
+            <FiArrowLeft /> Cancel
           </button>
         </div>
       </form>

@@ -177,9 +177,9 @@ const ItemAnalysis = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-white/70">{item.category}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-white">{item.quantity}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-green-400 font-medium">₹{item.revenue.toFixed(2)}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-red-400">₹{item.cost.toFixed(2)}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-blue-400 font-medium">₹{item.profit.toFixed(2)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-green-400 font-medium">₹{(item.revenue || 0).toFixed(2)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-red-400">₹{(item.cost || 0).toFixed(2)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-blue-400 font-medium">₹{(item.profit || 0).toFixed(2)}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                           item.margin >= 50 ? 'bg-green-400/20 text-green-400' :

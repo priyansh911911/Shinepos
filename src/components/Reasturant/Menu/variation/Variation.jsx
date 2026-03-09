@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { FiPlus } from 'react-icons/fi';
 import VariationList from './VariationList';
 import AddVariation from './AddVariation';
 import EditVariation from './EditVariation';
@@ -72,7 +73,7 @@ const Variation = () => {
                 onClick={handleAddVariation}
                 className="px-6 py-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl flex items-center space-x-2 font-medium transition-all border border-white/40"
               >
-                <span>➕ Add Variation</span>
+                <span className="flex items-center gap-2"><FiPlus /> Add Variation</span>
               </button>
             </div>
             <VariationList variations={variations} loading={loading} onAdd={handleAddVariation} onEdit={handleEditVariation} onDelete={fetchVariations} />

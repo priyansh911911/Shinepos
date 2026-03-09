@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FiLoader, FiSearch } from 'react-icons/fi';
+import { FiLoader, FiSearch, FiPackage } from 'react-icons/fi';
 
 const AddonList = ({ addons, loading, onAdd, onEdit, onDelete }) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -98,7 +98,7 @@ const AddonList = ({ addons, loading, onAdd, onEdit, onDelete }) => {
             {filteredAddons.length === 0 ? (
               <tr>
                 <td colSpan="6" className="px-6 py-8 text-center">
-                  <div className="text-6xl mb-2">📦</div>
+                  <FiPackage className="mx-auto text-gray-400" size={64} />
                   <p className="text-gray-500 font-medium">{searchQuery ? 'No addons found matching your search' : 'No addons found'}</p>
                   <p className="text-gray-400 text-sm">Create your first addon to get started</p>
                 </td>

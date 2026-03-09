@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { FiPlus } from 'react-icons/fi';
 import AddonList from './AddonList';
 import AddAddon from './AddAddon';
 import EditAddon from './EditAddon';
@@ -74,7 +75,7 @@ const Addon = () => {
                 onClick={handleAddAddon}
                 className="px-6 py-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl flex items-center space-x-2 font-medium transition-all border border-white/40"
               >
-                <span>➕ Add Addon</span>
+                <span className="flex items-center gap-2"><FiPlus /> Add Addon</span>
               </button>
             </div>
             <AddonList addons={addons} loading={loading} onAdd={handleAddAddon} onEdit={handleEditAddon} onDelete={fetchAddons} />

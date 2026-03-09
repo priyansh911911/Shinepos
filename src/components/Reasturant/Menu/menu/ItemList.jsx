@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FiEdit2, FiTrash2, FiLoader, FiCheckCircle, FiXCircle, FiClock, FiTag, FiSearch } from 'react-icons/fi';
+import { FiEdit2, FiTrash2, FiLoader, FiCheckCircle, FiXCircle, FiClock, FiTag, FiSearch, FiCircle } from 'react-icons/fi';
 
 const ItemList = ({ onEdit }) => {
   const [items, setItems] = useState([]);
@@ -135,12 +135,13 @@ const ItemList = ({ onEdit }) => {
               
               {/* Food Type Badge */}
               <div className="absolute top-2 left-2">
-                <span className={`px-2 py-0.5 rounded-full text-xs font-bold shadow-md ${
+                <span className={`px-2 py-0.5 rounded-full text-xs font-bold shadow-md flex items-center gap-1 ${
                   item.foodType === 'veg' 
                     ? 'bg-green-500 text-white' 
                     : 'bg-red-500 text-white'
                 }`}>
-                  {item.foodType === 'veg' ? '🌱' : '🍖'}
+                  <FiCircle className="fill-current" size={8} />
+                  {item.foodType === 'veg' ? 'Veg' : 'Non-Veg'}
                 </span>
               </div>
             </div>

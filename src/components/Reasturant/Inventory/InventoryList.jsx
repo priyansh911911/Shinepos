@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FiRefreshCw, FiEdit, FiPackage, FiTrash2 } from 'react-icons/fi';
+import { FiRefreshCw, FiEdit, FiPackage, FiTrash2, FiCheckCircle, FiXCircle, FiArrowLeft } from 'react-icons/fi';
 
 const InventoryList = ({ inventory, onUpdate, onRestock, onRefresh, onEdit, onDelete }) => {
   const [restockModal, setRestockModal] = useState(null);
@@ -26,7 +26,7 @@ const InventoryList = ({ inventory, onUpdate, onRestock, onRefresh, onEdit, onDe
   return (
     <div className="bg-white/20 backdrop-blur-2xl rounded-2xl animate-fadeIn">
       <div className="p-4 sm:p-6 border-b border-white/30 flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-3 sm:space-y-0">
-        <h2 className="text-lg sm:text-xl font-bold text-gray-900">📦 Inventory Items</h2>
+        <h2 className="text-lg sm:text-xl font-bold text-gray-900 flex items-center gap-2"><FiPackage /> Inventory Items</h2>
         <button
           onClick={onRefresh}
           className="flex items-center justify-center space-x-2 px-4 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl transition-colors w-full sm:w-auto"
@@ -152,7 +152,7 @@ const InventoryList = ({ inventory, onUpdate, onRestock, onRefresh, onEdit, onDe
       {restockModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6 w-full max-w-sm">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">📦 Restock Item</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2"><FiPackage /> Restock Item</h3>
             <input
               type="number"
               value={restockQty}
@@ -164,18 +164,18 @@ const InventoryList = ({ inventory, onUpdate, onRestock, onRefresh, onEdit, onDe
             <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
               <button
                 onClick={handleRestock}
-                className="flex-1 px-4 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl transition-colors"
+                className="flex-1 px-4 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl transition-colors flex items-center justify-center gap-2"
               >
-                ✓ Restock
+                <FiCheckCircle /> Restock
               </button>
               <button
                 onClick={() => {
                   setRestockModal(null);
                   setRestockQty('');
                 }}
-                className="flex-1 px-4 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl transition-colors"
+                className="flex-1 px-4 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl transition-colors flex items-center justify-center gap-2"
               >
-                ← Cancel
+                <FiArrowLeft /> Cancel
               </button>
             </div>
           </div>
@@ -185,20 +185,20 @@ const InventoryList = ({ inventory, onUpdate, onRestock, onRefresh, onEdit, onDe
       {deleteModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6 w-full max-w-sm">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">🗑️ Delete Item</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2"><FiTrash2 /> Delete Item</h3>
             <p className="mb-4 text-gray-900">Are you sure you want to delete this item?</p>
             <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
               <button
                 onClick={handleDelete}
-                className="flex-1 px-4 py-2 bg-red-500/30 backdrop-blur-md hover:bg-red-500/40 text-red-700 rounded-xl transition-colors"
+                className="flex-1 px-4 py-2 bg-red-500/30 backdrop-blur-md hover:bg-red-500/40 text-red-700 rounded-xl transition-colors flex items-center justify-center gap-2"
               >
-                ✓ Delete
+                <FiCheckCircle /> Delete
               </button>
               <button
                 onClick={() => setDeleteModal(null)}
-                className="flex-1 px-4 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl transition-colors"
+                className="flex-1 px-4 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl transition-colors flex items-center justify-center gap-2"
               >
-                ← Cancel
+                <FiArrowLeft /> Cancel
               </button>
             </div>
           </div>

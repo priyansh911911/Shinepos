@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FiRefreshCw, FiUser, FiPhone, FiGrid, FiShoppingBag, FiFileText, FiPlus, FiRotateCcw, FiCreditCard, FiChevronDown, FiCheckCircle, FiEye } from 'react-icons/fi';
+import { FiRefreshCw, FiUser, FiPhone, FiGrid, FiShoppingBag, FiFileText, FiPlus, FiRotateCcw, FiCreditCard, FiChevronDown, FiCheckCircle, FiEye, FiArrowLeft } from 'react-icons/fi';
 import axios from 'axios';
 
 const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRefresh, onUpdatePriority, onTransfer, onAddItems, onViewSplitBill, activeTab, setActiveTab }) => {
@@ -129,9 +129,9 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
       {/* Split View */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         {/* Left Side - Order List */}
-        <div className="bg-white/20 backdrop-blur-xl rounded-2xl overflow-hidden lg:col-span-1 self-start sticky top-6">
+        <div className="bg-white/10 backdrop-blur-md rounded-xl overflow-hidden lg:col-span-1 self-start sticky top-6 border border-white/20">
           <div className="p-4">
-            <h3 className="text-xl font-bold text-gray-900"><FiShoppingBag className="inline mr-2" />Orders ({filteredOrders.length})</h3>
+            <h3 className="text-xl font-bold text-white"><FiShoppingBag className="inline mr-2" />Orders ({filteredOrders.length})</h3>
           </div>
           <div className="overflow-y-auto max-h-[calc(100vh-300px)] p-4 space-y-3">
             {refreshingList ? (
@@ -150,15 +150,15 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
               >
                 <div className="flex justify-between items-start mb-2">
                   <div>
-                    <h4 className="font-bold text-gray-900">{order.customerName}</h4>
-                    <p className="text-xs text-gray-700"><FiGrid className="inline mr-1" />{order.tableNumber || 'N/A'}</p>
+                    <h4 className="font-bold text-white">{order.customerName}</h4>
+                    <p className="text-xs text-gray-200"><FiGrid className="inline mr-1" />{order.tableNumber || 'N/A'}</p>
                   </div>
                   <span className={`px-2 py-1 rounded-lg text-xs font-bold ${statusColors[order.status]}`}>
                     {order.status}
                   </span>
                 </div>
                 <div className="flex justify-between items-center text-sm">
-                  <div className="text-gray-900 text-sm cursor-pointer" onClick={(e) => {
+                  <div className="text-white text-sm cursor-pointer" onClick={(e) => {
                     e.stopPropagation();
                     setExpandedOrderItems(expandedOrderItems === order._id ? null : order._id);
                   }}>
@@ -169,19 +169,19 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
                     {expandedOrderItems === order._id && (
                       <div className="mt-2 space-y-1">
                         {order.items.map((item, idx) => (
-                          <div key={idx} className="text-xs text-gray-700">{item.quantity}x {item.name}</div>
+                          <div key={idx} className="text-xs text-gray-200">{item.quantity}x {item.name}</div>
                         ))}
                       </div>
                     )}
                   </div>
-                  <span className="font-bold text-gray-900">{formatCurrency(order.totalAmount)}</span>
+                  <span className="font-bold text-white">{formatCurrency(order.totalAmount)}</span>
                 </div>
               </div>
                 ))}
                 {filteredOrders.length === 0 && (
                   <div className="text-center py-10">
-                    <div className="text-5xl mb-3">🍽️</div>
-                    <p className="text-gray-900 font-medium">No orders found</p>
+                    <FiShoppingBag className="text-5xl mb-3 mx-auto text-white" />
+                    <p className="text-white font-medium">No orders found</p>
                   </div>
                 )}
               </>
@@ -190,11 +190,11 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
         </div>
 
         {/* Right Side - Order Details */}
-        <div className="bg-white/15 backdrop-blur-xl rounded-2xl overflow-hidden lg:col-span-2">
+        <div className="bg-white/10 backdrop-blur-md rounded-xl overflow-hidden lg:col-span-2 border border-white/20">
           {selectedOrder ? (
             <>
               <div className="p-4">
-                <h3 className="text-xl font-bold text-gray-900"><FiFileText className="inline mr-2" />Order Details</h3>
+                <h3 className="text-xl font-bold text-white"><FiFileText className="inline mr-2" />Order Details</h3>
               </div>
               <div className="p-6 space-y-4">
                 {/* Customer Info & Order Items in Same Row */}
@@ -444,8 +444,8 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
           ) : (
             <div className="flex items-center justify-center h-full p-10">
               <div className="text-center">
-                <div className="text-6xl mb-4">👈</div>
-                <p className="text-gray-900 font-medium text-lg">Select an order to view details</p>
+                <FiArrowLeft className="text-6xl mb-4 mx-auto text-white" />
+                <p className="text-white font-medium text-lg">Select an order to view details</p>
               </div>
             </div>
           )}
