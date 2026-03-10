@@ -7,7 +7,7 @@ import PendingKOT from './PendingKOT';
 const KOT = () => {
   const [kots, setKots] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('active');
+  const [activeTab, setActiveTab] = useState('all');
   const [currentTime, setCurrentTime] = useState(Date.now());
   const timerRef = useRef(null);
 
@@ -69,9 +69,6 @@ const KOT = () => {
   };
 
   const getFilteredKots = () => {
-    if (activeTab === 'active') {
-      return kots.filter(kot => kot.items?.some(item => item.status !== 'PENDING'));
-    }
     return kots;
   };
 
@@ -157,26 +154,6 @@ const KOT = () => {
             <FiList /> All
           </button>
           <button
-            onClick={() => setActiveTab('pending')}
-            className={`px-6 py-3 rounded-xl font-medium transition-colors flex items-center gap-2 border ${
-              activeTab === 'pending' 
-                ? 'bg-white/20 backdrop-blur-lg text-white border-white/30' 
-                : 'bg-white/10 backdrop-blur-md text-white border-white/20 hover:bg-white/20'
-            }`}
-          >
-            <FiClock /> Pending
-          </button>
-          <button
-            onClick={() => setActiveTab('active')}
-            className={`px-6 py-3 rounded-xl font-medium transition-colors flex items-center gap-2 border ${
-              activeTab === 'active' 
-                ? 'bg-white/20 backdrop-blur-lg text-white border-white/30' 
-                : 'bg-white/10 backdrop-blur-md text-white border-white/20 hover:bg-white/20'
-            }`}
-          >
-            <FiZap /> Active
-          </button>
-          <button
             onClick={() => setActiveTab('history')}
             className={`px-6 py-3 rounded-xl font-medium transition-colors flex items-center gap-2 border ${
               activeTab === 'history' 
@@ -195,9 +172,9 @@ const KOT = () => {
         </div>
       </div>
 
-      {activeTab === 'pending' && <PendingKOT onItemStarted={() => { fetchKitchenOrders(); setActiveTab('active'); }} />}
+      {activeTab === 'pending' && <PendingKOT onItemStarted={() => { fetchKitchenOrders(); setActiveTab('all'); }} />}
 
-      {(activeTab === 'active' || activeTab === 'all') && (
+      {(activeTab === 'all') && (
         <>
           {getFilteredKots().length === 0 ? (
             <div className="text-center py-16 bg-white/10 backdrop-blur-md rounded-2xl shadow-xl border border-white/20">
@@ -215,7 +192,7 @@ const KOT = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {getFilteredKots().map((kot) => {
                 const allItems = [...(kot.items || []), ...(kot.extraItems || [])];
-                const filteredItems = allItems.filter(item => activeTab === 'all' || item.status !== 'PENDING');
+                const filteredItems = allItems;
                 
                 return (
                 <motion.div 
@@ -238,9 +215,6 @@ const KOT = () => {
 
                   <div className="p-3 space-y-2">
                     {filteredItems.map((item, idx) => {
-                      const elapsed = calculateElapsedTime(item.startedAt, item.status);
-                      const prepTime = item.timeToPrepare || 15;
-                      const progress = elapsed ? Math.min((elapsed.totalSeconds / (prepTime * 60)) * 100, 100) : 100;
                       const isExtraItem = idx >= (kot.items?.length || 0);
                       const actualIndex = isExtraItem ? idx - (kot.items?.length || 0) : idx;
                       
@@ -252,25 +226,7 @@ const KOT = () => {
                             {item.name}
                             {isExtraItem && <span className="ml-1 text-[9px] bg-blue-500 text-white px-1.5 py-0.5 rounded">NEW</span>}
                           </span>
-                          {item.status === 'PREPARING' && elapsed && (
-                            <div className={`text-xs font-mono font-bold px-1.5 py-0.5 rounded flex items-center gap-1 ${getTimerColor(elapsed.totalSeconds, prepTime)} bg-white/50`}>
-                              <FiClock size={10} /> {elapsed.minutes}:{elapsed.seconds.toString().padStart(2, '0')}
-                            </div>
-                          )}
                         </div>
-                        {item.status === 'PREPARING' && elapsed && (
-                          <>
-                            <div className="w-full bg-gray-300/50 rounded-full h-1.5 mb-1 overflow-hidden">
-                              <div 
-                                className={`h-1.5 rounded-full transition-all duration-500 ${getProgressColor(elapsed.totalSeconds, prepTime)}`}
-                                style={{ width: `${progress}%` }}
-                              />
-                            </div>
-                            <div className="text-[9px] text-gray-700 font-medium mb-1">
-                              Target: {prepTime}min {progress >= 100 && <span className="text-red-600 font-bold flex items-center gap-1"><FiAlertCircle size={10} /> DELAYED</span>}
-                            </div>
-                          </>
-                        )}
                         {item.status === 'PENDING' && (
                           <button
                             onClick={() => updateItemStatus(kot._id, actualIndex, 'PREPARING', isExtraItem)}

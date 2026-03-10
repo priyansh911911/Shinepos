@@ -18,19 +18,19 @@ const SmartInventory = () => {
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white mb-2">🧠 Smart Inventory System</h1>
+        <h1 className="text-2xl font-bold text-white mb-2 flex items-center gap-2"><FiTrendingDown /> Smart Inventory System</h1>
       </div>
 
       {smartAlerts.length > 0 && (
-        <div className="mb-6 bg-orange-50 border border-orange-200 rounded-lg p-4">
-          <h3 className="font-semibold text-orange-800 mb-2">Smart Alerts</h3>
+        <div className="mb-6 bg-orange-500/20 border border-orange-400/50 rounded-lg p-4">
+          <h3 className="font-semibold text-orange-300 mb-2">Smart Alerts</h3>
           {smartAlerts.map((alert, index) => (
-            <div key={index} className="text-sm text-orange-700">{alert}</div>
+            <div key={index} className="text-sm text-orange-200">{alert}</div>
           ))}
         </div>
       )}
 
-      <div className="bg-white/20 backdrop-blur-2xl rounded-2xl animate-fadeIn">
+      <div className="bg-white/5 backdrop-blur-2xl rounded-2xl animate-fadeIn">
         <div className="border-b border-white/30">
           <div className="flex justify-between items-center px-6 py-4">
             <nav className="flex space-x-8">

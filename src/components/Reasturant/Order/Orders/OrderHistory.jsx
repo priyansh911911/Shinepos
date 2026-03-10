@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FiChevronDown, FiPhone, FiFileText, FiArchive } from 'react-icons/fi';
+import { FiChevronDown, FiPhone, FiFileText, FiArchive, FiLoader } from 'react-icons/fi';
 import Invoice from './Invoice';
 
 const OrderHistory = () => {
@@ -58,9 +58,8 @@ const OrderHistory = () => {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="text-center">
-          <FiArchive className="text-6xl mb-4 mx-auto text-gray-400" />
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-orange-500 border-t-transparent mx-auto"></div>
-          <p className="mt-4 text-gray-900 font-medium">Loading history...</p>
+          <FiLoader className="text-6xl mb-4 animate-spin mx-auto text-orange-500" size={64} />
+          <p className="mt-4 text-white font-medium">Loading history...</p>
         </div>
       </div>
     );
@@ -167,10 +166,10 @@ const OrderHistory = () => {
           </table>
         </div>
       ) : (
-        <div className="text-center py-16 bg-white/70 backdrop-blur-md rounded-2xl shadow-xl">
-          <FiArchive className="text-6xl mb-4 mx-auto text-gray-400" />
-          <p className="text-gray-500 text-lg font-medium">No order history available</p>
-          <p className="text-gray-400 text-sm mt-2">Completed orders will appear here</p>
+        <div className="text-center py-16 bg-white/10 backdrop-blur-md rounded-2xl shadow-xl">
+          <FiArchive className="text-6xl mb-4 mx-auto text-white" />
+          <p className="text-white text-lg font-medium">No order history available</p>
+          <p className="text-gray-200 text-sm mt-2">Completed orders will appear here</p>
         </div>
       )}
     </div>

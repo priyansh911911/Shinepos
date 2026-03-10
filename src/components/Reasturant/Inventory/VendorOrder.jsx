@@ -73,8 +73,8 @@ const VendorOrder = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-xl font-semibold">Purchase Orders</h2>
-          <p className="text-gray-600">Create and manage orders to vendors</p>
+          <h2 className="text-xl font-semibold text-white">Purchase Orders</h2>
+          <p className="text-gray-300">Create and manage orders to vendors</p>
         </div>
         <button
           onClick={() => setShowCreateOrder(true)}
@@ -85,29 +85,29 @@ const VendorOrder = () => {
         </button>
       </div>
 
-      <div className="bg-white/20 backdrop-blur-2xl rounded-2xl animate-fadeIn">
+      <div className="bg-white/5 backdrop-blur-2xl rounded-2xl animate-fadeIn">
         <div className="p-4 border-b border-white/30">
           <h3 className="font-medium text-white">Order History</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-white/10">
+            <thead className="bg-white/5">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Order ID</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Vendor</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Items</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Total</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Status</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Date</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Actions</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-white uppercase">Order ID</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-white uppercase">Vendor</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-white uppercase">Items</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-white uppercase">Total</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-white uppercase">Status</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-white uppercase">Date</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-white uppercase">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/20">
               {orders.map(order => (
-                <tr key={order._id} className="hover:bg-white/10">
+                <tr key={order._id} className="hover:bg-white/5 bg-white/5">
                   <td className="px-4 py-3 text-sm font-medium text-white">#{order.orderNumber || order._id.slice(-6)}</td>
-                  <td className="px-4 py-3 text-sm text-gray-300">{order.vendorName}</td>
-                  <td className="px-4 py-3 text-sm text-gray-300">{order.items?.length || 0} items</td>
+                  <td className="px-4 py-3 text-sm text-white">{order.vendorName}</td>
+                  <td className="px-4 py-3 text-sm text-white">{order.items?.length || 0} items</td>
                   <td className="px-4 py-3 text-sm font-medium text-white">₹{order.totalAmount?.toFixed(2) || '0.00'}</td>
                   <td className="px-4 py-3 text-sm">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1 w-fit ${getStatusColor(order.status)}`}>
@@ -115,7 +115,7 @@ const VendorOrder = () => {
                       <span className="capitalize">{order.status}</span>
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-300">{new Date(order.createdAt).toLocaleDateString()}</td>
+                  <td className="px-4 py-3 text-sm text-white">{new Date(order.createdAt).toLocaleDateString()}</td>
                   <td className="px-4 py-3 text-sm">
                     <div className="flex space-x-2">
                       {order.status === 'pending' && (
@@ -150,7 +150,7 @@ const VendorOrder = () => {
           </table>
         </div>
         {orders.length === 0 && (
-          <div className="text-center py-8 text-gray-300">
+          <div className="text-center py-8 text-white">
             No purchase orders found. Create your first order!
           </div>
         )}

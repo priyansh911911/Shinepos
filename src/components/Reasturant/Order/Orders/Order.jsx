@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FiPlus, FiEye, FiClipboard, FiRefreshCw, FiArchive, FiList, FiLoader } from 'react-icons/fi';
+import { FiPlus, FiEye, FiClipboard, FiRefreshCw, FiArchive, FiList, FiLoader, FiAlertCircle } from 'react-icons/fi';
 import OrderList from './OrderList';
 import CreateOrder from './CreateOrder';
 import OrderDetails from './OrderDetails';
@@ -55,7 +55,7 @@ const Order = () => {
         {error && (
           <div className="bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-4 rounded-xl mb-6 animate-slideIn">
             <div className="flex items-center space-x-2">
-              <span className="text-2xl">⚠️</span>
+              <FiAlertCircle className="text-2xl" />
               <span className="font-medium">{error}</span>
             </div>
           </div>

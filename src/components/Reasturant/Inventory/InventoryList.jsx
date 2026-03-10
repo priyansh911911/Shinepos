@@ -24,12 +24,12 @@ const InventoryList = ({ inventory, onUpdate, onRestock, onRefresh, onEdit, onDe
   };
 
   return (
-    <div className="bg-white/20 backdrop-blur-2xl rounded-2xl animate-fadeIn">
+    <div className="bg-white/5 backdrop-blur-2xl rounded-2xl animate-fadeIn">
       <div className="p-4 sm:p-6 border-b border-white/30 flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-3 sm:space-y-0">
-        <h2 className="text-lg sm:text-xl font-bold text-gray-900 flex items-center gap-2"><FiPackage /> Inventory Items</h2>
+        <h2 className="text-lg sm:text-xl font-bold text-white flex items-center gap-2"><FiPackage /> Inventory Items</h2>
         <button
           onClick={onRefresh}
-          className="flex items-center justify-center space-x-2 px-4 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl transition-colors w-full sm:w-auto"
+          className="flex items-center justify-center space-x-2 px-4 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-white rounded-xl transition-colors w-full sm:w-auto"
         >
           <FiRefreshCw />
           <span>Refresh</span>
@@ -39,9 +39,9 @@ const InventoryList = ({ inventory, onUpdate, onRestock, onRefresh, onEdit, onDe
       {/* Mobile Card View */}
       <div className="block sm:hidden">
         {inventory.map((item) => (
-          <div key={item._id} className={`p-4 border-b border-white/30 ${item.isLowStock ? 'bg-orange-500/20' : ''}`}>
+          <div key={item._id} className={`p-4 border-b border-white/30 ${item.isLowStock ? 'bg-orange-500/20' : 'bg-white/5'}`}>
             <div className="flex justify-between items-start mb-2">
-              <h3 className="font-medium text-gray-900">{item.name}</h3>
+              <h3 className="font-medium text-white">{item.name}</h3>
               <div className="flex space-x-2">
                 <button
                   onClick={() => onEdit(item)}
@@ -66,12 +66,12 @@ const InventoryList = ({ inventory, onUpdate, onRestock, onRefresh, onEdit, onDe
                 </button>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-2 text-sm text-gray-700">
+            <div className="grid grid-cols-2 gap-2 text-sm text-white">
               <div><span className="font-medium">Category:</span> {item.category}</div>
               <div><span className="font-medium">Unit:</span> {item.unit}</div>
               <div>
                 <span className="font-medium">Stock:</span> 
-                <span className={item.isLowStock ? 'text-orange-600 font-medium' : ''}>
+                <span className={item.isLowStock ? 'text-orange-300 font-medium' : ''}>
                   {item.currentStock}
                 </span>
               </div>
@@ -86,32 +86,32 @@ const InventoryList = ({ inventory, onUpdate, onRestock, onRefresh, onEdit, onDe
       {/* Desktop Table View */}
       <div className="hidden sm:block overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-white/30 backdrop-blur-lg">
+          <thead className="bg-white/10 backdrop-blur-lg">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-900 uppercase">Name</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-900 uppercase">Category</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-900 uppercase">Current Stock</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-900 uppercase">Min Stock</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-900 uppercase">Unit</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-900 uppercase">Cost/Unit</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-900 uppercase">Supplier</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-900 uppercase">Actions</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-white uppercase">Name</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-white uppercase">Category</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-white uppercase">Current Stock</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-white uppercase">Min Stock</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-white uppercase">Unit</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-white uppercase">Cost/Unit</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-white uppercase">Supplier</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-white uppercase">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/30">
+          <tbody className="divide-y divide-white/20">
             {inventory.map((item) => (
-              <tr key={item._id} className={`hover:bg-white/20 transition-colors ${item.isLowStock ? 'bg-orange-500/20' : ''}`}>
-                <td className="px-4 py-3 text-sm font-medium text-gray-900">{item.name}</td>
-                <td className="px-4 py-3 text-sm text-gray-900 capitalize">{item.category}</td>
+              <tr key={item._id} className={`hover:bg-white/10 transition-colors ${item.isLowStock ? 'bg-orange-500/20' : 'bg-white/5'}`}>
+                <td className="px-4 py-3 text-sm font-medium text-white">{item.name}</td>
+                <td className="px-4 py-3 text-sm text-white capitalize">{item.category}</td>
                 <td className="px-4 py-3 text-sm">
-                  <span className={`font-medium ${item.isLowStock ? 'text-orange-600' : 'text-gray-900'}`}>
+                  <span className={`font-medium ${item.isLowStock ? 'text-orange-300' : 'text-white'}`}>
                     {item.currentStock}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-sm text-gray-900">{item.minStock}</td>
-                <td className="px-4 py-3 text-sm text-gray-900">{item.unit}</td>
-                <td className="px-4 py-3 text-sm text-gray-900">₹{item.costPerUnit}</td>
-                <td className="px-4 py-3 text-sm text-gray-900">{item.supplier || '-'}</td>
+                <td className="px-4 py-3 text-sm text-white">{item.minStock}</td>
+                <td className="px-4 py-3 text-sm text-white">{item.unit}</td>
+                <td className="px-4 py-3 text-sm text-white">₹{item.costPerUnit}</td>
+                <td className="px-4 py-3 text-sm text-white">{item.supplier || '-'}</td>
                 <td className="px-4 py-3 text-sm">
                   <div className="flex space-x-3">
                     <button
@@ -144,7 +144,7 @@ const InventoryList = ({ inventory, onUpdate, onRestock, onRefresh, onEdit, onDe
       </div>
 
       {inventory.length === 0 && (
-        <div className="text-center py-8 text-gray-900">
+        <div className="text-center py-8 text-white">
           No inventory items found
         </div>
       )}
@@ -152,13 +152,13 @@ const InventoryList = ({ inventory, onUpdate, onRestock, onRefresh, onEdit, onDe
       {restockModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6 w-full max-w-sm">
-            <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2"><FiPackage /> Restock Item</h3>
+            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2"><FiPackage /> Restock Item</h3>
             <input
               type="number"
               value={restockQty}
               onChange={(e) => setRestockQty(e.target.value)}
               placeholder="Enter quantity"
-              className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+              className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-purple-500 text-white placeholder-gray-300"
               min="1"
             />
             <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
@@ -185,8 +185,8 @@ const InventoryList = ({ inventory, onUpdate, onRestock, onRefresh, onEdit, onDe
       {deleteModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6 w-full max-w-sm">
-            <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2"><FiTrash2 /> Delete Item</h3>
-            <p className="mb-4 text-gray-900">Are you sure you want to delete this item?</p>
+            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2"><FiTrash2 /> Delete Item</h3>
+            <p className="mb-4 text-white">Are you sure you want to delete this item?</p>
             <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
               <button
                 onClick={handleDelete}

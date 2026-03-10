@@ -1,10 +1,12 @@
 import React from 'react';
+import { FiUser, FiLoader, FiCheckCircle } from 'react-icons/fi';
 import { useCreateOrder } from './hooks/useCreateOrder';
 import FloatingCart from './FloatingCart';
 import OrderItemsList from './OrderItemsList';
 
 const CreateOrder = ({ onCreateOrder, onCancel }) => {
   const [step, setStep] = React.useState(1);
+  const [orderStatus, setOrderStatus] = React.useState(''); // '', 'confirming', 'success'
   const [searchQuery, setSearchQuery] = React.useState('');
   const [customers, setCustomers] = React.useState([]);
   const [showCustomerDropdown, setShowCustomerDropdown] = React.useState(false);
@@ -76,6 +78,19 @@ const CreateOrder = ({ onCreateOrder, onCancel }) => {
     setShowCustomerDropdown(false);
   };
 
+  const handleOrderSubmit = async () => {
+    setOrderStatus('confirming');
+    try {
+      await handleSubmit();
+      setOrderStatus('success');
+      setTimeout(() => {
+        onCancel(); // This will redirect to list page
+      }, 2000);
+    } catch (error) {
+      setOrderStatus('');
+    }
+  };
+
   const handleNext = () => {
     if (!customerName || !guestCount) {
       alert('Please fill in customer name and guest count');
@@ -83,6 +98,30 @@ const CreateOrder = ({ onCreateOrder, onCancel }) => {
     }
     setStep(2);
   };
+
+  // Order confirmation modal
+  if (orderStatus === 'confirming' || orderStatus === 'success') {
+    return (
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+        <div className="bg-white/90 backdrop-blur-xl rounded-2xl p-8 max-w-md w-full mx-4 text-center">
+          {orderStatus === 'confirming' && (
+            <>
+              <FiLoader className="animate-spin mx-auto text-blue-500 mb-4" size={48} />
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Confirming Your Order</h3>
+              <p className="text-gray-600">Please wait while we process your order...</p>
+            </>
+          )}
+          {orderStatus === 'success' && (
+            <>
+              <FiCheckCircle className="mx-auto text-green-500 mb-4" size={48} />
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Order Successfully Placed!</h3>
+              <p className="text-gray-600">Redirecting to orders list...</p>
+            </>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -95,7 +134,7 @@ const CreateOrder = ({ onCreateOrder, onCancel }) => {
       {/* Step 1: Customer Details */}
       {step === 1 && (
         <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-4 lg:p-6 border border-white/20 mx-auto">
-          <h3 className="text-xl font-bold text-white mb-6">👤 Customer Information</h3>
+          <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2"><FiUser /> Customer Information</h3>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
@@ -257,7 +296,7 @@ const CreateOrder = ({ onCreateOrder, onCancel }) => {
             updateItemQuantity={updateItemQuantity}
             removeItem={removeItem}
             calculateTotal={calculateTotal}
-            onCheckout={() => handleSubmit()}
+            onCheckout={handleOrderSubmit}
             loading={loading}
           />
         </>
