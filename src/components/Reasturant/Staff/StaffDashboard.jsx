@@ -10,6 +10,8 @@ const StaffDashboard = () => {
   const [userRole, setUserRole] = useState('');
   const [filterDate, setFilterDate] = useState('');
   const [filterStaffName, setFilterStaffName] = useState('');
+  const [customHours, setCustomHours] = useState({});
+  const [actualWorkedTime, setActualWorkedTime] = useState({});
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -34,6 +36,8 @@ const StaffDashboard = () => {
               const m = Math.floor((diff % 3600) / 60);
               const s = diff % 60;
               newStatus[request._id] = `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+              const decimalHours = diff / 3600;
+              setActualWorkedTime(prev => ({ ...prev, [request._id]: decimalHours }));
             }
           } catch (e) {
             newStatus[request._id] = '0:00:00';
@@ -79,6 +83,12 @@ const StaffDashboard = () => {
     return `${hour12}:${mins} ${ampm}`;
   };
 
+  const formatDecimalToTime = (decimalHours) => {
+    const hours = Math.floor(decimalHours);
+    const minutes = Math.round((decimalHours - hours) * 60);
+    return `${hours}:${String(minutes).padStart(2, '0')}`;
+  };
+
   const respondToOvertime = async (requestId, status) => {
     try {
       const token = localStorage.getItem('token');
@@ -101,28 +111,22 @@ const StaffDashboard = () => {
   };
 
   const declineOvertime = async (requestId) => {
-    console.log('Decline clicked for:', requestId);
     try {
       const token = localStorage.getItem('token');
-      const url = `${import.meta.env.VITE_API_URL}/api/staff/overtime/${requestId}/respond`;
-      console.log('Calling URL:', url);
-      const response = await fetch(url, {
+      const actualHours = actualWorkedTime[requestId] || 0;
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/staff/overtime/${requestId}/respond`, {
         method: 'PATCH',
         headers: { 
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ status: 'declined' })
+        body: JSON.stringify({ status: 'declined', actualHoursWorked: actualHours })
       });
       
-      console.log('Response status:', response.status);
       if (response.ok) {
         alert('Overtime declined!');
+        setActualWorkedTime({ ...actualWorkedTime, [requestId]: 0 });
         fetchOvertimeRequests();
-      } else {
-        const error = await response.text();
-        console.error('Response error:', response.status, error);
-        alert('Error: ' + error);
       }
     } catch (error) {
       console.error('Error declining overtime:', error);
@@ -132,21 +136,45 @@ const StaffDashboard = () => {
   const completeOvertime = async (requestId) => {
     try {
       const token = localStorage.getItem('token');
+      const actualHours = actualWorkedTime[requestId] || 0;
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/staff/overtime/${requestId}/complete`, {
         method: 'PATCH',
         headers: { 
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ status: 'completed' })
+        body: JSON.stringify({ status: 'completed', actualHoursWorked: actualHours })
       });
       
       if (response.ok) {
         alert('Overtime marked as completed!');
+        setActualWorkedTime({ ...actualWorkedTime, [requestId]: 0 });
         fetchOvertimeRequests();
       }
     } catch (error) {
       console.error('Error completing overtime:', error);
+    }
+  };
+
+  const updateCustomHours = async (requestId, hoursValue) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/staff/overtime/${requestId}/update-hours`, {
+        method: 'PATCH',
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ hours: hoursValue })
+      });
+      
+      if (response.ok) {
+        alert('Hours updated successfully!');
+        setCustomHours({ ...customHours, [requestId]: '' });
+        fetchOvertimeRequests();
+      }
+    } catch (error) {
+      console.error('Error updating hours:', error);
     }
   };
 
@@ -259,9 +287,7 @@ const StaffDashboard = () => {
                   <th className="px-6 py-3 text-left text-sm font-semibold text-white">Reason</th>
                 )}
                 <th className="px-6 py-3 text-left text-sm font-semibold text-white">Status</th>
-                {userRole !== 'RESTAURANT_ADMIN' && (
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-white">Action</th>
-                )}
+                <th className="px-6 py-3 text-left text-sm font-semibold text-white">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -272,7 +298,7 @@ const StaffDashboard = () => {
                   )}
                   <td className="px-6 py-4 text-sm text-white">{new Date(request.date).toLocaleDateString()}</td>
                   <td className="px-6 py-4 text-sm text-white">{formatTime12Hour(request.startTime)} - {formatTime12Hour(request.endTime)}</td>
-                  <td className="px-6 py-4 text-sm text-white">{request.hours}h</td>
+                  <td className="px-6 py-4 text-sm text-white">{formatDecimalToTime(request.hours)}</td>
                   {userRole === 'RESTAURANT_ADMIN' && (
                     <td className="px-6 py-4 text-sm text-white font-semibold">₹{request.amount || 0}</td>
                   )}
@@ -288,50 +314,78 @@ const StaffDashboard = () => {
                       {request.status === 'accepted' ? '✓ Accepted' : request.status === 'declined' ? '✗ Declined' : 'Pending'}
                     </span>
                   </td>
-                  {userRole !== 'RESTAURANT_ADMIN' && (
-                    <td className="px-6 py-4 text-sm">
-                      {request.status === 'pending' && (
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => respondToOvertime(request._id, 'accepted')}
-                            className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-xs font-medium"
-                          >
-                            Accept
-                          </button>
-                          <button
-                            onClick={() => respondToOvertime(request._id, 'declined')}
-                            className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-xs font-medium"
-                          >
-                            Decline
-                          </button>
-                        </div>
-                      )}
-                      {request.status === 'accepted' && (
-                        <div className="flex items-center gap-2">
-                          {timeStatus[request._id] === 'over' ? (
+                  <td className="px-6 py-4 text-sm">
+                    {userRole === 'RESTAURANT_ADMIN' && request.status === 'accepted' && (
+                      <div className="flex gap-2 items-center">
+                        <input
+                          type="time"
+                          value={customHours[request._id] || ''}
+                          onChange={(e) => setCustomHours({ ...customHours, [request._id]: e.target.value })}
+                          className="w-24 px-2 py-1 bg-white/20 border border-white/40 text-white rounded text-xs"
+                        />
+                        <button
+                          onClick={() => {
+                            const val = customHours[request._id];
+                            let hours = 0;
+                            if (val && val.includes(':')) {
+                              const [h, m] = val.split(':');
+                              hours = Number(h) + (Number(m) / 60);
+                            } else {
+                              hours = Number(val);
+                            }
+                            updateCustomHours(request._id, hours);
+                          }}
+                          className="px-2 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded text-xs font-bold"
+                        >
+                          Send
+                        </button>
+                      </div>
+                    )}
+                    {userRole !== 'RESTAURANT_ADMIN' && (
+                      <>
+                        {request.status === 'pending' && (
+                          <div className="flex gap-2">
                             <button
-                              onClick={() => completeOvertime(request._id)}
-                              className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-xs font-bold"
+                              onClick={() => respondToOvertime(request._id, 'accepted')}
+                              className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-xs font-medium"
                             >
-                              Complete
+                              Accept
                             </button>
-                          ) : (
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs font-semibold text-green-300">
-                                ⏱ Running: {timeStatus[request._id] || '0:00:00'} / {request.hours}h
-                              </span>
+                            <button
+                              onClick={() => respondToOvertime(request._id, 'declined')}
+                              className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-xs font-medium"
+                            >
+                              Decline
+                            </button>
+                          </div>
+                        )}
+                        {request.status === 'accepted' && (
+                          <div className="flex items-center gap-2">
+                            {timeStatus[request._id] === 'over' ? (
                               <button
-                                onClick={() => declineOvertime(request._id)}
-                                className="px-2 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-xs font-bold"
+                                onClick={() => completeOvertime(request._id)}
+                                className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-xs font-bold"
                               >
-                                Decline
+                                Complete
                               </button>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </td>
-                  )}
+                            ) : (
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs font-semibold text-green-300">
+                                  Running: {timeStatus[request._id] || '0:00:00'}
+                                </span>
+                                <button
+                                  onClick={() => declineOvertime(request._id)}
+                                  className="px-2 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-xs font-bold"
+                                >
+                                  Decline
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>

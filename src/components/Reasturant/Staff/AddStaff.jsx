@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-
 const AddStaff = ({ onSuccess, onBack }) => {
   const [formData, setFormData] = useState({
     name: '',
@@ -42,10 +41,6 @@ const AddStaff = ({ onSuccess, onBack }) => {
       permissions: formData.permissions || [],
       shiftSchedule: formData.shiftSchedule
     };
-    
-    
-    
-    
 
     try {
       const token = localStorage.getItem('token');
@@ -267,7 +262,7 @@ const AddStaff = ({ onSuccess, onBack }) => {
                 <option value="flexible">Flexible</option>
               </select>
             </div>
-            
+
             {formData.shiftSchedule.shiftType === 'fixed' && (
               <div>
                 <div className="mb-4">
@@ -323,7 +318,7 @@ const AddStaff = ({ onSuccess, onBack }) => {
                 </div>
               </div>
             )}
-            
+
             {formData.shiftSchedule.shiftType === 'flexible' && (
               <p className="text-sm text-white">Flexible scheduling - no fixed hours</p>
             )}
