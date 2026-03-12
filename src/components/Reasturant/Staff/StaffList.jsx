@@ -652,7 +652,7 @@ const StaffList = ({ onAdd, onEdit }) => {
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <p className="font-semibold text-gray-800">{new Date(record.date).toLocaleDateString()}</p>
-                        <p className="text-sm text-gray-600">{record.startTime} - {record.endTime}</p>
+                        <p className="text-sm text-gray-600">{formatTime12Hour(record.startTime)} - {formatTime12Hour(record.endTime)}</p>
                       </div>
                       <div className="text-right">
                         <p className="font-bold text-green-600">₹{record.amount || 0}</p>
@@ -666,27 +666,13 @@ const StaffList = ({ onAdd, onEdit }) => {
                         record.status === 'pending' ? 'text-yellow-600' :
                         'text-red-600'
                       }`}>{record.status}</span></p>
-                      {record.status === 'accepted' && (
-                        recordTimers[record._id] === 'over' ? (
-                          <button
-                            onClick={() => completeOvertimeRecord(record._id)}
-                            className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-xs font-bold"
-                          >
-                            Complete
-                          </button>
-                        ) : (
-                          <div className="flex gap-2">
-                            <span className="text-xs font-semibold text-green-600">
-                              Running: {recordTimers[record._id] || '0:00:00'}
-                            </span>
-                            <button
-                              onClick={() => declineOvertimeRecord(record._id)}
-                              className="px-2 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-xs font-bold"
-                            >
-                              Decline
-                            </button>
-                          </div>
-                        )
+                      {record.status === 'accepted' && recordTimers[record._id] === 'over' && (
+                        <button
+                          onClick={() => completeOvertimeRecord(record._id)}
+                          className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-xs font-bold"
+                        >
+                          Complete
+                        </button>
                       )}
                     </div>
                   </div>
