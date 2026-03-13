@@ -268,7 +268,7 @@ const AddStaff = ({ onSuccess, onBack }) => {
                 <option value="flexible">Flexible</option>
               </select>
             </div>
-            
+
             {formData.shiftSchedule.shiftType === 'fixed' && (
               <div>
                 <div className="mb-4">
@@ -324,7 +324,7 @@ const AddStaff = ({ onSuccess, onBack }) => {
                 </div>
               </div>
             )}
-            
+
             {formData.shiftSchedule.shiftType === 'flexible' && (
               <p className="text-sm text-white">Flexible scheduling - no fixed hours</p>
             )}

@@ -4,6 +4,7 @@ import { FiAward, FiBarChart2, FiDollarSign, FiUsers, FiUser, FiMail, FiPhone, F
 const StaffList = ({ onAdd, onEdit }) => {
   const [staff, setStaff] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [staffCheckInStatus, setStaffCheckInStatus] = useState({});
   const [overtimeModal, setOvertimeModal] = useState({ show: false, staff: null, rate: '' });
   const [overtimeRecordModal, setOvertimeRecordModal] = useState({ 
     show: false, 
@@ -77,6 +78,28 @@ const StaffList = ({ onAdd, onEdit }) => {
         const data = await response.json();
         console.log('Staff data:', data.staff);
         setStaff(data.staff || []);
+        
+        const today = new Date().toISOString().split('T')[0];
+        const checkInStatus = {};
+        for (const member of data.staff || []) {
+          try {
+            const attendanceResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/attendance/staff/${member._id}?date=${today}`, {
+              headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (attendanceResponse.ok) {
+              const attendanceData = await attendanceResponse.json();
+              const hasCheckedIn = attendanceData.attendance?.checkIn ? true : false;
+              const hasCheckedOut = attendanceData.attendance?.checkOut ? true : false;
+              checkInStatus[member._id] = hasCheckedIn && !hasCheckedOut;
+            } else {
+              checkInStatus[member._id] = false;
+            }
+          } catch (err) {
+            console.error(`Error fetching attendance for ${member._id}:`, err);
+            checkInStatus[member._id] = false;
+          }
+        }
+        setStaffCheckInStatus(checkInStatus);
       }
     } catch (error) {
       console.error('Error fetching staff:', error);
@@ -235,9 +258,35 @@ const StaffList = ({ onAdd, onEdit }) => {
     }
   };
 
+  const calculateHours = (startTime, endTime) => {
+    if (!startTime || !endTime) return '';
+    const [startH, startM] = startTime.split(':').map(Number);
+    const [endH, endM] = endTime.split(':').map(Number);
+    let diffMinutes = (endH * 60 + endM) - (startH * 60 + startM);
+    if (diffMinutes < 0) diffMinutes += 24 * 60;
+    const hours = Math.floor(diffMinutes / 60);
+    const minutes = diffMinutes % 60;
+    return `${hours}:${String(minutes).padStart(2, '0')}`;
+  };
+
+  const parseTimeFormat = (timeStr) => {
+    const parts = timeStr.split(':');
+    if (parts.length !== 2) return null;
+    const h = Number(parts[0]);
+    const m = Number(parts[1]);
+    if (isNaN(h) || isNaN(m) || m < 0 || m > 59) return null;
+    return h + (m / 60);
+  };
+
   const assignOvertimeRequest = async () => {
-    if (!assignOvertimeModal.hours || Number(assignOvertimeModal.hours) <= 0) {
+    if (!assignOvertimeModal.hours) {
       alert('Please enter valid hours');
+      return;
+    }
+    
+    const hours = parseTimeFormat(assignOvertimeModal.hours);
+    if (hours === null || hours <= 0) {
+      alert('Please enter hours in format H:MM (e.g., 1:30)');
       return;
     }
     
@@ -253,7 +302,7 @@ const StaffList = ({ onAdd, onEdit }) => {
           date: assignOvertimeModal.date,
           startTime: assignOvertimeModal.startTime,
           endTime: assignOvertimeModal.endTime,
-          hours: Number(assignOvertimeModal.hours),
+          hours: hours,
           reason: assignOvertimeModal.reason
         })
       });
@@ -368,8 +417,19 @@ const StaffList = ({ onAdd, onEdit }) => {
                 <FiEdit2 size={14} /> Edit
               </button>
               <button
-                onClick={() => setAssignOvertimeModal({ show: true, staff: member, date: new Date().toISOString().split('T')[0], startTime: member.shiftSchedule?.fixedShift?.endTime || '', endTime: '', hours: '', reason: '' })}
-                className="flex-1 px-3 py-2 bg-yellow-500/80 backdrop-blur-md hover:bg-yellow-600 text-white rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-1"
+                onClick={() => {
+                  if (!staffCheckInStatus[member._id]) {
+                    alert('Staff member has not checked in today');
+                    return;
+                  }
+                  setAssignOvertimeModal({ show: true, staff: member, date: new Date().toISOString().split('T')[0], startTime: member.shiftSchedule?.fixedShift?.endTime || '', endTime: '', hours: '', reason: '' });
+                }}
+                disabled={!staffCheckInStatus[member._id]}
+                className={`flex-1 px-3 py-2 backdrop-blur-md text-white rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-1 ${
+                  staffCheckInStatus[member._id]
+                    ? 'bg-yellow-500/80 hover:bg-yellow-600'
+                    : 'bg-gray-400/50 cursor-not-allowed'
+                }`}
               >
                 <FiClock size={14} /> Assign
               </button>
@@ -530,19 +590,21 @@ const StaffList = ({ onAdd, onEdit }) => {
                 <input
                   type="time"
                   value={assignOvertimeModal.endTime}
-                  onChange={(e) => setAssignOvertimeModal({ ...assignOvertimeModal, endTime: e.target.value })}
+                  onChange={(e) => {
+                    const newEndTime = e.target.value;
+                    const calculatedHours = calculateHours(assignOvertimeModal.startTime, newEndTime);
+                    setAssignOvertimeModal({ ...assignOvertimeModal, endTime: newEndTime, hours: calculatedHours });
+                  }}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Hours</label>
                 <input
-                  type="number"
+                  type="text"
                   value={assignOvertimeModal.hours}
                   onChange={(e) => setAssignOvertimeModal({ ...assignOvertimeModal, hours: e.target.value })}
-                  placeholder="Enter hours"
-                  min="0"
-                  step="0.5"
+                  placeholder="Enter hours (e.g., 1:30)"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                 />
               </div>
@@ -590,7 +652,7 @@ const StaffList = ({ onAdd, onEdit }) => {
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <p className="font-semibold text-gray-800">{new Date(record.date).toLocaleDateString()}</p>
-                        <p className="text-sm text-gray-600">{record.startTime} - {record.endTime}</p>
+                        <p className="text-sm text-gray-600">{formatTime12Hour(record.startTime)} - {formatTime12Hour(record.endTime)}</p>
                       </div>
                       <div className="text-right">
                         <p className="font-bold text-green-600">₹{record.amount || 0}</p>
@@ -604,27 +666,13 @@ const StaffList = ({ onAdd, onEdit }) => {
                         record.status === 'pending' ? 'text-yellow-600' :
                         'text-red-600'
                       }`}>{record.status}</span></p>
-                      {record.status === 'accepted' && (
-                        recordTimers[record._id] === 'over' ? (
-                          <button
-                            onClick={() => completeOvertimeRecord(record._id)}
-                            className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-xs font-bold"
-                          >
-                            Complete
-                          </button>
-                        ) : (
-                          <div className="flex gap-2">
-                            <span className="text-xs font-semibold text-green-600">
-                              Running: {recordTimers[record._id] || '0:00:00'}
-                            </span>
-                            <button
-                              onClick={() => declineOvertimeRecord(record._id)}
-                              className="px-2 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-xs font-bold"
-                            >
-                              Decline
-                            </button>
-                          </div>
-                        )
+                      {record.status === 'accepted' && recordTimers[record._id] === 'over' && (
+                        <button
+                          onClick={() => completeOvertimeRecord(record._id)}
+                          className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-xs font-bold"
+                        >
+                          Complete
+                        </button>
                       )}
                     </div>
                   </div>
