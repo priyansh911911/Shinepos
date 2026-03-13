@@ -220,18 +220,36 @@ const StaffList = ({ onAdd, onEdit }) => {
   const completeOvertimeRecord = async (recordId) => {
     try {
       const token = localStorage.getItem('token');
+      const completedAt = new Date().toISOString();
+      
+      // Find the record to calculate completion time
+      const record = viewRecordsModal.records.find(r => r._id === recordId);
+      let completionTimeMinutes = 0;
+      
+      if (record && record.respondedAt) {
+        const startTime = new Date(record.respondedAt);
+        const endTime = new Date(completedAt);
+        const diffMs = endTime - startTime;
+        completionTimeMinutes = Math.floor(diffMs / (1000 * 60));
+      }
+      
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/staff/overtime/${recordId}/complete`, {
         method: 'PATCH',
         headers: { 
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ status: 'completed' })
+        body: JSON.stringify({ 
+          status: 'completed',
+          completedAt: completedAt,
+          completionTimeMinutes: completionTimeMinutes
+        })
       });
       
       if (response.ok) {
         alert('Overtime marked as completed!');
         viewOvertimeRecords(viewRecordsModal.staff);
+        fetchAllOvertimeRecords(); // Refresh summary data
       }
     } catch (error) {
       console.error('Error completing overtime:', error);
@@ -241,18 +259,43 @@ const StaffList = ({ onAdd, onEdit }) => {
   const declineOvertimeRecord = async (recordId) => {
     try {
       const token = localStorage.getItem('token');
+      const respondedAt = new Date().toISOString();
+      
+      // Find the record to calculate decline time
+      const record = viewRecordsModal.records.find(r => r._id === recordId);
+      let declineTimeMinutes = 0;
+      let declineAmount = 0;
+      
+      if (record && record.createdAt) {
+        const assignedTime = new Date(record.createdAt);
+        const declinedTime = new Date(respondedAt);
+        const diffMs = declinedTime - assignedTime;
+        declineTimeMinutes = Math.floor(diffMs / (1000 * 60));
+        
+        // Calculate decline amount based on time
+        const diffHours = diffMs / (1000 * 60 * 60);
+        const overtimeRate = viewRecordsModal.staff?.overtimeRate || 0;
+        declineAmount = diffHours * overtimeRate;
+      }
+      
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/staff/overtime/${recordId}/respond`, {
         method: 'PATCH',
         headers: { 
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ status: 'declined' })
+        body: JSON.stringify({ 
+          status: 'declined',
+          respondedAt: respondedAt,
+          declineTimeMinutes: declineTimeMinutes,
+          declineAmount: declineAmount
+        })
       });
       
       if (response.ok) {
         alert('Overtime declined!');
         viewOvertimeRecords(viewRecordsModal.staff);
+        fetchAllOvertimeRecords(); // Refresh summary data
       }
     } catch (error) {
       console.error('Error declining overtime:', error);
@@ -309,6 +352,8 @@ const StaffList = ({ onAdd, onEdit }) => {
     
     try {
       const token = localStorage.getItem('token');
+      const assignedAt = new Date().toISOString();
+      
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/staff/assign-overtime/${assignOvertimeModal.staff._id}`, {
         method: 'POST',
         headers: { 
@@ -320,13 +365,16 @@ const StaffList = ({ onAdd, onEdit }) => {
           startTime: assignOvertimeModal.startTime,
           endTime: assignOvertimeModal.endTime,
           hours: hours,
-          reason: assignOvertimeModal.reason
+          reason: assignOvertimeModal.reason,
+          assignedAt: assignedAt,
+          overtimeRate: assignOvertimeModal.staff.overtimeRate || 0
         })
       });
       
       if (response.ok) {
         alert('Overtime assigned successfully!');
         setAssignOvertimeModal({ show: false, staff: null, date: '', startTime: '', endTime: '', hours: '', reason: '' });
+        fetchAllOvertimeRecords(); // Refresh summary data
       }
     } catch (error) {
       console.error('Error assigning overtime:', error);
