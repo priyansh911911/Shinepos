@@ -76,8 +76,20 @@ const StaffList = ({ onAdd, onEdit }) => {
       
       if (response.ok) {
         const data = await response.json();
-        console.log('Staff data:', data.staff);
-        setStaff(data.staff || []);
+        console.log('Full API response:', data);
+        
+        // Handle different response structures
+        let staffData = [];
+        if (data.staff && Array.isArray(data.staff)) {
+          staffData = data.staff;
+        } else if (Array.isArray(data)) {
+          staffData = data;
+        } else if (data.data && Array.isArray(data.data)) {
+          staffData = data.data;
+        }
+        
+        console.log('Processed staff data:', staffData);
+        setStaff(staffData.filter(member => member && member._id));
         
         const today = new Date().toISOString().split('T')[0];
         const checkInStatus = {};
@@ -100,9 +112,14 @@ const StaffList = ({ onAdd, onEdit }) => {
           }
         }
         setStaffCheckInStatus(checkInStatus);
+      } else {
+        console.error('Failed to fetch staff:', response.status, response.statusText);
+        const errorData = await response.text();
+        console.error('Error response:', errorData);
       }
     } catch (error) {
       console.error('Error fetching staff:', error);
+      alert('Failed to load staff data. Please check your connection and try again.');
     }
     setLoading(false);
   };
@@ -352,7 +369,7 @@ const StaffList = ({ onAdd, onEdit }) => {
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {staff.map((member, index) => (
+        {staff.filter(member => member && member._id && member.name).map((member, index) => (
           <div 
             key={member._id} 
             className="bg-white/30 backdrop-blur-md rounded-xl shadow-lg border border-white/40 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 animate-fadeIn overflow-hidden"
@@ -638,56 +655,254 @@ const StaffList = ({ onAdd, onEdit }) => {
       )}
 
       {/* View Overtime Records Modal */}
-      {viewRecordsModal.show && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white/90 backdrop-blur-xl rounded-2xl p-6 w-[600px] max-h-[80vh] overflow-y-auto shadow-2xl border border-white/40">
-            <h3 className="text-xl font-bold text-gray-800 mb-2">Overtime Records - {viewRecordsModal.staff?.name}</h3>
-            <p className="text-sm text-blue-600 mb-4">Current OT Rate: ₹{viewRecordsModal.staff?.overtimeRate || 0}/hr</p>
-            {viewRecordsModal.records.length === 0 ? (
-              <p className="text-gray-500 text-center py-8">No overtime records found</p>
-            ) : (
-              <div className="space-y-3">
-                {viewRecordsModal.records.map((record, idx) => (
-                  <div key={idx} className="bg-white/50 p-4 rounded-lg border border-gray-200">
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <p className="font-semibold text-gray-800">{new Date(record.date).toLocaleDateString()}</p>
-                        <p className="text-sm text-gray-600">{formatTime12Hour(record.startTime)} - {formatTime12Hour(record.endTime)}</p>
+      {viewRecordsModal.show && (() => {
+        // Calculate total hours from all records
+        const totalMinutes = viewRecordsModal.records.reduce((sum, record) => {
+          // Handle both decimal hours (like 0.083) and time format (like "0:05")
+          let hours = 0;
+          if (typeof record.hours === 'string' && record.hours.includes(':')) {
+            const [h, m] = record.hours.split(':').map(Number);
+            hours = h + (m / 60);
+          } else {
+            hours = parseFloat(record.hours) || 0;
+          }
+          return sum + (hours * 60);
+        }, 0);
+        
+        const totalHours = Math.floor(totalMinutes / 60);
+        const remainingMinutes = Math.round(totalMinutes % 60);
+        
+        // Calculate total amount from completed records
+        const totalAmount = viewRecordsModal.records
+          .filter(record => record.status === 'completed' || record.status === 'accepted')
+          .reduce((sum, record) => {
+            const amount = parseFloat(record.amount) || 0;
+            return sum + amount;
+          }, 0);
+        
+        return (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+            <div className="bg-white/90 backdrop-blur-xl rounded-2xl p-6 w-[600px] max-h-[80vh] overflow-y-auto shadow-2xl border border-white/40">
+              <h3 className="text-xl font-bold text-gray-800 mb-2">Overtime Records - {viewRecordsModal.staff?.name}</h3>
+              <p className="text-sm text-blue-600 mb-4">Current OT Rate: ₹{viewRecordsModal.staff?.overtimeRate || 0}/hr</p>
+              {viewRecordsModal.records.length === 0 ? (
+                <p className="text-gray-500 text-center py-8">No overtime records found</p>
+              ) : (
+                <>
+                  <div className="space-y-3 mb-4">
+                    {viewRecordsModal.records.map((record, idx) => (
+                      <div key={idx} className="bg-white/50 p-4 rounded-lg border border-gray-200">
+                        <div className="flex justify-between items-start mb-2">
+                          <div>
+                            <p className="font-semibold text-gray-800">{new Date(record.date).toLocaleDateString()}</p>
+                            <p className="text-sm text-gray-600">{formatTime12Hour(record.startTime)} - {formatTime12Hour(record.endTime)}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-bold text-green-600">₹{(parseFloat(record.amount) || 0).toFixed(2)}</p>
+                            <p className="text-xs text-gray-500">
+                              {typeof record.hours === 'string' && record.hours.includes(':') 
+                                ? record.hours + 'h' 
+                                : (parseFloat(record.hours) || 0).toFixed(2) + 'h'
+                              } @ ₹{record.rate || 0}/h
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex justify-between items-center mb-2">
+                          <p className="text-xs text-gray-600 capitalize">Status: <span className={`font-semibold ${
+                            record.status === 'completed' ? 'text-green-600' :
+                            record.status === 'accepted' ? 'text-blue-600' :
+                            record.status === 'pending' ? 'text-yellow-600' :
+                            'text-red-600'
+                          }`}>{record.status}</span></p>
+                          {record.status === 'accepted' && recordTimers[record._id] === 'over' && (
+                            <button
+                              onClick={() => completeOvertimeRecord(record._id)}
+                              className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-xs font-bold"
+                            >
+                              Complete
+                            </button>
+                          )}
+                        </div>
+                        {/* Show decline time calculation with rate */}
+                        {record.status === 'declined' && record.createdAt && record.respondedAt && (
+                          <div className="mt-2 p-2 bg-red-50 rounded border border-red-200">
+                            <p className="text-xs text-red-600">
+                              ⏱️ Decline Duration: {' '}
+                              <span className="font-medium">
+                                {(() => {
+                                  const assignedTime = new Date(record.createdAt);
+                                  const declinedTime = new Date(record.respondedAt);
+                                  const diffMs = declinedTime - assignedTime;
+                                  const diffMinutes = Math.floor(diffMs / (1000 * 60));
+                                  const diffHours = Math.floor(diffMinutes / 60);
+                                  const remainingMinutes = diffMinutes % 60;
+                                  
+                                  if (diffHours > 0) {
+                                    return `${diffHours}h ${remainingMinutes}m`;
+                                  } else {
+                                    return `${diffMinutes}m`;
+                                  }
+                                })()} 
+                              </span>
+                            </p>
+                            <p className="text-xs text-red-600 mt-1">
+                              💰 Decline Rate Amount: {' '}
+                              <span className="font-bold">
+                                ₹{(() => {
+                                  const assignedTime = new Date(record.createdAt);
+                                  const declinedTime = new Date(record.respondedAt);
+                                  const diffMs = declinedTime - assignedTime;
+                                  const diffHours = diffMs / (1000 * 60 * 60); // Convert to hours
+                                  const overtimeRate = viewRecordsModal.staff?.overtimeRate || 0;
+                                  const declineAmount = diffHours * overtimeRate;
+                                  return declineAmount.toFixed(2);
+                                })()}
+                              </span>
+                              {' '}@ ₹{viewRecordsModal.staff?.overtimeRate || 0}/hr
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              Declined at: {new Date(record.respondedAt).toLocaleString()}
+                            </p>
+                          </div>
+                        )}
+                        {/* Show completion time calculation */}
+                        {record.status === 'completed' && record.respondedAt && record.completedAt && (
+                          <div className="mt-2 p-2 bg-green-50 rounded border border-green-200">
+                            <p className="text-xs text-green-600">
+                              ⏱️ Work duration: {' '}
+                              <span className="font-medium">
+                                {(() => {
+                                  const startTime = new Date(record.respondedAt);
+                                  const endTime = new Date(record.completedAt);
+                                  const diffMs = endTime - startTime;
+                                  const diffMinutes = Math.floor(diffMs / (1000 * 60));
+                                  const diffHours = Math.floor(diffMinutes / 60);
+                                  const remainingMinutes = diffMinutes % 60;
+                                  
+                                  if (diffHours > 0) {
+                                    return `${diffHours}h ${remainingMinutes}m`;
+                                  } else {
+                                    return `${diffMinutes}m`;
+                                  }
+                                })()} total work time
+                              </span>
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              Completed at: {new Date(record.completedAt).toLocaleString()}
+                            </p>
+                          </div>
+                        )}
                       </div>
-                      <div className="text-right">
-                        <p className="font-bold text-green-600">₹{record.amount || 0}</p>
-                        <p className="text-xs text-gray-500">{record.hours}h @ ₹{record.rate || 0}/h</p>
-                      </div>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <p className="text-xs text-gray-600 capitalize">Status: <span className={`font-semibold ${
-                        record.status === 'completed' ? 'text-green-600' :
-                        record.status === 'accepted' ? 'text-blue-600' :
-                        record.status === 'pending' ? 'text-yellow-600' :
-                        'text-red-600'
-                      }`}>{record.status}</span></p>
-                      {record.status === 'accepted' && recordTimers[record._id] === 'over' && (
-                        <button
-                          onClick={() => completeOvertimeRecord(record._id)}
-                          className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-xs font-bold"
-                        >
-                          Complete
-                        </button>
-                      )}
-                    </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            )}
-            <button
-              onClick={() => setViewRecordsModal({ show: false, staff: null, records: [] })}
-              className="w-full mt-4 px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-lg font-medium"
-            >
-              Close
-            </button>
+                  <div className="bg-gradient-to-r from-orange-500/20 to-yellow-500/20 p-4 rounded-lg border border-orange-300 mb-4">
+                    <h4 className="font-bold text-gray-800 mb-3">Total Overtime Summary</h4>
+                    <div className="grid grid-cols-4 gap-4">
+                      <div className="text-center">
+                        <p className="text-xs text-gray-600 mb-1">Total Hours</p>
+                        <p className="text-2xl font-bold text-orange-600">{totalHours}h {remainingMinutes}m</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-xs text-gray-600 mb-1">Rate</p>
+                        <p className="text-lg font-bold text-blue-600">₹{viewRecordsModal.staff?.overtimeRate || 0}/hr</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-xs text-gray-600 mb-1">Total Amount</p>
+                        <p className="text-2xl font-bold text-green-600">₹{totalAmount.toFixed(2)}</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-xs text-gray-600 mb-1">Decline Rate Amount</p>
+                        <p className="text-lg font-bold text-red-600">
+                          ₹{(() => {
+                            const declinedRecords = viewRecordsModal.records.filter(r => 
+                              r.status === 'declined' && r.createdAt && r.respondedAt
+                            );
+                            
+                            if (declinedRecords.length === 0) return '0.00';
+                            
+                            const totalDeclineAmount = declinedRecords.reduce((sum, record) => {
+                              const assignedTime = new Date(record.createdAt);
+                              const declinedTime = new Date(record.respondedAt);
+                              const diffMs = declinedTime - assignedTime;
+                              const diffHours = diffMs / (1000 * 60 * 60); // Convert to hours
+                              const overtimeRate = viewRecordsModal.staff?.overtimeRate || 0;
+                              const declineAmount = diffHours * overtimeRate;
+                              return sum + declineAmount;
+                            }, 0);
+                            
+                            return totalDeclineAmount.toFixed(2);
+                          })()} 
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {viewRecordsModal.records.filter(r => r.status === 'declined').length} declined
+                        </p>
+                      </div>
+                    </div>
+                    {/* Decline Rate Analysis */}
+                    {(() => {
+                      const declinedRecords = viewRecordsModal.records.filter(r => 
+                        r.status === 'declined' && r.createdAt && r.respondedAt
+                      );
+                      
+                      if (declinedRecords.length > 0) {
+                        const overtimeRate = viewRecordsModal.staff?.overtimeRate || 0;
+                        
+                        const declineData = declinedRecords.map(record => {
+                          const assignedTime = new Date(record.createdAt);
+                          const declinedTime = new Date(record.respondedAt);
+                          const diffMs = declinedTime - assignedTime;
+                          const diffHours = diffMs / (1000 * 60 * 60);
+                          const amount = diffHours * overtimeRate;
+                          return { minutes: Math.floor(diffMs / (1000 * 60)), amount };
+                        });
+                        
+                        const fastDeclines = declineData.filter(d => d.minutes <= 5);
+                        const mediumDeclines = declineData.filter(d => d.minutes > 5 && d.minutes <= 30);
+                        const slowDeclines = declineData.filter(d => d.minutes > 30);
+                        
+                        const fastAmount = fastDeclines.reduce((sum, d) => sum + d.amount, 0);
+                        const mediumAmount = mediumDeclines.reduce((sum, d) => sum + d.amount, 0);
+                        const slowAmount = slowDeclines.reduce((sum, d) => sum + d.amount, 0);
+                        
+                        return (
+                          <div className="mt-3 pt-3 border-t border-orange-300">
+                            <p className="text-xs font-medium text-gray-700 mb-2">Decline Rate Breakdown:</p>
+                            <div className="grid grid-cols-3 gap-2 text-xs">
+                              <div className="text-center bg-red-100 p-2 rounded">
+                                <p className="font-bold text-red-600">₹{fastAmount.toFixed(2)}</p>
+                                <p className="text-gray-600">Fast (≤ 5m)</p>
+                                <p className="text-gray-500">{fastDeclines.length} declines</p>
+                              </div>
+                              <div className="text-center bg-yellow-100 p-2 rounded">
+                                <p className="font-bold text-yellow-600">₹{mediumAmount.toFixed(2)}</p>
+                                <p className="text-gray-600">Medium (5-30m)</p>
+                                <p className="text-gray-500">{mediumDeclines.length} declines</p>
+                              </div>
+                              <div className="text-center bg-orange-100 p-2 rounded">
+                                <p className="font-bold text-orange-600">₹{slowAmount.toFixed(2)}</p>
+                                <p className="text-gray-600">Slow (>30m)</p>
+                                <p className="text-gray-500">{slowDeclines.length} declines</p>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      }
+                      return null;
+                    })()
+                    }
+                  </div>
+                </>
+              )}
+              <button
+                onClick={() => setViewRecordsModal({ show: false, staff: null, records: [] })}
+                className="w-full mt-4 px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-lg font-medium"
+              >
+                Close
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
     </div>
   );
 };
