@@ -5,6 +5,7 @@ const StaffList = ({ onAdd, onEdit }) => {
   const [staff, setStaff] = useState([]);
   const [loading, setLoading] = useState(true);
   const [staffCheckInStatus, setStaffCheckInStatus] = useState({});
+  const [allOvertimeRecords, setAllOvertimeRecords] = useState([]);
   const [overtimeModal, setOvertimeModal] = useState({ show: false, staff: null, rate: '' });
   const [overtimeRecordModal, setOvertimeRecordModal] = useState({ 
     show: false, 
@@ -29,6 +30,7 @@ const StaffList = ({ onAdd, onEdit }) => {
 
   useEffect(() => {
     fetchStaff();
+    fetchAllOvertimeRecords();
   }, []);
 
   useEffect(() => {
@@ -65,6 +67,22 @@ const StaffList = ({ onAdd, onEdit }) => {
     const ampm = hour >= 12 ? 'PM' : 'AM';
     const hour12 = hour % 12 || 12;
     return `${hour12}:${minutes} ${ampm}`;
+  };
+
+  const fetchAllOvertimeRecords = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/staff/all-overtime-records`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setAllOvertimeRecords(data.records || []);
+      }
+    } catch (error) {
+      console.error('Error fetching all overtime records:', error);
+    }
   };
 
   const fetchStaff = async () => {
@@ -918,7 +936,7 @@ const StaffList = ({ onAdd, onEdit }) => {
                             <div className="grid grid-cols-3 gap-2 text-xs">
                               <div className="text-center bg-red-100 p-2 rounded">
                                 <p className="font-bold text-red-600">₹{fastAmount.toFixed(2)}</p>
-                                <p className="text-gray-600">Fast (≤ 5m)</p>
+                                <p className="text-gray-600">Fast (&le; 5m)</p>
                                 <p className="text-gray-500">{fastDeclines.length} declines</p>
                               </div>
                               <div className="text-center bg-yellow-100 p-2 rounded">
@@ -928,7 +946,7 @@ const StaffList = ({ onAdd, onEdit }) => {
                               </div>
                               <div className="text-center bg-orange-100 p-2 rounded">
                                 <p className="font-bold text-orange-600">₹{slowAmount.toFixed(2)}</p>
-                                <p className="text-gray-600">Slow (>30m)</p>
+                                <p className="text-gray-600">Slow (&gt;30m)</p>
                                 <p className="text-gray-500">{slowDeclines.length} declines</p>
                               </div>
                             </div>
