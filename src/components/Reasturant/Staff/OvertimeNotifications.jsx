@@ -51,17 +51,15 @@ const OvertimeNotifications = () => {
       {notifications.map(notif => (
         <div
           key={notif.id}
-          className={`bg-white/90 backdrop-blur-md rounded-lg p-4 shadow-lg border-l-4 ${
-            notif.status === 'accepted' ? 'border-green-500' : 'border-red-500'
-          }`}
+          className={`bg-white/90 backdrop-blur-md rounded-lg p-4 shadow-lg border-l-4 border-green-500`}
         >
           <div className="flex items-start justify-between">
             <div className="flex items-start gap-3">
-              <FiBell className={notif.status === 'accepted' ? 'text-green-500' : 'text-red-500'} />
+              <FiBell className="text-green-500" />
               <div>
                 <p className="font-semibold text-gray-800">{notif.staffName}</p>
                 <p className="text-sm text-gray-600">
-                  {notif.status === 'accepted' ? '✓ Accepted' : '✗ Declined'} overtime
+                  ✓ Accepted overtime
                 </p>
                 <p className="text-xs text-gray-500 mt-1">{notif.date} • {notif.time}</p>
                 <p className="text-xs text-gray-500">{notif.hours} hours</p>
