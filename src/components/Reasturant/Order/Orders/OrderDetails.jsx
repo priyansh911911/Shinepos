@@ -2,6 +2,9 @@ import React from 'react';
 import { FiArrowLeft, FiDollarSign, FiUser, FiPhone, FiCalendar } from 'react-icons/fi';
 
 const OrderDetails = ({ order, onUpdateStatus, onProcessPayment, onBack }) => {
+  const userRole = JSON.parse(localStorage.getItem('user'))?.role;
+  const isChef = userRole === 'CHEF';
+  const canProcessPayments = !isChef; // Hide payment options for chefs
   const statusColors = {
     PENDING: 'bg-yellow-100 text-yellow-800',
     ORDER_ACCEPTED: 'bg-blue-100 text-blue-800',
@@ -46,7 +49,8 @@ const OrderDetails = ({ order, onUpdateStatus, onProcessPayment, onBack }) => {
               {order.status.replace('_', ' ')}
             </span>
             
-            {!order.paymentDetails && (
+            {/* Payment button - Hidden for chefs */}
+            {canProcessPayments && !order.paymentDetails && (
               <button
                 onClick={() => onProcessPayment(order)}
                 className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
@@ -54,6 +58,13 @@ const OrderDetails = ({ order, onUpdateStatus, onProcessPayment, onBack }) => {
                 <FiDollarSign />
                 <span>Process Payment</span>
               </button>
+            )}
+            
+            {/* Chef-specific message when order is ready for payment */}
+            {isChef && !order.paymentDetails && order.status === 'DELIVERED' && (
+              <div className="px-4 py-2 bg-blue-100 text-blue-800 rounded-lg font-medium">
+                Order Ready for Payment
+              </div>
             )}
           </div>
         </div>
@@ -155,50 +166,52 @@ const OrderDetails = ({ order, onUpdateStatus, onProcessPayment, onBack }) => {
             </div>
           </div>
 
-          {/* Payment Information */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="text-lg font-medium text-gray-800 mb-4">Payment Information</h3>
-            
-            {order.paymentDetails ? (
-              <div className="space-y-3">
-                <div>
-                  <div className="text-sm text-gray-500">Payment Method</div>
-                  <div className="font-medium">{order.paymentDetails.method}</div>
-                </div>
-                
-                <div>
-                  <div className="text-sm text-gray-500">Amount Paid</div>
-                  <div className="font-medium">{formatCurrency(order.paymentDetails.amount)}</div>
-                </div>
-                
-                {order.paymentDetails.transactionId && (
+          {/* Payment Information - Hidden for chefs */}
+          {canProcessPayments && (
+            <div className="bg-gray-50 rounded-lg p-4">
+              <h3 className="text-lg font-medium text-gray-800 mb-4">Payment Information</h3>
+              
+              {order.paymentDetails ? (
+                <div className="space-y-3">
                   <div>
-                    <div className="text-sm text-gray-500">Transaction ID</div>
-                    <div className="font-medium">{order.paymentDetails.transactionId}</div>
+                    <div className="text-sm text-gray-500">Payment Method</div>
+                    <div className="font-medium">{order.paymentDetails.method}</div>
                   </div>
-                )}
-                
-                <div>
-                  <div className="text-sm text-gray-500">Paid At</div>
-                  <div className="font-medium">{formatDate(order.paymentDetails.paidAt)}</div>
+                  
+                  <div>
+                    <div className="text-sm text-gray-500">Amount Paid</div>
+                    <div className="font-medium">{formatCurrency(order.paymentDetails.amount)}</div>
+                  </div>
+                  
+                  {order.paymentDetails.transactionId && (
+                    <div>
+                      <div className="text-sm text-gray-500">Transaction ID</div>
+                      <div className="font-medium">{order.paymentDetails.transactionId}</div>
+                    </div>
+                  )}
+                  
+                  <div>
+                    <div className="text-sm text-gray-500">Paid At</div>
+                    <div className="font-medium">{formatDate(order.paymentDetails.paidAt)}</div>
+                  </div>
+                  
+                  <div className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium inline-block">
+                    Payment Complete
+                  </div>
                 </div>
-                
-                <div className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium inline-block">
-                  Payment Complete
+              ) : (
+                <div className="text-center py-4">
+                  <div className="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-medium inline-block mb-3">
+                    Payment Pending
+                  </div>
+                  <div className="text-2xl font-bold text-gray-800">
+                    {formatCurrency(order.totalAmount)}
+                  </div>
+                  <div className="text-sm text-gray-500">Amount Due</div>
                 </div>
-              </div>
-            ) : (
-              <div className="text-center py-4">
-                <div className="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-medium inline-block mb-3">
-                  Payment Pending
-                </div>
-                <div className="text-2xl font-bold text-gray-800">
-                  {formatCurrency(order.totalAmount)}
-                </div>
-                <div className="text-sm text-gray-500">Amount Due</div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Order Items */}

@@ -11,6 +11,8 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
   const userRole = JSON.parse(localStorage.getItem('user'))?.role;
   const canUpdateItemStatus = ['RESTAURANT_ADMIN', 'CHEF'].includes(userRole);
+  const isChef = userRole === 'CHEF';
+  const canProcessPayments = !isChef; // Hide payment options for chefs
 
   React.useEffect(() => {
     const timer = setInterval(() => setCurrentTime(Date.now()), 1000);
@@ -79,6 +81,16 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
     }
   }, [filteredOrders, selectedOrder]);
 
+  // Update selectedOrder when orders prop changes
+  React.useEffect(() => {
+    if (selectedOrder) {
+      const updatedOrder = orders.find(order => order._id === selectedOrder._id);
+      if (updatedOrder) {
+        setSelectedOrder(updatedOrder);
+      }
+    }
+  }, [orders]);
+
   const handleRefresh = async () => {
     setRefreshingList(true);
     await onRefresh();
@@ -101,21 +113,21 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
         headers: { Authorization: `Bearer ${token}` }
       });
       
-      // Update both selected order and orders list
-      const updatedOrderData = response.data.order;
-      
+      // Update local selectedOrder immediately
       if (selectedOrder && selectedOrder._id === orderId) {
-        setSelectedOrder(updatedOrderData);
+        const updatedOrder = { ...selectedOrder };
+        if (isExtraItem) {
+          updatedOrder.extraItems = updatedOrder.extraItems.map((item, index) => 
+            index === itemIndex ? { ...item, status: newStatus } : item
+          );
+        } else {
+          updatedOrder.items = updatedOrder.items.map((item, index) => 
+            index === itemIndex ? { ...item, status: newStatus } : item
+          );
+        }
+        setSelectedOrder(updatedOrder);
       }
       
-      // Update in orders list without full refresh
-      const updatedOrders = orders.map(order => 
-        order._id === orderId ? updatedOrderData : order
-      );
-      // Trigger parent update if available
-      if (onRefresh) {
-        onRefresh(updatedOrders);
-      }
     } catch (error) {
       console.error('Failed to update item status:', error);
       alert('Failed to update item status');
@@ -416,25 +428,36 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
                         <FiRotateCcw className="inline mr-1" />Transfer
                       </button>
                     )}
-                    {selectedOrder.hasSplitBill && !selectedOrder.paymentDetails && (
-                      <button
-                        onClick={() => onViewSplitBill && onViewSplitBill(selectedOrder)}
-                        className="flex-1 p-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-xl font-medium transition-colors shadow-md hover:from-purple-600 hover:to-purple-700"
-                      >
-                        <FiEye className="inline mr-1" />View Split
-                      </button>
+                    {/* Payment-related buttons - Hidden for chefs */}
+                    {canProcessPayments && (
+                      <>
+                        {selectedOrder.hasSplitBill && !selectedOrder.paymentDetails && (
+                          <button
+                            onClick={() => onViewSplitBill && onViewSplitBill(selectedOrder)}
+                            className="flex-1 p-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-xl font-medium transition-colors shadow-md hover:from-purple-600 hover:to-purple-700"
+                          >
+                            <FiEye className="inline mr-1" />View Split
+                          </button>
+                        )}
+                        {selectedOrder.status === 'DELIVERED' && selectedOrder.status !== 'PAID' && selectedOrder.status !== 'CANCELLED' && !selectedOrder.paymentDetails && !selectedOrder.hasSplitBill && (
+                          <button
+                            onClick={() => onProcessPayment(selectedOrder)}
+                            className="flex-1 p-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl font-medium transition-colors shadow-md hover:from-green-600 hover:to-emerald-600"
+                          >
+                            <FiCreditCard className="inline mr-1" />Pay
+                          </button>
+                        )}
+                        {(selectedOrder.status === 'PAID' || selectedOrder.paymentDetails) && (
+                          <div className="flex-1 p-3 bg-green-100 text-green-800 rounded-xl font-medium text-center">
+                            <FiCheckCircle className="inline mr-1" />Paid
+                          </div>
+                        )}
+                      </>
                     )}
-                    {selectedOrder.status === 'DELIVERED' && selectedOrder.status !== 'PAID' && selectedOrder.status !== 'CANCELLED' && !selectedOrder.paymentDetails && !selectedOrder.hasSplitBill && (
-                      <button
-                        onClick={() => onProcessPayment(selectedOrder)}
-                        className="flex-1 p-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl font-medium transition-colors shadow-md hover:from-green-600 hover:to-emerald-600"
-                      >
-                        <FiCreditCard className="inline mr-1" />Pay
-                      </button>
-                    )}
-                    {(selectedOrder.status === 'PAID' || selectedOrder.paymentDetails) && (
-                      <div className="flex-1 p-3 bg-green-100 text-green-800 rounded-xl font-medium text-center">
-                        <FiCheckCircle className="inline mr-1" />Paid
+                    {/* Chef-specific message when order is delivered */}
+                    {isChef && selectedOrder.status === 'DELIVERED' && !selectedOrder.paymentDetails && (
+                      <div className="flex-1 p-3 bg-blue-100 text-blue-800 rounded-xl font-medium text-center">
+                        <FiCheckCircle className="inline mr-1" />Order Ready for Payment
                       </div>
                     )}
                   </div>

@@ -55,19 +55,54 @@ export const useOrders = () => {
   const handleUpdateStatus = async (orderId, status) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.patch(
-        `${API_BASE_URL}/api/orders/update/status/${orderId}`,
-        { status },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
       
-      setOrders(prev => prev.map(order => 
-        order._id === orderId ? response.data.order : order
-      ));
+      // Update local state immediately
+      setOrders(prev => prev.map(order => {
+        if (order._id === orderId) {
+          const updated = { ...order, status };
+          if (status === 'DELIVERED') {
+            updated.items = updated.items.map(item => ({ ...item, status: 'SERVED' }));
+            if (updated.extraItems) {
+              updated.extraItems = updated.extraItems.map(item => ({ ...item, status: 'SERVED' }));
+            }
+          }
+          return updated;
+        }
+        return order;
+      }));
       
       if (selectedOrder?._id === orderId) {
-        setSelectedOrder(response.data.order);
+        const updated = { ...selectedOrder, status };
+        if (status === 'DELIVERED') {
+          updated.items = updated.items.map(item => ({ ...item, status: 'SERVED' }));
+          if (updated.extraItems) {
+            updated.extraItems = updated.extraItems.map(item => ({ ...item, status: 'SERVED' }));
+          }
+        }
+        setSelectedOrder(updated);
       }
+      
+      // API calls in background
+      axios.patch(`${API_BASE_URL}/api/orders/update/status/${orderId}`, { status }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      if (status === 'DELIVERED') {
+        const order = orders.find(o => o._id === orderId);
+        if (order) {
+          order.items.forEach((item, index) => {
+            axios.patch(`${API_BASE_URL}/api/orders/update/item-status/${orderId}/${index}`, 
+              { status: 'SERVED' }, { headers: { Authorization: `Bearer ${token}` } });
+          });
+          if (order.extraItems) {
+            order.extraItems.forEach((item, index) => {
+              axios.patch(`${API_BASE_URL}/api/orders/update/extra-item-status/${orderId}/${index}`, 
+                { status: 'SERVED' }, { headers: { Authorization: `Bearer ${token}` } });
+            });
+          }
+        }
+      }
+      
     } catch (err) {
       console.error('Update status error:', err);
       setError('Failed to update order status');

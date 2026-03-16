@@ -9,10 +9,12 @@ import QuickActions from './QuickActions';
 import OrderStatus from './OrderStatus';
 import PaymentStatistics from './PaymentStatistics';
 import MyAttendance from '../Attendance/MyAttendance';
+import TodayOvertimeCard from './TodayOvertimeCard';
 
 const Dashboard = () => {
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const isAdmin = user.role === 'RESTAURANT_ADMIN' || user.role === 'MANAGER';
+  const isChef = user.role === 'CHEF';
   
   const [stats, setStats] = useState({
     orders: 0,
@@ -114,7 +116,20 @@ const Dashboard = () => {
     return `${Math.floor(diffInMinutes / 1440)} day ago`;
   };
 
-  const cards = [
+  // Chef-specific cards - only Today's Orders
+  const chefCards = [
+    { 
+      title: "Today's Orders", 
+      value: stats.orders, 
+      icon: <FiShoppingBag />, 
+      color: 'from-blue-500 to-blue-600',
+      change: '+12%',
+      trend: 'up'
+    }
+  ];
+
+  // Admin/Manager cards - all stats
+  const adminCards = [
     { 
       title: filter === 'today' ? "Today's Orders" : filter === 'weekly' ? "Weekly Orders" : "Monthly Orders", 
       value: stats.orders, 
@@ -149,6 +164,8 @@ const Dashboard = () => {
     }
   ];
 
+  const cards = isChef ? chefCards : adminCards;
+
   const handleQuickAction = (actionId) => {
     
     // TODO: Implement navigation or modal opening based on actionId
@@ -172,12 +189,15 @@ const Dashboard = () => {
       transition={{ duration: 0.3 }}
       className="p-3 lg:p-4 bg-transparent space-y-3"
     >
-      {/* My Attendance - Show only for staff, not admin */}
-      {!isAdmin && <MyAttendance />}
-      {/* My Attendance - Show for staff */}
-      {/* <MyAttendance /> */}
+      {/* My Attendance and Overtime - Show for chef and other staff, not admin */}
+      {!isAdmin && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          <MyAttendance />
+          {isChef && <TodayOvertimeCard delay={0.3} />}
+        </div>
+      )}
       
-      {/* Welcome Header */}
+      {/* Welcome Header - Different for Chef */}
       <motion.div 
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -186,46 +206,53 @@ const Dashboard = () => {
       >
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-white mb-1 flex items-center gap-2">Welcome back! <FiSmile /></h1>
-            <p className="text-gray-200 text-sm">Here's what's happening at your restaurant</p>
+            <h1 className="text-2xl font-bold text-white mb-1 flex items-center gap-2">
+              Welcome back, {isChef ? 'Chef' : 'Admin'}! <FiSmile />
+            </h1>
+            <p className="text-gray-200 text-sm">
+              {isChef ? "Ready to manage kitchen orders" : "Here's what's happening at your restaurant"}
+            </p>
           </div>
-          <div className="flex items-center gap-3">
-            <select 
-              value={filter} 
-              onChange={(e) => setFilter(e.target.value)}
-              className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg px-3 py-1.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="today" className="bg-gray-800">Today</option>
-              <option value="weekly" className="bg-gray-800">This Week</option>
-              <option value="monthly" className="bg-gray-800">This Month</option>
-              <option value="custom" className="bg-gray-800">Custom Range</option>
-            </select>
-            {filter === 'custom' && (
-              <>
-                <input
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg px-2 py-1.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <input
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg px-2 py-1.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </>
-            )}
-            <div className="text-right">
-              <p className="text-sm text-gray-300">Date</p>
-              <p className="text-lg font-semibold text-white">{new Date().toLocaleDateString()}</p>
+          {/* Hide filter controls for chef - they only see today's data */}
+          {!isChef && (
+            <div className="flex items-center gap-3">
+              <select 
+                value={filter} 
+                onChange={(e) => setFilter(e.target.value)}
+                className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg px-3 py-1.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="today" className="bg-gray-800">Today</option>
+                <option value="weekly" className="bg-gray-800">This Week</option>
+                <option value="monthly" className="bg-gray-800">This Month</option>
+                <option value="custom" className="bg-gray-800">Custom Range</option>
+              </select>
+              {filter === 'custom' && (
+                <>
+                  <input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg px-2 py-1.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg px-2 py-1.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </>
+              )}
             </div>
+          )}
+          <div className="text-right">
+            <p className="text-sm text-gray-300">Date</p>
+            <p className="text-lg font-semibold text-white">{new Date().toLocaleDateString()}</p>
           </div>
         </div>
       </motion.div>
       
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+      {/* Stats Cards - Different layout for chef */}
+      <div className={`grid gap-3 ${isChef ? 'grid-cols-1 md:grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4'}`}>
         {cards.map((card, index) => (
           <AnalyticsCard
             key={index}
@@ -240,52 +267,35 @@ const Dashboard = () => {
         ))}
       </div>
 
-      {/* Charts and Analytics Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-        <PaymentStatistics stats={stats} delay={1.0} />
-        <RecentOrders
-          className="bg-white/10 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20"
-          orders={recentOrders} delay={0.9} />
-
-        {/* Customer Satisfaction - Hidden */}
-        {/* <motion.div 
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.7, duration: 0.3 }}
-          className="bg-white/10 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20"
-        >
-          <h3 className="text-lg font-semibold text-white mb-4">Customer Satisfaction</h3>
-          <div className="text-center">
-            <div className="text-4xl font-bold text-white mb-2">{stats.customerSatisfaction}</div>
-            <div className="flex justify-center mb-2">
-              {[...Array(5)].map((_, i) => (
-                <FiStar 
-                  key={i} 
-                  className={`text-lg ${
-                    i < Math.floor(stats.customerSatisfaction) ? 'text-yellow-400 fill-current' : 'text-gray-400'
-                  }`} 
-                />
-              ))}
-            </div>
-            <p className="text-gray-200 text-sm">Based on 127 reviews</p>
-            <div className="mt-4 w-full bg-gray-600 rounded-full h-2">
-              <div 
-                className="bg-gradient-to-r from-yellow-400 to-orange-500 h-2 rounded-full transition-all duration-1000"
-                style={{ width: `${(stats.customerSatisfaction / 5) * 100}%` }}
-              ></div>
-            </div>
+      {/* Chef Dashboard - Only Recent Orders and Order Status */}
+      {isChef ? (
+        <>
+          {/* Recent Orders for Chef */}
+          <RecentOrders
+            className="bg-white/10 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20"
+            orders={recentOrders} 
+            delay={0.9} 
+          />
+          
+          {/* Order Status for Chef */}
+          <OrderStatus stats={stats} delay={0.6} />
+        </>
+      ) : (
+        <>
+          {/* Admin/Manager Dashboard - Full Analytics */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+            <PaymentStatistics stats={stats} delay={1.0} />
+            <RecentOrders
+              className="bg-white/10 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20"
+              orders={recentOrders} delay={0.9} />
           </div>
-        </motion.div> */}
 
-        {/* Quick Actions - Hidden */}
-        {/* <QuickActions onActionClick={handleQuickAction} delay={0.8} /> */}
-      </div>
-
-      {/* Payment Statistics and Top Selling Items */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-        <OrderStatus stats={stats} delay={0.6} />
-        <TopSellingItems items={topItems} delay={1.1} />
-      </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+            <OrderStatus stats={stats} delay={0.6} />
+            <TopSellingItems items={topItems} delay={1.1} />
+          </div>
+        </>
+      )}
     </motion.div>
   );
 };

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FiEdit, FiArrowLeft, FiCheck, FiClock } from 'react-icons/fi';
 
 const EditStaff = ({ staff, onSuccess, onBack }) => {
   const [formData, setFormData] = useState({
@@ -89,12 +90,12 @@ const EditStaff = ({ staff, onSuccess, onBack }) => {
     <div className="p-6 animate-fadeIn">
       <div className="bg-white/20 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/40 p-6">
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-2xl font-bold text-white">✏️ Edit Staff Member</h3>
+          <h3 className="text-2xl font-bold text-white flex items-center gap-2"><FiEdit /> Edit Staff Member</h3>
           <button
             onClick={onBack}
-            className="px-4 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-white rounded-xl border border-white/40"
+            className="px-4 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-white rounded-xl border border-white/40 flex items-center gap-2"
           >
-            ← Back
+            <FiArrowLeft /> Back
           </button>
         </div>
 
@@ -108,7 +109,7 @@ const EditStaff = ({ staff, onSuccess, onBack }) => {
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
+                className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
               />
             </div>
 
@@ -120,7 +121,7 @@ const EditStaff = ({ staff, onSuccess, onBack }) => {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
+                className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
               />
             </div>
 
@@ -132,7 +133,7 @@ const EditStaff = ({ staff, onSuccess, onBack }) => {
                 value={formData.phone}
                 onChange={handleChange}
                 required
-                className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
+                className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
               />
             </div>
 
@@ -143,12 +144,12 @@ const EditStaff = ({ staff, onSuccess, onBack }) => {
                 value={formData.role}
                 onChange={handleChange}
                 required
-                className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
+                className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
               >
-                <option value="CASHIER">💰 Cashier</option>
-                <option value="KITCHEN_STAFF">👨🍳 Kitchen Staff</option>
-                <option value="MANAGER">👨💼 Manager</option>
-                <option value="RESTAURANT_ADMIN">👑 Restaurant Admin</option>
+                <option value="CASHIER">Cashier</option>
+                <option value="KITCHEN_STAFF">Kitchen Staff</option>
+                <option value="MANAGER">Manager</option>
+                <option value="RESTAURANT_ADMIN">Restaurant Admin</option>
               </select>
             </div>
 
@@ -159,11 +160,11 @@ const EditStaff = ({ staff, onSuccess, onBack }) => {
                 value={formData.salaryType}
                 onChange={handleChange}
                 required
-                className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
+                className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
               >
-                <option value="fixed">💰 Fixed Salary</option>
-                <option value="hourly">⏰ Hourly Rate</option>
-                <option value="daily">📅 Day Rate</option>
+                <option value="fixed">Fixed Salary</option>
+                <option value="hourly">Hourly Rate</option>
+                <option value="daily">Day Rate</option>
               </select>
             </div>
 
@@ -177,7 +178,7 @@ const EditStaff = ({ staff, onSuccess, onBack }) => {
                   onChange={handleChange}
                   required
                   min="0"
-                  className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
+                  className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
                 />
               </div>
             )}
@@ -192,7 +193,7 @@ const EditStaff = ({ staff, onSuccess, onBack }) => {
                   onChange={handleChange}
                   required
                   min="0"
-                  className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
+                  className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
                 />
               </div>
             )}
@@ -207,7 +208,7 @@ const EditStaff = ({ staff, onSuccess, onBack }) => {
                   onChange={handleChange}
                   required
                   min="0"
-                  className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
+                  className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
                 />
               </div>
             )}
@@ -220,13 +221,13 @@ const EditStaff = ({ staff, onSuccess, onBack }) => {
                 value={formData.overtimeRate}
                 onChange={handleChange}
                 min="0"
-                className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
+                className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
               />
             </div>
           </div>
 
           <div className="bg-white/20 rounded-xl p-4 mt-4">
-            <h4 className="text-lg font-medium text-white mb-3">⏰ Shift Schedule</h4>
+            <h4 className="text-lg font-medium text-white mb-3 flex items-center gap-2"><FiClock /> Shift Schedule</h4>
             <div className="mb-4">
               <label className="block text-sm font-medium text-white mb-1">Shift Type</label>
               <select
@@ -240,7 +241,7 @@ const EditStaff = ({ staff, onSuccess, onBack }) => {
                     rotatingShifts: e.target.value === 'rotating' ? [] : null
                   }
                 })}
-                className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
+                className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
               >
                 <option value="fixed">Fixed Shift</option>
                 <option value="rotating">Rotating Shifts</option>
@@ -269,14 +270,14 @@ const EditStaff = ({ staff, onSuccess, onBack }) => {
                         });
                       }
                     }}
-                    className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
+                    className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
                   >
                     <option value="">Choose a predefined shift</option>
-                    <option value="06:00-14:00">🌅 Morning Shift (6:00 AM - 2:00 PM)</option>
-                    <option value="09:00-17:00">🏢 Day Shift (9:00 AM - 5:00 PM)</option>
-                    <option value="14:00-22:00">🌆 Evening Shift (2:00 PM - 10:00 PM)</option>
-                    <option value="22:00-06:00">🌙 Night Shift (10:00 PM - 6:00 AM)</option>
-                    <option value="10:00-18:00">☀️ Regular Shift (10:00 AM - 6:00 PM)</option>
+                    <option value="06:00-14:00">Morning Shift (6:00 AM - 2:00 PM)</option>
+                    <option value="09:00-17:00">Day Shift (9:00 AM - 5:00 PM)</option>
+                    <option value="14:00-22:00">Evening Shift (2:00 PM - 10:00 PM)</option>
+                    <option value="22:00-06:00">Night Shift (10:00 PM - 6:00 AM)</option>
+                    <option value="10:00-18:00">Regular Shift (10:00 AM - 6:00 PM)</option>
                   </select>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -287,7 +288,7 @@ const EditStaff = ({ staff, onSuccess, onBack }) => {
                       name="shift.startTime"
                       value={formData.shiftSchedule.fixedShift.startTime}
                       onChange={handleChange}
-                      className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
+                      className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
                     />
                   </div>
                   <div>
@@ -297,7 +298,7 @@ const EditStaff = ({ staff, onSuccess, onBack }) => {
                       name="shift.endTime"
                       value={formData.shiftSchedule.fixedShift.endTime}
                       onChange={handleChange}
-                      className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
+                      className="w-full bg-white/40 backdrop-blur-lg border border-white/50 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
                     />
                   </div>
                 </div>
@@ -320,9 +321,9 @@ const EditStaff = ({ staff, onSuccess, onBack }) => {
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-white rounded-xl border border-white/40 disabled:opacity-50"
+              className="px-6 py-2 bg-white/30 backdrop-blur-md hover:bg-white/40 text-white rounded-xl border border-white/40 disabled:opacity-50 flex items-center gap-2"
             >
-              {loading ? 'Updating...' : '✓ Update Staff Member'}
+              {loading ? 'Updating...' : <><FiCheck /> Update Staff Member</>}
             </button>
           </div>
         </form>

@@ -14,6 +14,9 @@ import axios from 'axios';
 const Order = () => {
   const [showAddItems, setShowAddItems] = useState(null);
   const [showSplitBillView, setShowSplitBillView] = useState(null);
+  const userRole = JSON.parse(localStorage.getItem('user'))?.role;
+  const isChef = userRole === 'CHEF';
+  const canProcessPayments = !isChef; // Hide payment functionality for chefs
   const {
     orders,
     loading,
@@ -178,7 +181,8 @@ const Order = () => {
               </div>
             )}
 
-            {showPaymentModal && selectedOrder && (
+            {/* Payment Modal - Hidden for chefs */}
+            {canProcessPayments && showPaymentModal && selectedOrder && (
               <PaymentModal
                 order={selectedOrder}
                 onProcessPayment={handleProcessPayment}
@@ -207,7 +211,8 @@ const Order = () => {
               />
             )}
 
-            {showSplitBillView && (
+            {/* Split Bill Payment - Hidden for chefs */}
+            {canProcessPayments && showSplitBillView && (
               <SplitBillPayment
                 orderId={showSplitBillView._id}
                 onClose={() => setShowSplitBillView(null)}
