@@ -993,7 +993,7 @@ const StaffList = ({ onAdd, onEdit }) => {
                   </div>
                   <div className="bg-gradient-to-r from-orange-500/20 to-yellow-500/20 p-4 rounded-lg border border-orange-300 mb-4">
                     <h4 className="font-bold text-gray-800 mb-3">Total Overtime Summary</h4>
-                    <div className="grid grid-cols-4 gap-4">
+                    <div className="grid grid-cols-3 gap-4">
                       <div className="text-center">
                         <p className="text-xs text-gray-600 mb-1">Total Hours</p>
                         <p className="text-2xl font-bold text-orange-600">{totalHours}h {remainingMinutes}m</p>
@@ -1005,33 +1005,6 @@ const StaffList = ({ onAdd, onEdit }) => {
                       <div className="text-center">
                         <p className="text-xs text-gray-600 mb-1">Total Amount</p>
                         <p className="text-2xl font-bold text-green-600">₹{totalAmount.toFixed(2)}</p>
-                      </div>
-                      <div className="text-center">
-                        <p className="text-xs text-gray-600 mb-1">Decline Rate Amount</p>
-                        <p className="text-lg font-bold text-red-600">
-                          ₹{(() => {
-                            const declinedRecords = viewRecordsModal.records.filter(r =>
-                              r.status === 'declined' && r.createdAt && r.respondedAt
-                            );
-
-                            if (declinedRecords.length === 0) return '0.00';
-
-                            const totalDeclineAmount = declinedRecords.reduce((sum, record) => {
-                              const assignedTime = new Date(record.createdAt);
-                              const declinedTime = new Date(record.respondedAt);
-                              const diffMs = declinedTime - assignedTime;
-                              const diffHours = diffMs / (1000 * 60 * 60); // Convert to hours
-                              const overtimeRate = viewRecordsModal.staff?.overtimeRate || 0;
-                              const declineAmount = diffHours * overtimeRate;
-                              return sum + declineAmount;
-                            }, 0);
-
-                            return totalDeclineAmount.toFixed(2);
-                          })()}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {viewRecordsModal.records.filter(r => r.status === 'declined').length} declined
-                        </p>
                       </div>
                     </div>
                     {/* Decline Rate Analysis */}
