@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { FiAward, FiBarChart2, FiDollarSign, FiUsers, FiUser, FiMail, FiPhone, FiCalendar, FiEdit2, FiTrash2, FiPlus, FiLoader, FiCheckCircle, FiXCircle, FiClock } from 'react-icons/fi';
-
 const StaffList = ({ onAdd, onEdit }) => {
   const [staff, setStaff] = useState([]);
   const [loading, setLoading] = useState(true);
   const [staffCheckInStatus, setStaffCheckInStatus] = useState({});
   const [allOvertimeRecords, setAllOvertimeRecords] = useState([]);
   const [overtimeModal, setOvertimeModal] = useState({ show: false, staff: null, rate: '' });
-  const [overtimeRecordModal, setOvertimeRecordModal] = useState({ 
-    show: false, 
-    staff: null, 
+  const [overtimeRecordModal, setOvertimeRecordModal] = useState({
+    show: false,
+    staff: null,
     date: new Date().toISOString().split('T')[0],
     startTime: '',
     endTime: '',
@@ -18,15 +17,17 @@ const StaffList = ({ onAdd, onEdit }) => {
   });
   const [recordTimers, setRecordTimers] = useState({});
   const [viewRecordsModal, setViewRecordsModal] = useState({ show: false, staff: null, records: [] });
-  const [assignOvertimeModal, setAssignOvertimeModal] = useState({ 
-    show: false, 
-    staff: null, 
+  const [assignOvertimeModal, setAssignOvertimeModal] = useState({
+    show: false,
+    staff: null,
     date: new Date().toISOString().split('T')[0],
     startTime: '',
     endTime: '',
     hours: '',
     reason: ''
   });
+  const [advanceSalaryModal, setAdvanceSalaryModal] = useState({ show: false, staff: null, amount: '', reason: '' });
+  const [pfModal, setPfModal] = useState({ show: false, staff: null, percentage: '', isEnabled: false });
 
   useEffect(() => {
     fetchStaff();
@@ -75,7 +76,7 @@ const StaffList = ({ onAdd, onEdit }) => {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/staff/all-overtime-records`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         setAllOvertimeRecords(data.records || []);
@@ -91,11 +92,11 @@ const StaffList = ({ onAdd, onEdit }) => {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/staff/all/staff`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         console.log('Full API response:', data);
-        
+
         // Handle different response structures
         let staffData = [];
         if (data.staff && Array.isArray(data.staff)) {
@@ -105,10 +106,10 @@ const StaffList = ({ onAdd, onEdit }) => {
         } else if (data.data && Array.isArray(data.data)) {
           staffData = data.data;
         }
-        
+
         console.log('Processed staff data:', staffData);
         setStaff(staffData.filter(member => member && member._id));
-        
+
         const today = new Date().toISOString().split('T')[0];
         const checkInStatus = {};
         for (const member of data.staff || []) {
@@ -144,18 +145,18 @@ const StaffList = ({ onAdd, onEdit }) => {
 
   const deleteStaff = async (id) => {
     if (!confirm('Are you sure you want to delete this staff member?')) return;
-    
+
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/staff/update/staff/${id}`, {
         method: 'PUT',
-        headers: { 
+        headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ isActive: false })
       });
-      
+
       if (response.ok) {
         setStaff(staff.filter(member => member._id !== id));
         alert('Staff member deleted successfully!');
@@ -170,29 +171,29 @@ const StaffList = ({ onAdd, onEdit }) => {
       alert('Please enter a valid overtime rate');
       return;
     }
-    
+
     try {
       const token = localStorage.getItem('token');
       console.log('Sending overtime rate update:', { staffId: overtimeModal.staff._id, rate: Number(overtimeModal.rate) });
-      
+
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/staff/set-overtime-rate/${overtimeModal.staff._id}`, {
         method: 'PATCH',
-        headers: { 
+        headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ overtimeRate: Number(overtimeModal.rate) })
       });
-      
+
       const result = await response.json();
       console.log('Set overtime rate response:', result);
-      
+
       if (response.ok) {
         // Update local state immediately
         const updatedRate = Number(overtimeModal.rate);
-        setStaff(prevStaff => 
-          prevStaff.map(s => 
-            s._id === overtimeModal.staff._id 
+        setStaff(prevStaff =>
+          prevStaff.map(s =>
+            s._id === overtimeModal.staff._id
               ? { ...s, overtimeRate: updatedRate }
               : s
           )
@@ -213,7 +214,7 @@ const StaffList = ({ onAdd, onEdit }) => {
       const token = localStorage.getItem('token');
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/staff/overtime-record/${overtimeRecordModal.staff._id}`, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
@@ -225,7 +226,7 @@ const StaffList = ({ onAdd, onEdit }) => {
           notes: overtimeRecordModal.notes
         })
       });
-      
+
       if (response.ok) {
         alert('Overtime record added successfully!');
         setOvertimeRecordModal({ show: false, staff: null, date: '', startTime: '', endTime: '', hours: '', notes: '' });
@@ -239,31 +240,31 @@ const StaffList = ({ onAdd, onEdit }) => {
     try {
       const token = localStorage.getItem('token');
       const completedAt = new Date().toISOString();
-      
+
       // Find the record to calculate completion time
       const record = viewRecordsModal.records.find(r => r._id === recordId);
       let completionTimeMinutes = 0;
-      
+
       if (record && record.respondedAt) {
         const startTime = new Date(record.respondedAt);
         const endTime = new Date(completedAt);
         const diffMs = endTime - startTime;
         completionTimeMinutes = Math.floor(diffMs / (1000 * 60));
       }
-      
+
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/staff/overtime/${recordId}/complete`, {
         method: 'PATCH',
-        headers: { 
+        headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           status: 'completed',
           completedAt: completedAt,
           completionTimeMinutes: completionTimeMinutes
         })
       });
-      
+
       if (response.ok) {
         alert('Overtime marked as completed!');
         viewOvertimeRecords(viewRecordsModal.staff);
@@ -278,38 +279,38 @@ const StaffList = ({ onAdd, onEdit }) => {
     try {
       const token = localStorage.getItem('token');
       const respondedAt = new Date().toISOString();
-      
+
       // Find the record to calculate decline time
       const record = viewRecordsModal.records.find(r => r._id === recordId);
       let declineTimeMinutes = 0;
       let declineAmount = 0;
-      
+
       if (record && record.createdAt) {
         const assignedTime = new Date(record.createdAt);
         const declinedTime = new Date(respondedAt);
         const diffMs = declinedTime - assignedTime;
         declineTimeMinutes = Math.floor(diffMs / (1000 * 60));
-        
+
         // Calculate decline amount based on time
         const diffHours = diffMs / (1000 * 60 * 60);
         const overtimeRate = viewRecordsModal.staff?.overtimeRate || 0;
         declineAmount = diffHours * overtimeRate;
       }
-      
+
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/staff/overtime/${recordId}/respond`, {
         method: 'PATCH',
-        headers: { 
+        headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           status: 'declined',
           respondedAt: respondedAt,
           declineTimeMinutes: declineTimeMinutes,
           declineAmount: declineAmount
         })
       });
-      
+
       if (response.ok) {
         alert('Overtime declined!');
         viewOvertimeRecords(viewRecordsModal.staff);
@@ -326,7 +327,7 @@ const StaffList = ({ onAdd, onEdit }) => {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/staff/staff-overtime-records/${member._id}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         setViewRecordsModal({ show: true, staff: member, records: data.records });
@@ -361,20 +362,20 @@ const StaffList = ({ onAdd, onEdit }) => {
       alert('Please enter valid hours');
       return;
     }
-    
+
     const hours = parseTimeFormat(assignOvertimeModal.hours);
     if (hours === null || hours <= 0) {
       alert('Please enter hours in format H:MM (e.g., 1:30)');
       return;
     }
-    
+
     try {
       const token = localStorage.getItem('token');
       const assignedAt = new Date().toISOString();
-      
+
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/staff/assign-overtime/${assignOvertimeModal.staff._id}`, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
@@ -388,7 +389,7 @@ const StaffList = ({ onAdd, onEdit }) => {
           overtimeRate: assignOvertimeModal.staff.overtimeRate || 0
         })
       });
-      
+
       if (response.ok) {
         alert('Overtime assigned successfully!');
         setAssignOvertimeModal({ show: false, staff: null, date: '', startTime: '', endTime: '', hours: '', reason: '' });
@@ -400,8 +401,111 @@ const StaffList = ({ onAdd, onEdit }) => {
     }
   };
 
+  const holdAdvanceSalary = async () => {
+    if (!advanceSalaryModal.amount || Number(advanceSalaryModal.amount) <= 0) {
+      alert('Please enter a valid amount');
+      return;
+    }
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/salary/advance/hold/${advanceSalaryModal.staff._id}`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: Number(advanceSalaryModal.amount), reason: advanceSalaryModal.reason })
+      });
+      const result = await response.json();
+      if (response.ok) {
+        setStaff(prev => prev.map(s => s._id === advanceSalaryModal.staff._id
+          ? { ...s, advanceSalary: { isHeld: true, amount: Number(advanceSalaryModal.amount), reason: advanceSalaryModal.reason, recordId: result.record._id } }
+          : s
+        ));
+        setAdvanceSalaryModal({ show: false, staff: null, amount: '', reason: '' });
+        alert('Advance salary held successfully');
+      } else {
+        alert(result.error || 'Failed to hold advance salary');
+      }
+    } catch (error) {
+      console.error('Hold advance salary error:', error);
+    }
+  };
+
+  const releaseAdvanceSalary = async (member) => {
+    if (!confirm('Release the held advance salary?')) return;
+    try {
+      const token = localStorage.getItem('token');
+      // Fetch the latest held record for this staff
+      const listRes = await fetch(`${import.meta.env.VITE_API_URL}/api/salary/advance/${member._id}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const listData = await listRes.json();
+      const heldRecord = (listData.records || []).find(r => r.status === 'held');
+      if (!heldRecord) { alert('No held advance salary record found'); return; }
+
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/salary/advance/release/${heldRecord._id}`, {
+        method: 'PATCH',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.ok) {
+        setStaff(prev => prev.map(s => s._id === member._id
+          ? { ...s, advanceSalary: { isHeld: false, amount: 0 } }
+          : s
+        ));
+        alert('Advance salary released');
+      }
+    } catch (error) {
+      console.error('Release advance salary error:', error);
+    }
+  };
+
+  const savePFDeduction = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/salary/pf/enable/${pfModal.staff._id}`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isEnabled: true })
+      });
+      const result = await response.json();
+      if (response.ok) {
+        setStaff(prev => prev.map(s => s._id === pfModal.staff._id
+          ? { ...s, pfDeduction: { percentage: 2.5, isEnabled: true, record: result.record } }
+          : s
+        ));
+        setPfModal({ show: false, staff: null });
+        alert(`PF enabled. Auto 2.5% (₹${result.record.employeeDeduction.toFixed(2)}) deducted from salary.`);
+      } else {
+        alert(result.error || 'Failed to enable PF');
+      }
+    } catch (error) {
+      console.error('Set PF deduction error:', error);
+    }
+  };
+
+  const deductEmployerPF = async (member) => {
+    if (!confirm(`Deduct extra 2.5% employer PF from ${member.name}?`)) return;
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/salary/pf/deduct-employer/${member._id}`, {
+        method: 'PATCH',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const result = await response.json();
+      if (response.ok) {
+        setStaff(prev => prev.map(s => s._id === member._id
+          ? { ...s, pfDeduction: { ...s.pfDeduction, employerDeducted: true } }
+          : s
+        ));
+        alert(result.message);
+      } else {
+        alert(result.error || 'Failed to deduct employer PF');
+      }
+    } catch (error) {
+      console.error('Deduct employer PF error:', error);
+    }
+  };
+
   const getRoleIcon = (role) => {
-    switch(role) {
+    switch (role) {
       case 'RESTAURANT_ADMIN': return <FiAward />;
       case 'MANAGER': return <FiBarChart2 />;
       case 'CASHIER': return <FiDollarSign />;
@@ -433,11 +537,11 @@ const StaffList = ({ onAdd, onEdit }) => {
           <span>Add Staff</span>
         </button>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {staff.filter(member => member && member._id && member.name).map((member, index) => (
-          <div 
-            key={member._id} 
+          <div
+            key={member._id}
             className="bg-white/30 backdrop-blur-md rounded-xl shadow-lg border border-white/40 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 animate-fadeIn overflow-hidden"
             style={{ animationDelay: `${index * 0.05}s` }}
           >
@@ -449,9 +553,8 @@ const StaffList = ({ onAdd, onEdit }) => {
                   <h3 className="text-lg font-bold text-white">{member.name}</h3>
                   <p className="text-sm text-gray-200">{member.role.replace('_', ' ')}</p>
                 </div>
-                <span className={`px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 ${
-                  member.isActive ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
-                }`}>
+                <span className={`px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 ${member.isActive ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+                  }`}>
                   {member.isActive ? <><FiCheckCircle /> Active</> : <><FiXCircle /> Inactive</>}
                 </span>
               </div>
@@ -463,12 +566,12 @@ const StaffList = ({ onAdd, onEdit }) => {
                 <FiMail className="text-lg text-white" />
                 <span className="text-white font-medium">{member.email}</span>
               </div>
-              
+
               <div className="flex items-center gap-2 text-sm">
                 <FiPhone className="text-lg text-white" />
                 <span className="text-white font-medium">{member.phone}</span>
               </div>
-              
+
               <div className="flex items-center gap-2 text-sm">
                 <FiDollarSign className="text-lg text-white" />
                 <span className="text-white font-medium">
@@ -477,18 +580,26 @@ const StaffList = ({ onAdd, onEdit }) => {
                   {member.salaryType === 'daily' && `₹${member.dayRate || 0}/day`}
                 </span>
               </div>
-              
+
               <div className="flex items-center gap-2 text-sm">
                 <FiClock className="text-lg text-white" />
                 <span className={`font-medium ${member.overtimeRate > 0 ? 'text-white' : 'text-yellow-300'}`}>
                   OT: ₹{member.overtimeRate || 0}/hr {member.overtimeRate === 0 && '⚠️'}
                 </span>
               </div>
-              
+
               <div className="flex items-center gap-2 text-sm">
                 <FiCalendar className="text-lg text-white" />
                 <span className="text-gray-200">Joined {new Date(member.createdAt).toLocaleDateString()}</span>
               </div>
+
+              {member.advanceSalary?.isHeld && (
+                <div className="flex items-center gap-2 text-sm bg-red-500/20 rounded-lg px-2 py-1">
+                  <span className="text-red-200 font-medium">⏸ Advance Held: ₹{member.advanceSalary.amount}</span>
+                </div>
+              )}
+
+
             </div>
 
             {/* Actions */}
@@ -508,11 +619,10 @@ const StaffList = ({ onAdd, onEdit }) => {
                   setAssignOvertimeModal({ show: true, staff: member, date: new Date().toISOString().split('T')[0], startTime: member.shiftSchedule?.fixedShift?.endTime || '', endTime: '', hours: '', reason: '' });
                 }}
                 disabled={!staffCheckInStatus[member._id]}
-                className={`flex-1 px-3 py-2 backdrop-blur-md text-white rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-1 ${
-                  staffCheckInStatus[member._id]
+                className={`flex-1 px-3 py-2 backdrop-blur-md text-white rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-1 ${staffCheckInStatus[member._id]
                     ? 'bg-yellow-500/80 hover:bg-yellow-600'
                     : 'bg-gray-400/50 cursor-not-allowed'
-                }`}
+                  }`}
               >
                 <FiClock size={14} /> Assign
               </button>
@@ -529,10 +639,11 @@ const StaffList = ({ onAdd, onEdit }) => {
                 <FiTrash2 size={14} /> Del
               </button>
             </div>
+
           </div>
         ))}
       </div>
-      
+
       {staff.length === 0 && (
         <div className="text-center py-16 bg-white/70 backdrop-blur-md rounded-2xl">
           <FiUsers className="text-6xl mb-4 mx-auto text-gray-400" size={64} />
@@ -659,7 +770,7 @@ const StaffList = ({ onAdd, onEdit }) => {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                 />
               </div>
-            <div>
+              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Start Time</label>
                 <input
                   type="time"
@@ -734,10 +845,10 @@ const StaffList = ({ onAdd, onEdit }) => {
           }
           return sum + (hours * 60);
         }, 0);
-        
+
         const totalHours = Math.floor(totalMinutes / 60);
         const remainingMinutes = Math.round(totalMinutes % 60);
-        
+
         // Calculate total amount from completed records
         const totalAmount = viewRecordsModal.records
           .filter(record => record.status === 'completed' || record.status === 'accepted')
@@ -745,7 +856,7 @@ const StaffList = ({ onAdd, onEdit }) => {
             const amount = parseFloat(record.amount) || 0;
             return sum + amount;
           }, 0);
-        
+
         return (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
             <div className="bg-white/90 backdrop-blur-xl rounded-2xl p-6 w-[600px] max-h-[80vh] overflow-y-auto shadow-2xl border border-white/40">
@@ -766,20 +877,19 @@ const StaffList = ({ onAdd, onEdit }) => {
                           <div className="text-right">
                             <p className="font-bold text-green-600">₹{(parseFloat(record.amount) || 0).toFixed(2)}</p>
                             <p className="text-xs text-gray-500">
-                              {typeof record.hours === 'string' && record.hours.includes(':') 
-                                ? record.hours + 'h' 
+                              {typeof record.hours === 'string' && record.hours.includes(':')
+                                ? record.hours + 'h'
                                 : (parseFloat(record.hours) || 0).toFixed(2) + 'h'
                               } @ ₹{record.rate || 0}/h
                             </p>
                           </div>
                         </div>
                         <div className="flex justify-between items-center mb-2">
-                          <p className="text-xs text-gray-600 capitalize">Status: <span className={`font-semibold ${
-                            record.status === 'completed' ? 'text-green-600' :
-                            record.status === 'accepted' ? 'text-blue-600' :
-                            record.status === 'pending' ? 'text-yellow-600' :
-                            'text-red-600'
-                          }`}>{record.status}</span></p>
+                          <p className="text-xs text-gray-600 capitalize">Status: <span className={`font-semibold ${record.status === 'completed' ? 'text-green-600' :
+                              record.status === 'accepted' ? 'text-blue-600' :
+                                record.status === 'pending' ? 'text-yellow-600' :
+                                  'text-red-600'
+                            }`}>{record.status}</span></p>
                           {record.status === 'accepted' && recordTimers[record._id] === 'over' && (
                             <button
                               onClick={() => completeOvertimeRecord(record._id)}
@@ -802,13 +912,13 @@ const StaffList = ({ onAdd, onEdit }) => {
                                   const diffMinutes = Math.floor(diffMs / (1000 * 60));
                                   const diffHours = Math.floor(diffMinutes / 60);
                                   const remainingMinutes = diffMinutes % 60;
-                                  
+
                                   if (diffHours > 0) {
                                     return `${diffHours}h ${remainingMinutes}m`;
                                   } else {
                                     return `${diffMinutes}m`;
                                   }
-                                })()} 
+                                })()}
                               </span>
                             </p>
                             <p className="text-xs text-red-600 mt-1">
@@ -844,7 +954,7 @@ const StaffList = ({ onAdd, onEdit }) => {
                                   const diffMinutes = Math.floor(diffMs / (1000 * 60));
                                   const diffHours = Math.floor(diffMinutes / 60);
                                   const remainingMinutes = diffMinutes % 60;
-                                  
+
                                   if (diffHours > 0) {
                                     return `${diffHours}h ${remainingMinutes}m`;
                                   } else {
@@ -880,12 +990,12 @@ const StaffList = ({ onAdd, onEdit }) => {
                         <p className="text-xs text-gray-600 mb-1">Decline Rate Amount</p>
                         <p className="text-lg font-bold text-red-600">
                           ₹{(() => {
-                            const declinedRecords = viewRecordsModal.records.filter(r => 
+                            const declinedRecords = viewRecordsModal.records.filter(r =>
                               r.status === 'declined' && r.createdAt && r.respondedAt
                             );
-                            
+
                             if (declinedRecords.length === 0) return '0.00';
-                            
+
                             const totalDeclineAmount = declinedRecords.reduce((sum, record) => {
                               const assignedTime = new Date(record.createdAt);
                               const declinedTime = new Date(record.respondedAt);
@@ -895,9 +1005,9 @@ const StaffList = ({ onAdd, onEdit }) => {
                               const declineAmount = diffHours * overtimeRate;
                               return sum + declineAmount;
                             }, 0);
-                            
+
                             return totalDeclineAmount.toFixed(2);
-                          })()} 
+                          })()}
                         </p>
                         <p className="text-xs text-gray-500">
                           {viewRecordsModal.records.filter(r => r.status === 'declined').length} declined
@@ -906,13 +1016,13 @@ const StaffList = ({ onAdd, onEdit }) => {
                     </div>
                     {/* Decline Rate Analysis */}
                     {(() => {
-                      const declinedRecords = viewRecordsModal.records.filter(r => 
+                      const declinedRecords = viewRecordsModal.records.filter(r =>
                         r.status === 'declined' && r.createdAt && r.respondedAt
                       );
-                      
+
                       if (declinedRecords.length > 0) {
                         const overtimeRate = viewRecordsModal.staff?.overtimeRate || 0;
-                        
+
                         const declineData = declinedRecords.map(record => {
                           const assignedTime = new Date(record.createdAt);
                           const declinedTime = new Date(record.respondedAt);
@@ -921,15 +1031,15 @@ const StaffList = ({ onAdd, onEdit }) => {
                           const amount = diffHours * overtimeRate;
                           return { minutes: Math.floor(diffMs / (1000 * 60)), amount };
                         });
-                        
+
                         const fastDeclines = declineData.filter(d => d.minutes <= 5);
                         const mediumDeclines = declineData.filter(d => d.minutes > 5 && d.minutes <= 30);
                         const slowDeclines = declineData.filter(d => d.minutes > 30);
-                        
+
                         const fastAmount = fastDeclines.reduce((sum, d) => sum + d.amount, 0);
                         const mediumAmount = mediumDeclines.reduce((sum, d) => sum + d.amount, 0);
                         const slowAmount = slowDeclines.reduce((sum, d) => sum + d.amount, 0);
-                        
+
                         return (
                           <div className="mt-3 pt-3 border-t border-orange-300">
                             <p className="text-xs font-medium text-gray-700 mb-2">Decline Rate Breakdown:</p>
@@ -969,6 +1079,78 @@ const StaffList = ({ onAdd, onEdit }) => {
           </div>
         );
       })()}
+      {/* Advance Salary Modal */}
+      {advanceSalaryModal.show && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white/90 backdrop-blur-xl rounded-2xl p-6 w-96 shadow-2xl border border-white/40">
+            <h3 className="text-xl font-bold text-gray-800 mb-2">Hold Advance Salary</h3>
+            <p className="text-gray-600 mb-4">Staff: <span className="font-semibold">{advanceSalaryModal.staff?.name}</span></p>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Amount (₹)</label>
+                <input
+                  type="number"
+                  value={advanceSalaryModal.amount}
+                  onChange={(e) => setAdvanceSalaryModal({ ...advanceSalaryModal, amount: e.target.value })}
+                  placeholder="Enter advance amount"
+                  min="1"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Reason (optional)</label>
+                <textarea
+                  value={advanceSalaryModal.reason}
+                  onChange={(e) => setAdvanceSalaryModal({ ...advanceSalaryModal, reason: e.target.value })}
+                  placeholder="Reason for advance"
+                  rows="2"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                />
+              </div>
+            </div>
+            <div className="flex gap-2 mt-4">
+              <button onClick={() => setAdvanceSalaryModal({ show: false, staff: null, amount: '', reason: '' })} className="flex-1 px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-lg font-medium">Cancel</button>
+              <button onClick={holdAdvanceSalary} className="flex-1 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium">Hold</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* PF Deduction Modal */}
+      {pfModal.show && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white/90 backdrop-blur-xl rounded-2xl p-6 w-96 shadow-2xl border border-white/40">
+            <h3 className="text-xl font-bold text-gray-800 mb-2">Enable PF Deduction</h3>
+            <p className="text-gray-600 mb-4">Staff: <span className="font-semibold">{pfModal.staff?.name}</span></p>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4 space-y-2">
+              <p className="text-sm font-semibold text-blue-800">PF Breakdown (this month)</p>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Employee contribution (auto)</span>
+                <span className="font-bold text-blue-700">2.5%</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Employer contribution (manual click)</span>
+                <span className="font-bold text-indigo-700">2.5%</span>
+              </div>
+              <div className="flex justify-between text-sm border-t border-blue-200 pt-2">
+                <span className="text-gray-700 font-medium">Total PF (if both deducted)</span>
+                <span className="font-bold text-green-700">5%</span>
+              </div>
+              {pfModal.staff?.salaryAmount > 0 && (
+                <div className="flex justify-between text-sm border-t border-blue-200 pt-2">
+                  <span className="text-gray-600">Auto deduction amount</span>
+                  <span className="font-bold text-blue-700">₹{((pfModal.staff.salaryAmount * 2.5) / 100).toFixed(2)}</span>
+                </div>
+              )}
+            </div>
+            <p className="text-xs text-gray-500 mb-4">Enabling PF will automatically deduct 2.5% from salary. You can manually deduct the extra 2.5% employer share anytime.</p>
+            <div className="flex gap-2">
+              <button onClick={() => setPfModal({ show: false, staff: null })} className="flex-1 px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-lg font-medium">Cancel</button>
+              <button onClick={savePFDeduction} className="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium">Enable PF</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
