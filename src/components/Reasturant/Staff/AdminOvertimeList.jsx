@@ -83,11 +83,12 @@ const AdminOvertimeList = () => {
                   <td className="px-6 py-4 text-sm text-white font-semibold">{item.hours}h</td>
                   <td className="px-6 py-4 text-sm">
                     <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                      item.status === 'pending' ? 'bg-yellow-500/30 text-yellow-300' :
                       item.status === 'accepted' ? 'bg-green-500/30 text-green-300' :
-                      'bg-red-500/30 text-red-300'
+                      item.status === 'completed' ? 'bg-blue-500/30 text-blue-300' :
+                      'bg-yellow-500/30 text-yellow-300'
                     }`}>
-                      {item.status === 'accepted' ? '✓ Accepted' : item.status === 'declined' ? '✗ Declined' : 'Pending'}
+                      {item.status === 'accepted' ? '✓ Accepted' : 
+                       item.status === 'completed' ? '✓ Completed' : 'In Progress'}
                     </span>
                   </td>
                 </tr>
