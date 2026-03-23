@@ -244,8 +244,8 @@ const AdvanceSalaryManager = () => {
                 disabled={member.advanceSalary?.isHeld}
                 className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                   member.advanceSalary?.isHeld
-                    ? 'bg-gray-400/50 text-gray-400 cursor-not-allowed'
-                    : 'bg-yellow-500/80 hover:bg-yellow-600 text-white'
+                    ? 'bg-gray-600/50 text-gray-300 cursor-not-allowed border border-gray-500/50'
+                    : 'bg-white/20 hover:bg-white/30 text-gray-900 border border-white/30'
                 }`}
               >
                 <FiCreditCard size={14} className="inline mr-1" />
@@ -254,7 +254,7 @@ const AdvanceSalaryManager = () => {
               
               <button
                 onClick={() => openModal('give', member)}
-                className="flex-1 px-3 py-2 bg-green-500/80 hover:bg-green-600 text-white rounded-lg text-xs font-medium transition-all"
+                className="flex-1 px-3 py-2 bg-white/20 hover:bg-white/30 text-gray-900 rounded-lg text-xs font-medium transition-all border border-white/30"
               >
                 <FiDollarSign size={14} className="inline mr-1" />
                 Give
@@ -262,7 +262,7 @@ const AdvanceSalaryManager = () => {
               
               <button
                 onClick={() => openModal('view', member)}
-                className="px-3 py-2 bg-blue-500/80 hover:bg-blue-600 text-white rounded-lg text-xs font-medium transition-all"
+                className="px-3 py-2 bg-white/20 hover:bg-white/30 text-gray-900 rounded-lg text-xs font-medium transition-all border border-white/30"
               >
                 <FiEye size={14} />
               </button>
@@ -315,14 +315,14 @@ const AdvanceSalaryManager = () => {
                           <>
                             <button
                               onClick={() => releaseAdvanceSalary(record._id)}
-                              className="px-2 py-1 bg-green-500/80 hover:bg-green-600 text-white rounded text-xs font-medium"
+                              className="px-2 py-1 bg-white/20 hover:bg-white/30 text-gray-900 rounded text-xs font-medium border border-white/30"
                               title="Release"
                             >
                               <FiCheck size={12} />
                             </button>
                             <button
                               onClick={() => deductAdvanceSalary(record._id)}
-                              className="px-2 py-1 bg-blue-500/80 hover:bg-blue-600 text-white rounded text-xs font-medium"
+                              className="px-2 py-1 bg-white/20 hover:bg-white/30 text-gray-900 rounded text-xs font-medium border border-white/30"
                               title="Mark as Deducted"
                             >
                               <FiDollarSign size={12} />
@@ -392,7 +392,7 @@ const AdvanceSalaryManager = () => {
                   </button>
                   <button
                     onClick={holdAdvanceSalary}
-                    className="flex-1 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg font-medium"
+                    className="flex-1 px-4 py-2 bg-white/20 hover:bg-white/30 text-gray-900 rounded-lg font-medium border border-white/30"
                   >
                     Hold Advance
                   </button>
@@ -447,7 +447,7 @@ const AdvanceSalaryManager = () => {
                   </button>
                   <button
                     onClick={giveAdvanceSalary}
-                    className="flex-1 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium"
+                    className="flex-1 px-4 py-2 bg-white/20 hover:bg-white/30 text-gray-900 rounded-lg font-medium border border-white/30"
                   >
                     Give Advance
                   </button>

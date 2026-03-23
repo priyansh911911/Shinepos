@@ -263,7 +263,7 @@ const BonusManager = () => {
 
               <button
                 onClick={() => openModal('add', member)}
-                className="w-full px-3 py-2 bg-green-500/80 hover:bg-green-600 text-white rounded-lg text-xs font-medium transition-all"
+                className="w-full px-3 py-2 bg-white/20 hover:bg-white/30 text-gray-900 rounded-lg text-xs font-medium transition-all border border-white/30"
               >
                 <FiPlus size={14} className="inline mr-1" />
                 Add Bonus
@@ -328,14 +328,14 @@ const BonusManager = () => {
                           <>
                             <button
                               onClick={() => updateBonusStatus(bonus._id, 'approved')}
-                              className="px-2 py-1 bg-green-500/80 hover:bg-green-600 text-white rounded text-xs font-medium"
+                              className="px-2 py-1 bg-white/20 hover:bg-white/30 text-gray-900 rounded text-xs font-medium border border-white/30"
                               title="Approve"
                             >
                               <FiCheck size={12} />
                             </button>
                             <button
                               onClick={() => updateBonusStatus(bonus._id, 'cancelled')}
-                              className="px-2 py-1 bg-red-500/80 hover:bg-red-600 text-white rounded text-xs font-medium"
+                              className="px-2 py-1 bg-white/20 hover:bg-white/30 text-gray-900 rounded text-xs font-medium border border-white/30"
                               title="Cancel"
                             >
                               <FiX size={12} />
@@ -345,7 +345,7 @@ const BonusManager = () => {
                         {bonus.status === 'approved' && (
                           <button
                             onClick={() => updateBonusStatus(bonus._id, 'paid')}
-                            className="px-2 py-1 bg-blue-500/80 hover:bg-blue-600 text-white rounded text-xs font-medium"
+                            className="px-2 py-1 bg-white/20 hover:bg-white/30 text-gray-900 rounded text-xs font-medium border border-white/30"
                             title="Mark as Paid"
                           >
                             <FiDollarSign size={12} />
@@ -354,7 +354,7 @@ const BonusManager = () => {
                         {bonus.status !== 'paid' && (
                           <button
                             onClick={() => deleteBonus(bonus._id)}
-                            className="px-2 py-1 bg-gray-500/80 hover:bg-gray-600 text-white rounded text-xs font-medium"
+                            className="px-2 py-1 bg-white/20 hover:bg-white/30 text-gray-900 rounded text-xs font-medium border border-white/30"
                             title="Delete"
                           >
                             <FiTrash2 size={12} />
@@ -481,7 +481,7 @@ const BonusManager = () => {
               </button>
               <button
                 onClick={addBonus}
-                className="flex-1 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium"
+                className="flex-1 px-4 py-2 bg-white/20 hover:bg-white/30 text-gray-900 rounded-lg font-medium border border-white/30"
               >
                 {modalType === 'add' ? 'Add Bonus' : 'Update Bonus'}
               </button>

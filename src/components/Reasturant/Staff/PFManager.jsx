@@ -220,10 +220,10 @@ const PFManager = () => {
 
               <button
                 onClick={() => openModal(member)}
-                className={`w-full px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                className={`w-full px-3 py-2 rounded-lg text-xs font-medium transition-all border ${
                   isPFEnabled
-                    ? 'bg-green-500/80 hover:bg-green-600 text-white'
-                    : 'bg-blue-500/80 hover:bg-blue-600 text-white'
+                    ? 'bg-white/20 hover:bg-white/30 text-gray-900 border-white/30'
+                    : 'bg-white/20 hover:bg-white/30 text-gray-900 border-white/30'
                 }`}
               >
                 <FiPercent size={14} className="inline mr-1" />
@@ -286,7 +286,7 @@ const PFManager = () => {
                         {record.status === 'active' && !record.employerDeducted && (
                           <button
                             onClick={() => deductEmployerPF(record.staffId)}
-                            className="px-2 py-1 bg-green-500/80 hover:bg-green-600 text-white rounded text-xs font-medium"
+                            className="px-2 py-1 bg-white/20 hover:bg-white/30 text-gray-900 rounded text-xs font-medium border border-white/30"
                             title="Deduct Employer PF"
                           >
                             <FiDollarSign size={12} />
@@ -295,7 +295,7 @@ const PFManager = () => {
                         {record.status === 'active' && (
                           <button
                             onClick={() => markPFDeducted(record._id)}
-                            className="px-2 py-1 bg-blue-500/80 hover:bg-blue-600 text-white rounded text-xs font-medium"
+                            className="px-2 py-1 bg-white/20 hover:bg-white/30 text-gray-900 rounded text-xs font-medium border border-white/30"
                             title="Mark as Deducted"
                           >
                             <FiCheck size={12} />
@@ -380,7 +380,7 @@ const PFManager = () => {
               </button>
               <button
                 onClick={setPFDeduction}
-                className="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium"
+                className="flex-1 px-4 py-2 bg-white/20 hover:bg-white/30 text-gray-900 rounded-lg font-medium border border-white/30"
               >
                 Update PF Settings
               </button>
